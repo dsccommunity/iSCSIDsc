@@ -311,7 +311,8 @@ function Test-TargetResource
 
 # Helper Functions
 
-Function Get-ServerTarget {
+Function Get-ServerTarget
+{
     param
     (
         [parameter(Mandatory = $true)]

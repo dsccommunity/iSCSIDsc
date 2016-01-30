@@ -139,17 +139,20 @@ function Set-TargetResource
             [Boolean] $Recreate = $false
             
             if (($DiskType) `
-                -and ($VirtualDisk.DiskType -ne $DiskType)) {
+                -and ($VirtualDisk.DiskType -ne $DiskType))
+            {
                 $Recreate = $true
             }
 
             if (($SizeBytes) `
-                -and ($VirtualDisk.Size -ne $SizeBytes)) {
+                -and ($VirtualDisk.Size -ne $SizeBytes))
+            {
                 $Recreate = $true
             }
 
             if (($ParentPath) `
-                -and ($VirtualDisk.ParentPath -ne $ParentPath)) {
+                -and ($VirtualDisk.ParentPath -ne $ParentPath))
+            {
                 $Recreate = $true
             }
 
@@ -291,7 +294,8 @@ function Test-TargetResource
             [Boolean] $Recreate = $false
 
             if (($Description) `
-                -and ($VirtualDisk.Description -ne $Description)) {
+                -and ($VirtualDisk.Description -ne $Description))
+            {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
                     $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
@@ -301,7 +305,8 @@ function Test-TargetResource
             }
             
             if (($DiskType) `
-                -and ($VirtualDisk.DiskType -ne $DiskType)) {
+                -and ($VirtualDisk.DiskType -ne $DiskType))
+            {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
                     $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
@@ -311,7 +316,8 @@ function Test-TargetResource
             }
 
             if (($SizeBytes) `
-                -and ($VirtualDisk.Size -ne $SizeBytes)) {
+                -and ($VirtualDisk.Size -ne $SizeBytes))
+            {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
                     $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
@@ -321,7 +327,8 @@ function Test-TargetResource
             }
 
             if (($ParentPath) `
-                -and ($VirtualDisk.ParentPath -ne $ParentPath)) {
+                -and ($VirtualDisk.ParentPath -ne $ParentPath))
+            {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
                     $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
@@ -387,7 +394,8 @@ function Test-TargetResource
 
 # Helper Functions
 
-Function Get-VirtualDisk {
+Function Get-VirtualDisk
+{
     param
     (
         [parameter(Mandatory = $true)]
