@@ -30,7 +30,7 @@ configuration Sample_ciSCSIServerTarget
             Ensure = 'Present'
             Path = 'D:\iSCSIVirtualDisks\ClusterVdisk02.vhdx'
             DiskType = 'Dynamic'
-            UseFixed = $false
+            SizeBytes = 10GB            
             Description = 'Cluster Virtual Disk 02'
             DependsOn = "[WindowsFeature]ISCSITargetServerInstall" 
         } # End of ciSCSIVirtualDisk Resource

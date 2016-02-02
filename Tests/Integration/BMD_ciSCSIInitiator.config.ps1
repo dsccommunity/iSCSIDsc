@@ -1,7 +1,7 @@
 (Get-NetIPAddress -InterfaceIndex (Get-NetConnectionProfile -IPv4Connectivity Internet).InterfaceIndex -AddressFamily IPv4).IPAddress
 $TargetName = 'TestServerTarget'
 $Initiator = @{
-    NodeName               = "iqn.1991-05.com.microsoft:$($ENV:ComputerName)-$TargetName-target-target"
+    NodeAddress            = "iqn.1991-05.com.microsoft:$($ENV:ComputerName)-$TargetName-target-target"
     TargetPortalAddress    = $ENV:ComputerName
     InitiatorPortalAddress = $ENV:ComputerName
     Ensure                 = 'Present'
@@ -22,7 +22,7 @@ Configuration BMD_ciSCSIInitiator_Config {
     Import-DscResource -ModuleName ciSCSI
     node localhost {
         ciSCSIInitiator Integration_Test {
-            NodeName               = $Initiator.NodeName
+            NodeAddress            = $Initiator.NodeAddress
             TargetPortalAddress    = $Initiator.TargetPortalAddress
             InitiatorPortalAddress = $Initiator.InitiatorPortalAddress
             Ensure                 = $Initiator.Ensure
