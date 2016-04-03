@@ -24,7 +24,7 @@ try
 {
     #region Pester Tests
     InModuleScope $Global:DSCResourceName {
-        
+
         # Create the Mock Objects that will be used for running tests
         $TestInitiator = [PSObject]@{
             NodeAddress = 'iqn.1991-05.com.microsoft:fileserver-cluster-target-target'
@@ -42,7 +42,25 @@ try
             IsPersistent = $true
             ReportToPnP = $true
         }
-        
+
+        $TestInitiatorWithiSNS = [PSObject]@{
+            NodeAddress = 'iqn.1991-05.com.microsoft:fileserver-cluster-target-target'
+            TargetPortalAddress = '192.168.129.24'
+            InitiatorPortalAddress = '192.168.129.28'
+            Ensure = 'Present'
+            TargetPortalPortNumber = 3260
+            InitiatorInstanceName = 'ROOT\ISCSIPRT\0000_0'
+            AuthenticationType = 'MutualCHAP'
+            ChapUsername = 'MyUsername'
+            ChapSecret = 'MySecret'
+            IsDataDigest = $false
+            IsHeaderDigest = $false
+            IsMultipathEnabled = $false
+            IsPersistent = $true
+            ReportToPnP = $true
+            iSNSServer = 'isns.contoso.com'
+        }
+
         $MockTargetPortal = [PSObject]@{
             TargetPortalAddress = $TestInitiator.TargetPortalAddress
             InitiatorPortalAddress = $TestInitiator.InitiatorPortalAddress
@@ -51,12 +69,12 @@ try
             IsDataDigest = $TestInitiator.IsDataDigest
             IsHeaderDigest = $TestInitiator.IsHeaderDigest
         }
-        
+
         $MockTarget = [PSObject]@{
             NodeAddress = $TestInitiator.NodeAddress
             IsConnected = $True
         }
-        
+
         $MockTargetNotConnected = [PSObject]@{
             NodeAddress = $TestInitiator.NodeAddress
             IsConnected = $False
@@ -69,7 +87,7 @@ try
             TargetAddress        = $TestInitiator.TargetPortalAddress
             TargetPortNumber     = $TestInitiator.TargetPortalPortNumber
         }
-        
+
         $MockSession = [PSObject]@{
             AuthenticationType      = $TestInitiator.AuthenticationType
             InitiatorInstanceName   = $TestInitiator.InitiatorInstanceName
@@ -90,12 +108,18 @@ try
         $MockSessionPersistent = $MockSession.Clone()
         $MockSessionPersistent.IsPersistent = $True
 
+        $MockiSNSSrver = @{
+             Path               = "\\Localhost\root\wmi:MSiSCSIInitiator_iSNSServerClass.iSNSServerAddress=`"$($TestInitiatorWithiSNS.iSNSServer)`""
+            iSNSServerAddress   = $TestInitiatorWithiSNS.iSNSServer
+        }
+
         Describe "$($Global:DSCResourceName)\Get-TargetResource" {
             Context 'Target Portal and Target do not exist' {
                 Mock Get-TargetPortal
                 Mock Get-Target
                 Mock Get-Connection
-                Mock Get-Session                
+                Mock Get-Session
+                Mock Get-WMIObject
                 It 'should return absent' {
                     $Result = Get-TargetResource `
                         -NodeAddress $TestInitiator.NodeAddress `
@@ -108,14 +132,16 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
-            
+
             Context 'Target Portal exists but Target does not' {
                 Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
                 Mock Get-Target
                 Mock Get-Connection
                 Mock Get-Session
+                Mock Get-WMIObject
                 It 'should return absent but with Target Portal data' {
                     $Result = Get-TargetResource `
                         -NodeAddress $TestInitiator.NodeAddress `
@@ -134,6 +160,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
 
@@ -142,6 +169,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTargetNotConnected) }
                 Mock Get-Connection
                 Mock Get-Session
+                Mock Get-WMIObject
                 It 'should return absent but with Target Portal data' {
                     $Result = Get-TargetResource `
                         -NodeAddress $TestInitiator.NodeAddress `
@@ -160,6 +188,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
 
@@ -168,6 +197,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection -MockWith { return @($MockConnection) }
                 Mock Get-Session -MockWith { return @($MockSession) }
+                Mock Get-WMIObject
                 It 'should return correct data' {
                     $Result = Get-TargetResource `
                         -NodeAddress $TestInitiator.NodeAddress `
@@ -193,10 +223,47 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                }
+            }
+
+            Context 'Target Portal and Target exists and is Connected, iSNS Server set' {
+                Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
+                Mock Get-Target -MockWith { return @($MockTarget) }
+                Mock Get-Connection -MockWith { return @($MockConnection) }
+                Mock Get-Session -MockWith { return @($MockSession) }
+                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                It 'should return correct data' {
+                    $Result = Get-TargetResource `
+                        -NodeAddress $TestInitiator.NodeAddress `
+                        -TargetPortalAddress $TestInitiator.TargetPortalAddress `
+                        -InitiatorPortalAddress $TestInitiator.InitiatorPortalAddress
+                    $Result.Ensure                 | Should Be 'Present'
+                    $Result.TargetPortalAddress    | Should Be $TestInitiator.TargetPortalAddress
+                    $Result.InitiatorPortalAddress | Should Be $TestInitiator.InitiatorPortalAddress
+                    $Result.TargetPortalPortNumber | Should Be $TestInitiator.TargetPortalPortNumber
+                    $Result.InitiatorInstanceName  | Should Be $TestInitiator.InitiatorInstanceName
+                    $Result.IsDataDigest           | Should Be $TestInitiator.IsDataDigest
+                    $Result.IsHeaderDigest         | Should Be $TestInitiator.IsHeaderDigest
+                    $Result.AuthenticationType     | Should Be $TestInitiator.AuthenticationType
+                    $Result.InitiatorInstanceName  | Should Be $TestInitiator.InitiatorInstanceName
+                    $Result.ConnectionIdentifier   | Should Be $MockConnection.ConnectionIdentifier
+                    $Result.SessionIdentifier      | Should Be $MockSession.SessionIdentifier
+                    $Result.IsConnected            | Should Be $MockSession.IsConnected
+                    $Result.IsDiscovered           | Should Be $MockSession.IsDiscovered
+                    $Result.IsPersistent           | Should Be $MockSession.IsPersistent
+                    $Result.iSNSServer             | Should Be $MockiSNSSrver.iSNSServerAddress
+                }
+                It 'should call the expected mocks' {
+                    Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
+                    Assert-MockCalled -commandName Get-Target -Exactly 1
+                    Assert-MockCalled -commandName Get-Connection -Exactly 1
+                    Assert-MockCalled -commandName Get-Session -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
         }
-        
+
         Describe "$($Global:DSCResourceName)\Set-TargetResource" {
             Context 'Target Portal does not exist but should' {
                 Mock Get-TargetPortal
@@ -208,7 +275,10 @@ try
                 Mock Connect-IscsiTarget -MockWith { return @($MockSession) }
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
-                Mock Unregister-IscsiSession                
+                Mock Unregister-IscsiSession
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
                 It 'should not throw error' {
                     {
                         $Splat = $TestInitiator.Clone()
@@ -226,9 +296,12 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
             }
-            
+
             Context 'Target Portal does exist and should but Target is disconnected' {
                 Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
                 Mock New-IscsiTargetPortal
@@ -240,6 +313,9 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
                 It 'should not throw error' {
                     {
                         $Splat = $TestInitiator.Clone()
@@ -257,6 +333,9 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
             }
 
@@ -270,6 +349,9 @@ try
             Mock Disconnect-IscsiTarget
             Mock Register-IscsiSession
             Mock Unregister-IscsiSession
+            Mock Get-WMIObject
+            Mock Set-WMIInstance
+            Mock Remove-WMIObject
 
             Context 'Target Portal does exist and should but TargetPortalPortNumber is different' {
                 It 'should not throw error' {
@@ -290,9 +372,12 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
             }
-            
+
             Context 'Target Portal does exist and should but InitiatorInstanceName is different' {
                 It 'should not throw error' {
                     {
@@ -312,6 +397,9 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
             }
 
@@ -334,6 +422,9 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
             }
 
@@ -356,6 +447,9 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
             }
 
@@ -370,6 +464,9 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
                 It 'should not throw error' {
                     {
                         $Splat = $TestInitiator.Clone()
@@ -387,6 +484,9 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
             }
 
@@ -401,6 +501,9 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
                 It 'should not throw error' {
                     {
                         $Splat = $TestInitiator.Clone()
@@ -419,6 +522,9 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 1
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
             }
 
@@ -433,6 +539,9 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
                 It 'should not throw error' {
                     {
                         $Splat = $TestInitiator.Clone()
@@ -450,6 +559,9 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
             }
 
@@ -464,6 +576,9 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
                 It 'should not throw error' {
                     {
                         $Splat = $TestInitiator.Clone()
@@ -482,6 +597,9 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
             }
 
@@ -496,6 +614,9 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
                 It 'should not throw error' {
                     {
                         $Splat = $TestInitiator.Clone()
@@ -514,9 +635,12 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 1
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
             }
-            
+
             Context 'Target Portal exists but should not and Target is not connected' {
                 Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
                 Mock New-IscsiTargetPortal
@@ -528,6 +652,9 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
                 It 'should not throw error' {
                     {
                         $Splat = $TestInitiator.Clone()
@@ -546,6 +673,9 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
             }
 
@@ -560,6 +690,9 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
                 It 'should not throw error' {
                     {
                         $Splat = $TestInitiator.Clone()
@@ -578,6 +711,9 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 1
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
             }
 
@@ -592,6 +728,9 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
                 It 'should not throw error' {
                     {
                         $Splat = $TestInitiator.Clone()
@@ -610,44 +749,200 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
+                }
+            }
+
+            Context 'Target Portal does exist, Target is connected, is Persistent and should be, but iSNS Server is different' {
+                Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
+                Mock New-IscsiTargetPortal
+                Mock Remove-IscsiTargetPortal
+                Mock Get-Target -MockWith { return @($MockTarget) }
+                Mock Get-Connection -MockWith { return @($MockConnection) }
+                Mock Get-Session -MockWith { return @($MockSessionPersistent) }
+                Mock Connect-IscsiTarget
+                Mock Disconnect-IscsiTarget
+                Mock Register-IscsiSession
+                Mock Unregister-IscsiSession
+                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
+                It 'should not throw error' {
+                    {
+                        $Splat = $TestInitiatorWithiSNS.Clone()
+                        $Splat.iSNSServer = 'different.contoso.com'
+                        Set-TargetResource @Splat
+                    } | Should Not Throw
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
+                    Assert-MockCalled -commandName New-iSCSITargetPortal -Exactly 0
+                    Assert-MockCalled -commandName Remove-iSCSITargetPortal -Exactly 0
+                    Assert-MockCalled -commandName Get-Target -Exactly 1
+                    Assert-MockCalled -commandName Get-Connection -Exactly 1
+                    Assert-MockCalled -commandName Get-Session -Exactly 1
+                    Assert-MockCalled -commandName Connect-IscsiTarget -Exactly 0
+                    Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
+                    Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 1
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
+                }
+            }
+
+            Context 'Target Portal does exist, Target is connected, is Persistent and should be, but iSNS Server is not set' {
+                Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
+                Mock New-IscsiTargetPortal
+                Mock Remove-IscsiTargetPortal
+                Mock Get-Target -MockWith { return @($MockTarget) }
+                Mock Get-Connection -MockWith { return @($MockConnection) }
+                Mock Get-Session -MockWith { return @($MockSessionPersistent) }
+                Mock Connect-IscsiTarget
+                Mock Disconnect-IscsiTarget
+                Mock Register-IscsiSession
+                Mock Unregister-IscsiSession
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
+                It 'should not throw error' {
+                    {
+                        $Splat = $TestInitiatorWithiSNS.Clone()
+                        Set-TargetResource @Splat
+                    } | Should Not Throw
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
+                    Assert-MockCalled -commandName New-iSCSITargetPortal -Exactly 0
+                    Assert-MockCalled -commandName Remove-iSCSITargetPortal -Exactly 0
+                    Assert-MockCalled -commandName Get-Target -Exactly 1
+                    Assert-MockCalled -commandName Get-Connection -Exactly 1
+                    Assert-MockCalled -commandName Get-Session -Exactly 1
+                    Assert-MockCalled -commandName Connect-IscsiTarget -Exactly 0
+                    Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
+                    Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 1
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
+                }
+            }
+
+            Context 'Target Portal does exist, Target is connected, is Persistent and should be, but iSNS Server should not be set' {
+                Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
+                Mock New-IscsiTargetPortal
+                Mock Remove-IscsiTargetPortal
+                Mock Get-Target -MockWith { return @($MockTarget) }
+                Mock Get-Connection -MockWith { return @($MockConnection) }
+                Mock Get-Session -MockWith { return @($MockSessionPersistent) }
+                Mock Connect-IscsiTarget
+                Mock Disconnect-IscsiTarget
+                Mock Register-IscsiSession
+                Mock Unregister-IscsiSession
+                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
+                It 'should not throw error' {
+                    {
+                        $Splat = $TestInitiatorWithiSNS.Clone()
+                        $Splat.iSNSServer = ''
+                        Set-TargetResource @Splat
+                    } | Should Not Throw
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
+                    Assert-MockCalled -commandName New-iSCSITargetPortal -Exactly 0
+                    Assert-MockCalled -commandName Remove-iSCSITargetPortal -Exactly 0
+                    Assert-MockCalled -commandName Get-Target -Exactly 1
+                    Assert-MockCalled -commandName Get-Connection -Exactly 1
+                    Assert-MockCalled -commandName Get-Session -Exactly 1
+                    Assert-MockCalled -commandName Connect-IscsiTarget -Exactly 0
+                    Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
+                    Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 1
+                }
+            }
+
+            Context 'Target Portal does not exist and should not and Target is not connected but iSNS Server is set' {
+                Mock Get-TargetPortal
+                Mock New-IscsiTargetPortal
+                Mock Remove-IscsiTargetPortal
+                Mock Get-Target
+                Mock Get-Connection
+                Mock Get-Session
+                Mock Connect-IscsiTarget
+                Mock Disconnect-IscsiTarget
+                Mock Register-IscsiSession
+                Mock Unregister-IscsiSession
+                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
+                It 'should not throw error' {
+                    {
+                        $Splat = $TestInitiator.Clone()
+                        $Splat.Ensure = 'Absent'
+                        Set-TargetResource @Splat
+                    } | Should Not Throw
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
+                    Assert-MockCalled -commandName New-iSCSITargetPortal -Exactly 0
+                    Assert-MockCalled -commandName Remove-iSCSITargetPortal -Exactly 0
+                    Assert-MockCalled -commandName Get-Target -Exactly 1
+                    Assert-MockCalled -commandName Get-Connection -Exactly 0
+                    Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Connect-IscsiTarget -Exactly 0
+                    Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
+                    Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 1
                 }
             }
         }
-        
+
         Describe "$($Global:DSCResourceName)\Test-TargetResource" {
             Context 'Target Portal does not exist but should' {
                 Mock Get-TargetPortal
                 Mock Get-Target
                 Mock Get-Connection
                 Mock Get-Session
+                Mock Get-WMIObject
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     Test-TargetResource @Splat | Should Be $False
-                    
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
                     Assert-MockCalled -commandName Get-Target -Exactly 0
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
-            
+
             Context 'Target Portal does exist and should but Target does not exist' {
                 Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
                 Mock Get-Target
                 Mock Get-Connection
-                Mock Get-Session                
+                Mock Get-Session
+                Mock Get-WMIObject
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     Test-TargetResource @Splat | Should Be $False
-                    
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
 
@@ -656,16 +951,17 @@ try
                 Mock Get-Target -MockWith { return @($MockTargetNotConnected) }
                 Mock Get-Connection
                 Mock Get-Session
+                Mock Get-WMIObject
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     Test-TargetResource @Splat | Should Be $False
-                    
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
 
@@ -673,6 +969,7 @@ try
             Mock Get-Target -MockWith { return @($MockTarget) }
             Mock Get-Connection
             Mock Get-Session
+            Mock Get-WMIObject
 
             Context 'Target Portal does exist and should but TargetPortalPortNumber is different' {
                 It 'should return false' {
@@ -685,6 +982,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
             
@@ -692,13 +990,14 @@ try
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.InitiatorInstanceName = "Different"
-                    Test-TargetResource @Splat | Should Be $False                    
+                    Test-TargetResource @Splat | Should Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
 
@@ -706,13 +1005,14 @@ try
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.IsDataDigest = ! $Splat.IsDataDigest
-                    Test-TargetResource @Splat | Should Be $False                    
+                    Test-TargetResource @Splat | Should Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
 
@@ -720,13 +1020,14 @@ try
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.IsHeaderDigest = ! $Splat.IsHeaderDigest
-                    Test-TargetResource @Splat | Should Be $False                    
+                    Test-TargetResource @Splat | Should Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
 
@@ -734,17 +1035,19 @@ try
                 Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection -MockWith { return @($MockConnection) }
-                Mock Get-Session -MockWith { return @($MockSession) }                
+                Mock Get-Session -MockWith { return @($MockSession) }
+                Mock Get-WMIObject
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.AuthenticationType = 'None'
-                    Test-TargetResource @Splat | Should Be $False                    
+                    Test-TargetResource @Splat | Should Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
 
@@ -752,16 +1055,18 @@ try
                 Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection -MockWith { return @($MockConnection) }
-                Mock Get-Session -MockWith { return @($MockSessionPersistent) }                
+                Mock Get-Session -MockWith { return @($MockSessionPersistent) }
+                Mock Get-WMIObject
                 It 'should return true' {
                     $Splat = $TestInitiator.Clone()
-                    Test-TargetResource @Splat | Should Be $True                    
+                    Test-TargetResource @Splat | Should Be $True
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
 
@@ -769,17 +1074,19 @@ try
                 Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection -MockWith { return @($MockConnection) }
-                Mock Get-Session -MockWith { return @($MockSessionPersistent) }                
+                Mock Get-Session -MockWith { return @($MockSessionPersistent) }
+                Mock Get-WMIObject
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.IsPersistent = $False
-                    Test-TargetResource @Splat | Should Be $False                    
+                    Test-TargetResource @Splat | Should Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
 
@@ -787,17 +1094,19 @@ try
                 Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection
-                Mock Get-Session                
+                Mock Get-Session
+                Mock Get-WMIObject
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.Ensure = 'Absent'
-                    Test-TargetResource @Splat | Should Be $False                    
+                    Test-TargetResource @Splat | Should Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
             
@@ -806,34 +1115,38 @@ try
                 Mock Get-Target -MockWith { return @($MockTargetNotConnected) }
                 Mock Get-Connection
                 Mock Get-Session
+                Mock Get-WMIObject
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.Ensure = 'Absent'
-                    Test-TargetResource @Splat | Should Be $False                    
+                    Test-TargetResource @Splat | Should Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
 
-            Context 'Target Portal does not exist and should not but Target is connected' {                
+            Context 'Target Portal does not exist and should not but Target is connected' {
                 Mock Get-TargetPortal
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection
                 Mock Get-Session
+                Mock Get-WMIObject
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.Ensure = 'Absent'
-                    Test-TargetResource @Splat | Should Be $False                    
+                    Test-TargetResource @Splat | Should Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
 
@@ -842,20 +1155,101 @@ try
                 Mock Get-Target
                 Mock Get-Connection
                 Mock Get-Session
+                Mock Get-WMIObject
                 It 'should return true' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.Ensure = 'Absent'
-                    Test-TargetResource @Splat | Should Be $True       
+                    Test-TargetResource @Splat | Should Be $True
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                }
+            }
+
+            Context 'Target Portal does exist, Target is connected, is Persistent and should be and iSNS Server is not set' {
+                Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
+                Mock Get-Target -MockWith { return @($MockTarget) }
+                Mock Get-Connection -MockWith { return @($MockConnection) }
+                Mock Get-Session -MockWith { return @($MockSessionPersistent) }
+                Mock Get-WMIObject
+                It 'should return false' {
+                    $Splat = $TestInitiatorWithiSNS.Clone()
+                    Test-TargetResource @Splat | Should Be $False
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
+                    Assert-MockCalled -commandName Get-Target -Exactly 1
+                    Assert-MockCalled -commandName Get-Connection -Exactly 1
+                    Assert-MockCalled -commandName Get-Session -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                }
+            }
+
+            Context 'Target Portal does exist, Target is connected, is Persistent and should be and iSNS Server is different' {
+                Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
+                Mock Get-Target -MockWith { return @($MockTarget) }
+                Mock Get-Connection -MockWith { return @($MockConnection) }
+                Mock Get-Session -MockWith { return @($MockSessionPersistent) }
+                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                It 'should return false' {
+                    $Splat = $TestInitiatorWithiSNS.Clone()
+                    $Splat.iSNSServer = 'different.contoso.com'
+                    Test-TargetResource @Splat | Should Be $False
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
+                    Assert-MockCalled -commandName Get-Target -Exactly 1
+                    Assert-MockCalled -commandName Get-Connection -Exactly 1
+                    Assert-MockCalled -commandName Get-Session -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                }
+            }
+
+            Context 'Target Portal does exist, Target is connected, is Persistent and should be and iSNS Server should be cleared' {
+                Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
+                Mock Get-Target -MockWith { return @($MockTarget) }
+                Mock Get-Connection -MockWith { return @($MockConnection) }
+                Mock Get-Session -MockWith { return @($MockSessionPersistent) }
+                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                It 'should return false' {
+                    $Splat = $TestInitiatorWithiSNS.Clone()
+                    $Splat.iSNSServer = ''
+                    Test-TargetResource @Splat | Should Be $False
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
+                    Assert-MockCalled -commandName Get-Target -Exactly 1
+                    Assert-MockCalled -commandName Get-Connection -Exactly 1
+                    Assert-MockCalled -commandName Get-Session -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                }
+            }
+
+            Context 'Target Portal does not exist and should not and Target is not connected but iSNS Server is set' {
+                Mock Get-TargetPortal
+                Mock Get-Target
+                Mock Get-Connection
+                Mock Get-Session
+                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                It 'should return false' {
+                    $Splat = $TestInitiator.Clone()
+                    $Splat.Ensure = 'Absent'
+                    Test-TargetResource @Splat | Should Be $False
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
+                    Assert-MockCalled -commandName Get-Target -Exactly 1
+                    Assert-MockCalled -commandName Get-Connection -Exactly 0
+                    Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
         }
-        
+
         Describe "$($Global:DSCResourceName)\Get-TargetPortal" {
             Context 'Target Portal does not exist' {
                 Mock Get-iSCSITargetPortal

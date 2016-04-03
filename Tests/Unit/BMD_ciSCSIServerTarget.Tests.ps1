@@ -22,19 +22,27 @@ $TestEnvironment = Initialize-TestEnvironment `
 # Begin Testing
 try
 {    
-    #region Pester Tests     
+    #region Pester Tests
     InModuleScope $Global:DSCResourceName {
-    
+
         # Create the Mock Objects that will be used for running tests
         $TestVirtualDisk = [PSObject]@{
             Path                    = Join-Path -Path $ENV:Temp -ChildPath 'TestiSCSIVirtualDisk.vhdx'
         }
-        
+
         $TestServerTarget = @{
             TargetName   = 'testtarget'
             Ensure       = 'Present'
             InitiatorIds = @( 'Iqn:iqn.1991-05.com.microsoft:fs1.contoso.com','Iqn:iqn.1991-05.com.microsoft:fs2.contoso.com' )
             Paths        = @( $TestVirtualDisk.Path )
+        }
+
+        $TestServerTargetWithiSNS = @{
+            TargetName   = 'testtarget'
+            Ensure       = 'Present'
+            InitiatorIds = @( 'Iqn:iqn.1991-05.com.microsoft:fs1.contoso.com','Iqn:iqn.1991-05.com.microsoft:fs2.contoso.com' )
+            Paths        = @( $TestVirtualDisk.Path )
+            iSNSServer   = 'isns.contoso.com'
         }
 
         $MockServerTarget = @{
@@ -51,7 +59,12 @@ try
                 }
             )
         }
-       
+
+         $MockiSNSSrver = @{
+             Path               = "\\Localhost\root\wmi:WT_ISnsServer.ServerName=`"$($TestServerTargetWithiSNS.iSNSServer)`""
+             ServerName         = $TestServerTargetWithiSNS.iSNSServer
+         }
+
         # Ensure that the tests can be performed on this computer
         $ProductType = (Get-CimInstance Win32_OperatingSystem).ProductType
         Describe 'Environment' {
@@ -80,27 +93,31 @@ try
         }
 
         Describe "$($Global:DSCResourceName)\Get-TargetResource" {
-    
+
             Context 'Server Target does not exist' {
-                
+
                 Mock Get-iSCSIServerTarget
-    
+                Mock Get-WMIObject
+
                 It 'should return absent Server Target' {
                     $Result = Get-TargetResource `
                         -TargetName $TestServerTarget.TargetName `
                         -InitiatorIds $TestServerTarget.InitiatorIds `
                         -Paths $TestServerTarget.Paths
                     $Result.Ensure                  | Should Be 'Absent'
+                    $Result.iSNSServer              | Should BeNullOrEmpty
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
-                } 
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                }
             }
-    
-            Context 'Server Target does exist' {
-                
+
+            Context 'Server Target exists and iSNS Server not set' {
+
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
-    
+                Mock Get-WMIObject
+
                 It 'should return correct Server Target' {
                     $Result = Get-TargetResource `
                         -TargetName $TestServerTarget.TargetName `
@@ -109,24 +126,50 @@ try
                     $Result.Ensure                  | Should Be 'Present'
                     $Result.InitiatorIds            | Should Be $TestServerTarget.InitiatorIds
                     $Result.Paths                   | Should Be $TestServerTarget.Paths
+                    $Result.iSNSServer              | Should BeNullOrEmpty
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                }
+            }
+
+            Context 'Server Target exists and iSNS Server set' {
+
+                Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
+                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+
+                It 'should return correct Server Target' {
+                    $Result = Get-TargetResource `
+                        -TargetName $TestServerTargetWithiSNS.TargetName `
+                        -InitiatorIds $TestServerTargetWithiSNS.InitiatorIds `
+                        -Paths $TestServerTargetWithiSNS.Paths
+                    $Result.Ensure                  | Should Be 'Present'
+                    $Result.InitiatorIds            | Should Be $TestServerTargetWithiSNS.InitiatorIds
+                    $Result.Paths                   | Should Be $TestServerTargetWithiSNS.Paths
+                    $Result.iSNSServer              | Should Be $TestServerTargetWithiSNS.iSNSServer
+                }
+                It 'should call the expected mocks' {
+                    Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
         }
-    
+
         Describe "$($Global:DSCResourceName)\Set-TargetResource" {
-    
+
             Context 'Server Target does not exist but should' {
-                
+
                 Mock Get-iSCSIServerTarget
                 Mock New-iSCSIServerTarget
                 Mock Set-iSCSIServerTarget
                 Mock Remove-iSCSIServerTarget
                 Mock Add-IscsiVirtualDiskTargetMapping
-                Mock Remove-IscsiVirtualDiskTargetMapping   
-    
+                Mock Remove-IscsiVirtualDiskTargetMapping
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
+
                 It 'should not throw error' {
                     { 
                         $Splat = $TestServerTarget.Clone()
@@ -140,18 +183,24 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
                     Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 1
                     Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
             }
-    
+
             Context 'Server Target exists and should but has an additional Path' {
-                
+
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
                 Mock New-iSCSIServerTarget
                 Mock Set-iSCSIServerTarget
                 Mock Remove-iSCSIServerTarget
                 Mock Add-IscsiVirtualDiskTargetMapping
                 Mock Remove-IscsiVirtualDiskTargetMapping
-    
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
+
                 It 'should not throw error' {
                     { 
                         $Splat = $TestServerTarget.Clone()
@@ -166,20 +215,26 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
                     Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 1
                     Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
-            }    
+            }
 
             Context 'Server Target exists and should but has different Paths' {
-                
+
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
                 Mock New-iSCSIServerTarget
                 Mock Set-iSCSIServerTarget
                 Mock Remove-iSCSIServerTarget
                 Mock Add-IscsiVirtualDiskTargetMapping
                 Mock Remove-IscsiVirtualDiskTargetMapping
-    
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
+
                 It 'should not throw error' {
-                    { 
+                    {
                         $Splat = $TestServerTarget.Clone()
                         $Splat.Paths = @( 'd:\NewVHD.vhdx' )
                         Set-TargetResource @Splat
@@ -192,20 +247,26 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
                     Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 1
                     Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
-            }    
+            }
 
             Context 'Server Target exists and should but has different InitiatorIds' {
-                
+
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
                 Mock New-iSCSIServerTarget
                 Mock Set-iSCSIServerTarget
                 Mock Remove-iSCSIServerTarget
                 Mock Add-IscsiVirtualDiskTargetMapping
                 Mock Remove-IscsiVirtualDiskTargetMapping
-    
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
+
                 It 'should not throw error' {
-                    { 
+                    {
                         $Splat = $TestServerTarget.Clone()
                         $Splat.InitiatorIds += @( 'Iqn:iqn.1991-05.com.microsoft:fs3.contoso.com' )
                         Set-TargetResource @Splat
@@ -218,20 +279,26 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
                     Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 0
                     Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
-            }    
-   
+            }
+
             Context 'Server Target exists but should not' {
-                
+
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
                 Mock New-iSCSIServerTarget
                 Mock Set-iSCSIServerTarget
                 Mock Remove-iSCSIServerTarget
                 Mock Add-IscsiVirtualDiskTargetMapping
                 Mock Remove-IscsiVirtualDiskTargetMapping
-    
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
+
                 It 'should not throw error' {
-                    { 
+                    {
                         $Splat = $TestServerTarget.Clone()
                         $Splat.Ensure = 'Absent'
                         Set-TargetResource @Splat
@@ -244,20 +311,26 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 1
                     Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 0
                     Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
             }
-    
+
             Context 'Server Target does not exist and should not' {
-                
+
                 Mock Get-iSCSIServerTarget
                 Mock New-iSCSIServerTarget
                 Mock Set-iSCSIServerTarget
                 Mock Remove-iSCSIServerTarget
                 Mock Add-IscsiVirtualDiskTargetMapping
                 Mock Remove-IscsiVirtualDiskTargetMapping
-                    
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
+
                 It 'should not throw error' {
-                    { 
+                    {
                         $Splat = $TestServerTarget.Clone()
                         $Splat.Ensure = 'Absent'
                         Set-TargetResource @Splat
@@ -270,116 +343,310 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
                     Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 0
                     Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
+                }
+            }
+
+            Context 'Server Target exists and should but iSNS Server is different' {
+
+                Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
+                Mock New-iSCSIServerTarget
+                Mock Set-iSCSIServerTarget
+                Mock Remove-iSCSIServerTarget
+                Mock Add-IscsiVirtualDiskTargetMapping
+                Mock Remove-IscsiVirtualDiskTargetMapping
+                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
+
+                It 'should not throw error' {
+                    {
+                        $Splat = $TestServerTargetWithiSNS.Clone()
+                        $Splat.iSNSServer = 'different.contoso.com'
+                        Set-TargetResource @Splat
+                    } | Should Not Throw
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
+                    Assert-MockCalled -commandName New-iSCSIServerTarget -Exactly 0
+                    Assert-MockCalled -commandName Set-iSCSIServerTarget -Exactly 0
+                    Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
+                    Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 0
+                    Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 1
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
+                }
+            }
+
+            Context 'Server Target exists and should but iSNS Server is not set' {
+
+                Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
+                Mock New-iSCSIServerTarget
+                Mock Set-iSCSIServerTarget
+                Mock Remove-iSCSIServerTarget
+                Mock Add-IscsiVirtualDiskTargetMapping
+                Mock Remove-IscsiVirtualDiskTargetMapping
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
+
+                It 'should not throw error' {
+                    {
+                        $Splat = $TestServerTargetWithiSNS.Clone()
+                        Set-TargetResource @Splat
+                    } | Should Not Throw
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
+                    Assert-MockCalled -commandName New-iSCSIServerTarget -Exactly 0
+                    Assert-MockCalled -commandName Set-iSCSIServerTarget -Exactly 0
+                    Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
+                    Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 0
+                    Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 1
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
+                }
+            }
+
+            Context 'Server Target exists and should but iSNS Server should not be set' {
+
+                Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
+                Mock New-iSCSIServerTarget
+                Mock Set-iSCSIServerTarget
+                Mock Remove-iSCSIServerTarget
+                Mock Add-IscsiVirtualDiskTargetMapping
+                Mock Remove-IscsiVirtualDiskTargetMapping
+                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
+
+                It 'should not throw error' {
+                    {
+                        $Splat = $TestServerTargetWithiSNS.Clone()
+                        $Splat.iSNSServer = ''
+                        Set-TargetResource @Splat
+                    } | Should Not Throw
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
+                    Assert-MockCalled -commandName New-iSCSIServerTarget -Exactly 0
+                    Assert-MockCalled -commandName Set-iSCSIServerTarget -Exactly 0
+                    Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
+                    Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 0
+                    Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 1
+                }
+            }
+
+            Context 'Server Target does not exist but iSNS Server is set' {
+
+                Mock Get-iSCSIServerTarget
+                Mock New-iSCSIServerTarget
+                Mock Set-iSCSIServerTarget
+                Mock Remove-iSCSIServerTarget
+                Mock Add-IscsiVirtualDiskTargetMapping
+                Mock Remove-IscsiVirtualDiskTargetMapping
+                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
+
+                It 'should not throw error' {
+                    {
+                        $Splat = $TestServerTarget.Clone()
+                        $Splat.Ensure = 'Absent'
+                        Set-TargetResource @Splat
+                    } | Should Not Throw
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
+                    Assert-MockCalled -commandName New-iSCSIServerTarget -Exactly 0
+                    Assert-MockCalled -commandName Set-iSCSIServerTarget -Exactly 0
+                    Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
+                    Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 0
+                    Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 1
                 }
             }
         }
-    
+
         Describe "$($Global:DSCResourceName)\Test-TargetResource" {
-    
+
             Context 'Server Target does not exist but should' {
-                
+
                 Mock Get-iSCSIServerTarget
-    
+                Mock Get-WMIObject
+
                 It 'should return false' {
                     $Splat = $TestServerTarget.Clone()
                     Test-TargetResource @Splat | Should Be $False
-                    
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
-    
+
             Context 'Server Target exists and should but has a different Paths' {
-                
+
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
-    
+                Mock Get-WMIObject
+
                 It 'should return false' {
-                    { 
-                        $Splat = $TestServerTarget.Clone()
-                        $Splat.Paths = @( 'd:\NewVHD.vhdx' )
-                        Test-TargetResource @Splat | Should Be $False
-                    } | Should Not Throw
+                    $Splat = $TestServerTarget.Clone()
+                    $Splat.Paths = @( 'd:\NewVHD.vhdx' )
+                    Test-TargetResource @Splat | Should Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
-    
+
             Context 'Server Target exists and should but has a different InitiatorIds' {
-                
+
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
-    
+                Mock Get-WMIObject
+
                 It 'should return false' {
-                    { 
-                        $Splat = $TestServerTarget.Clone()
-                        $Splat.InitiatorIds += @( 'Iqn:iqn.1991-05.com.microsoft:fs3.contoso.com' )
-                        Test-TargetResource @Splat | Should Be $False
-                    } | Should Not Throw
+                    $Splat = $TestServerTarget.Clone()
+                    $Splat.InitiatorIds += @( 'Iqn:iqn.1991-05.com.microsoft:fs3.contoso.com' )
+                    Test-TargetResource @Splat | Should Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
 
             Context 'Server Target exists and should and all parameters match' {
-                
+
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
-    
+                Mock Get-WMIObject
+
                 It 'should return true' {
-                    { 
-                        $Splat = $TestServerTarget.Clone()
-                        Test-TargetResource @Splat | Should Be $True
-                    } | Should Not Throw
+                    $Splat = $TestServerTarget.Clone()
+                    Test-TargetResource @Splat | Should Be $True
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
-    
+
             Context 'Server Target exists but should not' {
-                
+
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
-    
+                Mock Get-WMIObject
+
                 It 'should return false' {
-                    { 
-                        $Splat = $TestServerTarget.Clone()
-                        $Splat.Ensure = 'Absent'
+                    $Splat = $TestServerTarget.Clone()
+                    $Splat.Ensure = 'Absent'
                     Test-TargetResource @Splat | Should Be $False
-                    } | Should Not Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
-    
+
             Context 'Server Target does not exist and should not' {
-                
+
                 Mock Get-iSCSIServerTarget
-    
+                Mock Get-WMIObject
+
                 It 'should return true' {
-                    { 
-                        $Splat = $TestServerTarget.Clone()
-                        $Splat.Ensure = 'Absent'
-                        Test-TargetResource @Splat | Should Be $True
-                    } | Should Not Throw
+                    $Splat = $TestServerTarget.Clone()
+                    $Splat.Ensure = 'Absent'
+                    Test-TargetResource @Splat | Should Be $True
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                }
+            }
+
+            Context 'Server Target exists and should and iSNS Server is not set' {
+
+                Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
+                Mock Get-WMIObject
+
+                It 'should return false' {
+                    $Splat = $TestServerTargetWithiSNS.Clone()
+                    Test-TargetResource @Splat | Should Be $False
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                }
+            }
+
+            Context 'Server Target exists and should and iSNS Server is different' {
+
+                Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
+                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+
+                It 'should return false' {
+                    $Splat = $TestServerTargetWithiSNS.Clone()
+                    $Splat.iSNSServer = 'different.contoso.com'
+                    Test-TargetResource @Splat | Should Be $False
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                }
+            }
+
+            Context 'Server Target exists and should and iSNS Server should be cleared' {
+
+                Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
+                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+
+                It 'should return false' {
+                    $Splat = $TestServerTargetWithiSNS.Clone()
+                    $Splat.iSNSServer = ''
+                    Test-TargetResource @Splat | Should Be $False
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                }
+            }
+
+            Context 'Server Target does not exist and should not but iSNS Server is set' {
+
+                Mock Get-iSCSIServerTarget
+                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+
+                It 'should return false' {
+                    $Splat = $TestServerTarget.Clone()
+                    $Splat.Ensure = 'Absent'
+                    Test-TargetResource @Splat | Should Be $False
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
         }
 
         Describe "$($Global:DSCResourceName)\Get-ServerTarget" {
-    
+
             Context 'Server Target does not exist' {
-                
+
                 Mock Get-iSCSIServerTarget
-    
+
                 It 'should return null' {
                     $Splat = $TestServerTarget.Clone()
                     $Result = Get-ServerTarget -TargetName $Splat.TargetName 
-                    $Result | Should Be $null             
+                    $Result | Should Be $null
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -389,7 +656,7 @@ try
             Context 'Server Target does exist' {
                 
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
-    
+
                 It 'should return expected parameters' {
                     $Splat = $TestServerTarget.Clone()
                     $Result = Get-ServerTarget -TargetName $Splat.TargetName 
