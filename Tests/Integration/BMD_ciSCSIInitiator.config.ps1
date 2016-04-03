@@ -15,7 +15,7 @@ $Initiator = @{
     IsMultipathEnabled     = $false
     IsPersistent           = $true
     ReportToPnP            = $true
-
+    iSNSServer             = "isns.contoso.com"
 }
 
 Configuration BMD_ciSCSIInitiator_Config {
@@ -36,6 +36,7 @@ Configuration BMD_ciSCSIInitiator_Config {
             IsMultipathEnabled     = $Initiator.IsMultipathEnabled
             IsPersistent           = $Initiator.IsPersistent
             ReportToPnP            = $Initiator.ReportToPnP
+            iSNSServer             = $Initiator.iSNSServer
         }
     }
 }

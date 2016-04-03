@@ -13,7 +13,7 @@ configuration Sample_ciSCSIInitiator
         { 
             Name = 'MSiSCSI'
             StartupType = 'Automatic'
-            State = 'Running'  
+            State = 'Running'
         }
 
         ciSCSIInitiator iSCSIInitiator
@@ -21,9 +21,10 @@ configuration Sample_ciSCSIInitiator
             Ensure = 'Present'
             NodeAddress = 'iqn.1991-05.com.microsoft:fileserver01-cluster-target'
             TargetPortalAddress = '192.168.128.10'
-            InitiatorPortalAddress = '192.168.128.20' 
-            IsPersistent = $true 
-            DependsOn = "[Service]iSCSIService" 
+            InitiatorPortalAddress = '192.168.128.20'
+            IsPersistent = $true
+            iSNSServer = 'isns.contoso.com'
+            DependsOn = "[Service]iSCSIService"
         } # End of ciSCSIInitiator Resource
     } # End of Node
 } # End of Configuration

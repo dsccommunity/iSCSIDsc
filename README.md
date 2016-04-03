@@ -11,15 +11,22 @@ The **ciSCSI** module contains DSC resources for configuring Windows iSCSI Targe
 
 ## Installation
 ```powershell
-Install-Module -Name ciSCSI -MinimumVersion 1.0.0.0
+Install-Module -Name ciSCSI -MinimumVersion 1.1.0.0
 ```
 
 ## Important Information
+### iSNS Servers
+Configuring a _Server Target_ or _Initiator_ to connect to an **iSNS Server** requires that the **iSNS Server** is online and accessible.
+If an **iSNS Server** is specified but it can't be contacted, the **iSNS Server** will not be set on the _Server Target_ or _Initiator_, but an error will not be thrown.
+This error will be reported in the DSC verbose logs however.
+This means that the configuration will continue to be applied until the **iSNS Server** is contactable so that the **iSNS Server** setting will be configured as soon as the **iSNS Server** becomes contactable.
 
 ## Known Issues
-- Integration Tests on the ciSCSIInitiator resource are currently disabled because it requires iSCSI Initiator Loopback, but this isn't documented anywhere so could not be made to work.
-  Note: iSCSI Initiator Loopback is supported according to [this document](http://blogs.technet.com/b/filecab/archive/2012/05/21/introduction-of-iscsi-target-in-windows-server-2012.aspx).
-  This issue won't prevent this resource from working correctly, it simply reduced the effectiveness of automated testing of the resource.
+- Integration Tests on the ciSCSIInitiator resource are currently disabled because it requires **iSCSI Initiator Loopback**, but this isn't documented anywhere so could not be made to work.
+  Note: **iSCSI Initiator Loopback** is supported according to [this document](http://blogs.technet.com/b/filecab/archive/2012/05/21/introduction-of-iscsi-target-in-windows-server-2012.aspx).
+  This issue won't prevent this resource from working correctly, it simply reduces the effectiveness of automated testing of the resource.
+- Integration Tests on **iSNS Server** settings on the _Server Target_ and _Initiator_ resources are currently disabled because they require access to an **iSNS server**.
+  However, the "iSNSServer" parameter is still set in the integration test, but the resulting configuration parameter value is not confirmed.
 
 ## Contributing
 Please check out common DSC Resources [contributing guidelines](https://github.com/PowerShell/DscResource.Kit/blob/master/CONTRIBUTING.md).
@@ -47,6 +54,7 @@ This resource is used to create or remove iSCSI Server Targets.
 * **TargetName**: Specifies the name of the iSCSI target. Required.
 * **InitiatorIds**: Specifies the iSCSI initiator identifiers (IDs) to which the iSCSI target is assigned. Required.
 * **Paths**: Specifies the path of the virtual hard disk (VHD) files that are associated with the Server Target. Required.
+* **iSNSServer**: Specifies an iSNS Server to register this Server Target with. Optional.
 
 ## iSCSI Initiator Resources
 ### ciSCSIInitiator
@@ -67,6 +75,7 @@ This resource is used to add or remove an iSCSI Target Portals and connect to an
 * **IsMultipathEnabled**: Indicates that the initiator has enabled Multipath I/O (MPIO) and it will be used when logging into the target portal. Defaults to False. Optional.
 * **IsPersistent**: Specifies that the session is to be automatically connected after each restart. Defaults to True. Optional.
 * **ReportToPnP**: Specifies that the operation is reported to PNP. Defaults to True. Optional.
+* **iSNSServer**: Specifies an iSNS Server to register this Initiator with. Optional.
 
 ## Examples
 This example installs the iSCSI Target Server, creates two iSCSI Virtal Disks and then a new iSCSI Target called Cluster with the two Virtual Disks assigned. The iSCSI target will accept connections from cluster01.contoso.com, cluster02.contoso.com or cluster03.contoso.com. 
@@ -115,7 +124,8 @@ configuration Sample_ciSCSIServerTarget
             TargetName = 'Cluster'
             InitiatorIds = 'iqn.1991-05.com.microsoft:cluster01.contoso.com','iqn.1991-05.com.microsoft:cluster02.contoso.com','iqn.1991-05.com.microsoft:cluster03.contoso.com'
             Paths = 'D:\iSCSIVirtualDisks\ClusterVdisk01.vhdx','D:\iSCSIVirtualDisks\ClusterVdisk02.vhdx'
-            DependsOn = "[ciSCSIVirtualDisk]iSCSIClusterVDisk01","[ciSCSIVirtualDisk]iSCSIClusterVDisk01" 
+            iSNSServer = 'isns.contoso.com'
+            DependsOn = "[ciSCSIVirtualDisk]iSCSIClusterVDisk01","[ciSCSIVirtualDisk]iSCSIClusterVDisk01"
         } # End of ciSCSIServerTarget Resource
     } # End of Node
 } # End of Configuration
@@ -148,6 +158,7 @@ configuration Sample_ciSCSIInitiator
             TargetPortalAddress = '192.168.128.10'
             InitiatorPortalAddress = '192.168.128.20' 
             IsPersistent = $true 
+            iSNSServer = 'isns.contoso.com'
             DependsOn = "[Service]iSCSIService" 
         } # End of ciSCSIInitiator Resource
     } # End of Node
@@ -155,6 +166,9 @@ configuration Sample_ciSCSIInitiator
 ```
 
 ## Versions
+
+### 1.1.0.0
+* Added iSNS Server support.
 
 ### 1.0.0.0
 * Initial release.
