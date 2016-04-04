@@ -73,7 +73,6 @@ deploy_script:
 
       # Populate Version Folder
       $null = Copy-Item -Path (Join-Path -Path $buildFolder -ChildPath "${ENV:APPVEYOR_PROJECT_NAME}.psd1") -Destination $VersionFolder
-      $null = Copy-Item -Path (Join-Path -Path $buildFolder -ChildPath "${ENV:APPVEYOR_PROJECT_NAME}.psm1") -Destination $VersionFolder
       $null = Copy-Item -Path (Join-Path -Path $buildFolder -ChildPath 'LICENSE') -Destination $VersionFolder
       $null = Copy-Item -Path (Join-Path -Path $buildFolder -ChildPath 'README.md') -Destination $VersionFolder
       $null = Copy-Item -Path (Join-Path -Path $buildFolder -ChildPath 'Examples') -Destination $VersionFolder -Recurse
