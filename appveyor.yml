@@ -81,7 +81,7 @@ deploy_script:
       # Create zip artifact
       $zipFilePath = Join-Path -Path $buildFolder -ChildPath "${ENV:APPVEYOR_PROJECT_NAME}_${env:APPVEYOR_BUILD_VERSION}.zip"
       $null = Add-Type -assemblyname System.IO.Compression.FileSystem
-      [System.IO.Compression.ZipFile]::CreateFromDirectory($ModuleFolder, $zipFilePath)
+      [System.IO.Compression.ZipFile]::CreateFromDirectory($StagingFolder, $zipFilePath)
 
       # Create Publish Script Artifact
       $PublishScriptName = $env:APPVEYOR_PROJECT_NAME + "." + $env:APPVEYOR_BUILD_VERSION + "_publish.ps1"
