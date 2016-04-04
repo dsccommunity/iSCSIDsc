@@ -10,10 +10,8 @@ install:
   - cinst -y pester
   - git clone https://github.com/PowerShell/DscResource.Tests
   - ps: |
-      $ResourceName = 'ciSCSI'
-
       # Update AppVeyor Build Version by pulling from Manifest
-      $ManifestPath = Join-Path -Path $ENV:APPVEYOR_BUILD_FOLDER -ChildPath "$ResourceName.psd1"
+      $ManifestPath = Join-Path -Path $ENV:APPVEYOR_BUILD_FOLDER -ChildPath "${env:APPVEYOR_PROJECT_NAME}.psd1"
       $ManifestContent = Get-Content -Path $ManifestPath -Raw
 
       $Regex = '(?<=ModuleVersion\s+=\s+'')(?<ModuleVersion>.*)(?='')'
@@ -65,33 +63,35 @@ test_script:
 deploy_script: 
   - ps: |
       # Creating project artifact
-      $StagingDirectory = (Resolve-Path ..).Path
+      $buildFolder = $ENV:APPVEYOR_BUILD_FOLDER
+      $StagingFolder = Join-Path -Path $buildFolder -ChildPath 'Staging'
+      $null = New-Item -Path $StagingFolder -Type directory
+      $ModuleFolder = Join-Path -Path $StagingFolder -ChildPath $ENV:APPVEYOR_PROJECT_NAME
+      $null = New-Item -Path $ModuleFolder -Type directory
+      $VersionFolder = Join-Path -Path $ModuleFolder -ChildPath $ENV:APPVEYOR_BUILD_VERSION
+      $null = New-Item -Path $VersionFolder -Type directory
 
-      # Cleanup staging directory
-      Remove-Item -Path (Join-Path -Path $pwd -ChildPath '.git') -Recurse -Force
-      Remove-Item -Path (Join-Path -Path $pwd -ChildPath '.gitignore') -Force
-      Remove-Item -Path (Join-Path -Path $pwd -ChildPath 'DSCResource.Tests') -Recurse -Force
+      # Populate Version Folder
+      $null = Copy-Item -Path (Join-Path -Path $buildFolder -ChildPath "${ENV:APPVEYOR_PROJECT_NAME}.psd1") -Destination $VersionFolder
+      $null = Copy-Item -Path (Join-Path -Path $buildFolder -ChildPath "${ENV:APPVEYOR_PROJECT_NAME}.psm1") -Destination $VersionFolder
+      $null = Copy-Item -Path (Join-Path -Path $buildFolder -ChildPath 'LICENSE') -Destination $VersionFolder
+      $null = Copy-Item -Path (Join-Path -Path $buildFolder -ChildPath 'README.md') -Destination $VersionFolder
+      $null = Copy-Item -Path (Join-Path -Path $buildFolder -ChildPath 'Examples') -Destination $VersionFolder -Recurse
+      $null = Copy-Item -Path (Join-Path -Path $buildFolder -ChildPath 'DSCResources') -Destination $VersionFolder -Recurse
 
       # Create zip artifact
-      $zipFilePath = Join-Path -Path $StagingDirectory -ChildPath "${env:APPVEYOR_PROJECT_NAME}_${env:APPVEYOR_BUILD_VERSION}.zip"
-      Add-Type -assemblyname System.IO.Compression.FileSystem
-      [System.IO.Compression.ZipFile]::CreateFromDirectory($pwd, $zipFilePath)
+      $zipFilePath = Join-Path -Path $buildFolder -ChildPath "${ENV:APPVEYOR_PROJECT_NAME}_${env:APPVEYOR_BUILD_VERSION}.zip"
+      $null = Add-Type -assemblyname System.IO.Compression.FileSystem
+      [System.IO.Compression.ZipFile]::CreateFromDirectory($ModuleFolder, $zipFilePath)
 
-      # Creating NuGet package artifact
-      New-Nuspec -packageName $env:APPVEYOR_PROJECT_NAME -version $env:APPVEYOR_BUILD_VERSION -author "Daniel Scott-Raynsford" -owners "Microsoft" -licenseUrl "https://github.com/PowerShell/DscResources/blob/master/LICENSE" -projectUrl "https://github.com/$($env:APPVEYOR_REPO_NAME)" -packageDescription $env:APPVEYOR_PROJECT_NAME -tags "DesiredStateConfiguration DSC DSCResourceKit" -destinationPath .
-      nuget pack ".\$($env:APPVEYOR_PROJECT_NAME).nuspec" -outputdirectory .
-      $nuGetPackageName = $env:APPVEYOR_PROJECT_NAME + "." + $env:APPVEYOR_BUILD_VERSION + ".nupkg"
-      $nuGetPackagePath = (Get-ChildItem $nuGetPackageName).FullName
-      
       # Create Publish Script Artifact
       $PublishScriptName = $env:APPVEYOR_PROJECT_NAME + "." + $env:APPVEYOR_BUILD_VERSION + "_publish.ps1"
-      $PublishScriptPath = Join-Path -Path $StagingDirectory -ChildPath $PublishScriptName
-      Set-Content -Path $PublishScriptPath -Value "Publish-Module -Name $ResourceName -RequiredVersion ${env:APPVEYOR_BUILD_VERSION} -NuGetApiKey (Read-Host -Prompt 'NuGetApiKey')"
+      $PublishScriptPath = Join-Path -Path $buildFolder -ChildPath $PublishScriptName
+      Set-Content -Path $PublishScriptPath -Value "Publish-Module -Name ${ENV:APPVEYOR_PROJECT_NAME} -RequiredVersion ${ENV:APPVEYOR_BUILD_VERSION} -NuGetApiKey (Read-Host -Prompt 'NuGetApiKey')"
 
       @(
           # You can add other artifacts here
           $zipFilePath,
-          $nuGetPackagePath,
           $PublishScriptPath
       ) | % { 
           Write-Host "Pushing package $_ as Appveyor artifact"
@@ -106,5 +106,8 @@ deploy_script:
         Write-Host "Publishing Module to PowerShell Gallery"
         Copy-Item -Path $ModuleFolder -Destination ($ENV:PSModulePath -split ';')[0] -Recurse
         Get-PackageProvider -Name NuGet -ForceBootstrap
-        Publish-Module -Name $ResourceName -RequiredVersion ${ENV:APPVEYOR_BUILD_VERSION} -NuGetApiKey $ENV:PowerShellGalleryApiKey -Confirm:$false
+        Publish-Module -Name ${ENV:APPVEYOR_PROJECT_NAME} -RequiredVersion ${ENV:APPVEYOR_BUILD_VERSION} -NuGetApiKey $ENV:PowerShellGalleryApiKey -Confirm:$false
       }
+      
+      # Remove Staging Folder
+      $null = Remove-Item -Path $StagingFolder -Recurse -Force
