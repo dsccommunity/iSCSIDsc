@@ -6,6 +6,7 @@ $ServerTarget = @{
     Ensure       = 'Present'
     InitiatorIds = @( 'Iqn:iqn.1991-05.com.microsoft:fs1.contoso.com','Iqn:iqn.1991-05.com.microsoft:fs2.contoso.com' )
     Paths        = @( $VirtualDisk.Path )
+    iSNSServer   = 'isns.contoso.com'
 }
 
 Configuration BMD_ciSCSIServerTarget_Config {
@@ -16,6 +17,7 @@ Configuration BMD_ciSCSIServerTarget_Config {
             Ensure       = $ServerTarget.Ensure
             InitiatorIds = $ServerTarget.InitiatorIds
             Paths        = $ServerTarget.Paths
+            iSNSServer   = $ServerTarget.iSNSServer
         }
     }
 }

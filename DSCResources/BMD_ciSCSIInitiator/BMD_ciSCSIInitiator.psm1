@@ -23,6 +23,9 @@ iSCSISessionRemovedPersistentMessage=iSCSI Session "{0}" is no longer persistent
 iSCSITargetPortalRemovedMessage=iSCSI Target Portal "{0}" from "{1}" has been removed.
 EnsureiSCSITargetIsConnectedMessage=Ensuring iSCSI Target "{0}" is connected.
 EnsureiSCSITargetIsDisconnectedMessage=Ensuring iSCSI Target "{0}" is disconnected.
+iSNSServerRemovedMessage=iSNS Server has been cleared.
+iSNSServerUpdatedMessage=iSNS Server has been set to "{0}".
+iSNSServerUpdateErrorMessage=An error occurred setting the iSNS Server to "{0}". This is usually caused by the iSNS Server not being accessible.
 TestingiSCSIInitiatorMessage=Testing iSCSI Initiator "{0}", "{1}" from "{2}".
 iSCSIInitiatorParameterNeedsUpdateMessage=iSCSI {3} "{0}", "{1}" from "{2}" {4} is different. Change required.
 iSCSITargetPortalDoesNotExistButShouldMessage=iSCSI Target Portal "{0}" from "{1}" does not exist but should. Change required.
@@ -33,6 +36,8 @@ iSCSITargetDoesNotExistButShouldMessage=iSCSI Target "{0}" does not exist but sh
 iSCSITargetNotConnectedMessage=iSCSI Target "{0}" exists but is not connected. Change required.
 iSCSIConnectionDoesNotExistButShouldMessage=iSCSI Connection "{0}" does not exist but should. Change required.
 iSCSISessionDoesNotExistButShouldMessage=iSCSI Session "{0}" does not exist but should. Change required.
+iSNSServerNeedsUpdateMessage=iSNS Server is "{0}" but should be "{1}". Change required.
+iSNSServerIsSetButShouldBeNotMessage=iSNS Server is set but should not be. Change required.
 '@
 }
 
@@ -99,7 +104,7 @@ function Get-TargetResource
             $($LocalizedData.iSCSITargetPortalDoesNotExistMessage) `
                 -f $TargetPortalAddress,$InitiatorPortalAddress
             ) -join '' )
-    }
+    } # if
 
     # Lookup the Target
     $Target = Get-Target `
@@ -123,8 +128,8 @@ function Get-TargetResource
             $($LocalizedData.iSCSITargetDoesNotExistMessage) `
                 -f $NodeAddress
             ) -join '' )
-    }
-        
+    } # if
+
     # The rest of the properties can only be populated if the Target is connected.
     if ($Target.IsConnected)
     {
@@ -154,7 +159,7 @@ function Get-TargetResource
                 $($LocalizedData.iSCSIConnectionDoesNotExistMessage) `
                     -f $NodeAddress
                 ) -join '' )
-        }
+        } # if
 
         # Lookup the Session
         $Session = Get-Session `
@@ -185,9 +190,20 @@ function Get-TargetResource
                 $($LocalizedData.iSCSISessionDoesNotExistMessage) `
                     -f $NodeAddress
                 ) -join '' )
+        } # if
+    } # if
+
+    # Get the iSNS Server
+    $iSNSServerCurrent = Get-WmiObject `
+        -Class MSiSCSIInitiator_iSNSServerClass `
+        -Namespace root\wmi
+    if ($iSNSServerCurrent)
+    {
+        $returnValue += @{
+            iSNSServer = $iSNSServerCurrent.iSNSServerAddress
         }
     }
-
+    
     $returnValue
 } # Get-TargetResource
 
@@ -241,7 +257,10 @@ function Set-TargetResource
         $IsPersistent,
         
         [System.Boolean]
-        $ReportToPNP
+        $ReportToPNP,
+
+        [System.String]
+        $iSNSServer
     )
 
     Write-Verbose -Message ( @(
@@ -257,6 +276,14 @@ function Set-TargetResource
     $TargetPortal = Get-TargetPortal `
         -TargetPortalAddress $TargetPortalAddress `
         -InitiatorPortalAddress $InitiatorPortalAddress
+
+    # Get the iSNS Server
+    $iSNSServerCurrent = Get-WmiObject `
+        -Class MSiSCSIInitiator_iSNSServerClass `
+        -Namespace root\wmi
+    $returnValue += @{
+        iSNSServer = $iSNSServerCurrent.iSNSServerAddress
+    }
 
     if ($Ensure -eq 'Present')
     {
@@ -275,23 +302,23 @@ function Set-TargetResource
                 -and ($TargetPortal.TargetPortalPortNumber -ne $TargetPortalPortNumber))
             {
                 $create = $true
-            }
+            } # if
             if (($InitiatorInstanceName) `
                 -and ($TargetPortal.InitiatorInstanceName -ne $InitiatorInstanceName))
             {
                 $create = $true
-            }
+            } # if
             if (($IsDataDigest -ne $null) `
                 -and ($TargetPortal.IsDataDigest -ne $IsDataDigest))
             {
                 $create = $true
-            }
+            } # if
             if (($IsHeaderDigest -ne $null) `
                 -and ($TargetPortal.IsHeaderDigest -ne $IsHeaderDigest))
             {
                 $create = $true
-            }            
-            
+            } # if
+
             if ($create)
             {
                 # The Target Portal exists but has different parameters
@@ -306,13 +333,13 @@ function Set-TargetResource
                     $($LocalizedData.iSCSITargetPortalRemovedForRecreateMessage) `
                         -f $TargetPortalAddress,$InitiatorPortalAddress
                     ) -join '' )
-             }
+             } # if
         }
         else
         {
             $create = $true
-        }
-        
+        } # if
+
         if ($create)
         {
             # Create the iSCSI Target Portal using a splat
@@ -321,6 +348,7 @@ function Set-TargetResource
             $Splat.Remove('IsMultipathEnabled')
             $Splat.Remove('IsPersistent')
             $Splat.Remove('ReportToPNP')
+            $Splat.Remove('iSNSServer')
             New-iSCSITargetPortal `
                 @Splat `
                 -ErrorAction Stop
@@ -331,10 +359,10 @@ function Set-TargetResource
                     -f $TargetPortalAddress,$InitiatorPortalAddress
                 ) -join '' )
         }
-                
+
         # Lookup the Target
         $Target = Get-Target `
-            -NodeAddress $NodeAddress        
+            -NodeAddress $NodeAddress
 
         # Check the Target is connected
         [Boolean] $connect = $false
@@ -356,45 +384,45 @@ function Set-TargetResource
                 -Target $Target
 
             if ($Connection -and $Session)
-            {            
+            {
                 # Check that the session and connection parameters are correct
                 if ($Connection.TargetAddress -ne $TargetPortalAddress)
                 {
                     $connect = $true
-                }
+                } # if
                 if ($Connection.InitiatorAddress -ne $InitiatorPortalAddress)
                 {
                     $connect = $true
-                }
+                } # if
                 if (($TargetPortalPortNumber) `
                     -and ($Connection.TargetPortNumber -ne $TargetPortalPortNumber))
                 {
                     $connect = $true
-                }
+                } # if
                 if (($AuthenticationType) `
                     -and ($Session.AuthenticationType -ne $AuthenticationType))
                 {
                     $connect = $true
-                }
+                } # if
                 if (($InitiatorInstanceName) `
                     -and ($Session.InitiatorInstanceName -ne $InitiatorInstanceName))
                 {
                     $connect = $true
-                }
+                } # if
                 if ($Session.InitiatorPortalAddress -ne $InitiatorPortalAddress)
                 {
                     $connect = $true
-                }
+                } # if
                 if (($IsDataDigest -ne $null) `
                     -and ($Session.IsDataDigest -ne $IsDataDigest))
                 {
                     $connect = $true
-                }
+                } # if
                 if (($IsHeaderDigest -ne $null) `
                     -and ($Session.IsHeaderDigest -ne $IsHeaderDigest))
                 {
                     $connect = $true
-                }
+                } # if
 
                 if ($connect)
                 {
@@ -411,24 +439,25 @@ function Set-TargetResource
                             -f $NodeAddress
                         ) -join '' )
                         
-                }
+                } # if
             }
             else
             {
                 # Either the session or connection doesn't exist
                 # so reconnect or the target is not connected
                 $connect = $true
-            }
+            } # if
         }
         else
         {
             $connect = $true
-        }
-        
+        } # if
+
         if ($connect)
         {
             [PSObject] $Splat = [PSObject]@{} + $PSBoundParameters
             $Splat.Remove('IsMultipathEnabled')
+            $Splat.Remove('iSNSServer')
             
             $Session = Connect-IscsiTarget `
                 @Splat `
@@ -438,9 +467,9 @@ function Set-TargetResource
                 "$($MyInvocation.MyCommand): "
                 $($LocalizedData.iSCSITargetConnectedMessage) `
                     -f $NodeAddress
-                ) -join '' )                
-        }
-        
+                ) -join '' )
+        } # if
+
         if (($IsPersistent -ne $null) `
             -and ($IsPersistent -ne $Session.IsPersistent))
         {
@@ -463,7 +492,7 @@ function Set-TargetResource
                 # Ensure session is not persistent
                 Unregister-IscsiSession `
                     -SessionIdentifier $Session.SessionIdentifier `
-                    -ErrorAction Stop                
+                    -ErrorAction Stop
 
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
@@ -472,6 +501,51 @@ function Set-TargetResource
                     ) -join '' )
             }
         }
+
+        # Check the iSNS Server setting
+        if ($PSBoundParameters.ContainsKey('iSNSServer'))
+        {
+            if ([String]::IsNullOrEmpty($iSNSServer))
+            {
+                if ($iSNSServerCurrent)
+                {
+                    # The iSNS Server is set but should not be - remove it
+                    Remove-WmiObject `
+                        -Path $iSNSServerCurrent.Path `
+                        -ErrorAction Stop
+
+                    Write-Verbose -Message ( @(
+                        "$($MyInvocation.MyCommand): "
+                        $($LocalizedData.iSNSServerRemovedMessage)
+                        ) -join '' )
+                } # if
+            }
+            else
+            {
+                try
+                {
+                    Set-WmiInstance `
+                        -Namespace root\wmi `
+                        -Class WT_iSNSServer `
+                        -Arguments @{ServerName=$iSNSServer} `
+                        -ErrorAction Stop
+
+                    Write-Verbose -Message ( @(
+                        "$($MyInvocation.MyCommand): "
+                        $($LocalizedData.iSNSServerUpdatedMessage) `
+                            -f $iSNSServer
+                        ) -join '' )
+                }
+                catch
+                {
+                    Write-Verbose -Message ( @(
+                        "$($MyInvocation.MyCommand): "
+                        $($LocalizedData.iSNSServerUpdateErrorMessage) `
+                            -f $iSNSServer
+                        ) -join '' )
+                }
+            } # if
+        } # if
     }
     else
     {
@@ -483,12 +557,12 @@ function Set-TargetResource
 
         # Lookup the Target
         $Target = Get-Target `
-            -NodeAddress $NodeAddress        
+            -NodeAddress $NodeAddress
 
         if ($Target)
         {
             if ($Target.IsConnected)
-            {                
+            {
                 Disconnect-IscsiTarget `
                     -NodeAddress $NodeAddress `
                     -Confirm:$false `
@@ -521,6 +595,20 @@ function Set-TargetResource
                 "$($MyInvocation.MyCommand): "
                 $($LocalizedData.iSCSITargetPortalRemovedMessage) `
                     -f $TargetPortalAddress,$InitiatorPortalAddress
+                ) -join '' )
+        } # if
+
+        if ($iSNSServerCurrent)
+        {
+            # The iSNS Server is set but should not be - remove it
+            Remove-WmiObject `
+                -Path $iSNSServerCurrent.Path `
+                -ErrorAction Stop
+
+            Write-Verbose -Message ( @(
+                "$($MyInvocation.MyCommand): "
+                $($LocalizedData.iSCSIServerTargetiSNSRemovedMessage) `
+                    -f $TargetName
                 ) -join '' )
         } # if
     } # if
@@ -577,7 +665,10 @@ function Test-TargetResource
         $IsPersistent,
         
         [System.Boolean]
-        $ReportToPNP
+        $ReportToPNP,
+
+        [System.String]
+        $iSNSServer
     )
    
     # Flag to signal whether settings are correct
@@ -594,6 +685,14 @@ function Test-TargetResource
         -TargetPortalAddress $TargetPortalAddress `
         -InitiatorPortalAddress $InitiatorPortalAddress
 
+    # Get the iSNS Server
+    $iSNSServerCurrent = Get-WmiObject `
+        -Class MSiSCSIInitiator_iSNSServerClass `
+        -Namespace root\wmi
+    $returnValue += @{
+        iSNSServer = $iSNSServerCurrent.iSNSServerAddress
+    }
+
     if ($Ensure -eq 'Present')
     {
         # The iSCSI Target Portal should exist
@@ -609,7 +708,8 @@ function Test-TargetResource
                         -f $NodeAddress,$TargetPortalAddress,$InitiatorPortalAddress,'TargetPortal','TargetPortalPortNumber'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
-            }
+            } # if
+
             if (($InitiatorInstanceName) `
                 -and ($TargetPortal.InitiatorInstanceName -ne $InitiatorInstanceName))
             {
@@ -619,7 +719,8 @@ function Test-TargetResource
                         -f $NodeAddress,$TargetPortalAddress,$InitiatorPortalAddress,'TargetPortal','InitiatorInstanceName'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
-            }
+            } # if
+
             if (($IsDataDigest -ne $null) `
                 -and ($TargetPortal.IsDataDigest -ne $IsDataDigest))
             {
@@ -629,7 +730,8 @@ function Test-TargetResource
                         -f $NodeAddress,$TargetPortalAddress,$InitiatorPortalAddress,'TargetPortal','IsDataDigest'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
-            }
+            } # if
+
             if (($IsHeaderDigest -ne $null) `
                 -and ($TargetPortal.IsHeaderDigest -ne $IsHeaderDigest))
             {
@@ -639,12 +741,12 @@ function Test-TargetResource
                         -f $NodeAddress,$TargetPortalAddress,$InitiatorPortalAddress,'TargetPortal','IsHeaderDigest'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
-            }
+            } # if
 
             # Lookup the Target
             $Target = Get-Target `
                 -NodeAddress $NodeAddress
-            
+
             if (! $Target)
             {
                 # Ths iSCSI Target doesn't exist but should
@@ -655,9 +757,9 @@ function Test-TargetResource
                     ) -join '' )
                 $desiredConfigurationMatch = $false
                 return $desiredConfigurationMatch
-            }
-            
-            if (! $Target.IsConnected)
+            } # if
+
+            if (-not $Target.IsConnected)
             {
                 # Ths iSCSI Target exists but is not connected
                 Write-Verbose -Message ( @(
@@ -667,13 +769,13 @@ function Test-TargetResource
                     ) -join '' )
                 $desiredConfigurationMatch = $false
                 return $desiredConfigurationMatch
-            }
+            } # if
 
             # Lookup the Connection
             $Connection = Get-Connection `
                 -Target $Target
 
-            if (! $Connection)
+            if (-not $Connection)
             {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
@@ -682,8 +784,8 @@ function Test-TargetResource
                     ) -join '' )
                 $desiredConfigurationMatch = $false
                 return $desiredConfigurationMatch
-            }
-            
+            } # if
+
             # Check the Connection parameters are correct
             if ($Connection.TargetAddress -ne $TargetPortalAddress)
             {
@@ -694,6 +796,7 @@ function Test-TargetResource
                     ) -join '' )
                 $desiredConfigurationMatch = $false
             }
+
             if ($Connection.InitiatorAddress -ne $InitiatorPortalAddress)
             {
                 Write-Verbose -Message ( @(
@@ -702,7 +805,8 @@ function Test-TargetResource
                         -f $NodeAddress,$TargetPortalAddress,$InitiatorPortalAddress,'Connection','InitiatorAddress'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
-            }
+            } # if
+
             if (($TargetPortalPortNumber) `
                 -and ($Connection.TargetPortNumber -ne $TargetPortalPortNumber))
             {
@@ -712,13 +816,13 @@ function Test-TargetResource
                         -f $NodeAddress,$TargetPortalAddress,$InitiatorPortalAddress,'Connection','TargetPortNumber'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
-            }
+            } # if
 
             # Lookup the Session
             $Session = Get-Session `
                 -Target $Target
 
-            if (! $Session)
+            if (-not $Session)
             {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
@@ -727,8 +831,8 @@ function Test-TargetResource
                     ) -join '' )
                 $desiredConfigurationMatch = $false
                 return $desiredConfigurationMatch
-            }
-            
+            } # if
+
             # Check the Session parameters are correct
             if (($AuthenticationType) `
                 -and ($Session.AuthenticationType -ne $AuthenticationType))
@@ -739,7 +843,8 @@ function Test-TargetResource
                         -f $NodeAddress,$TargetPortalAddress,$InitiatorPortalAddress,'Session','AuthenticationType'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
-            }
+            } # if
+
             if (($InitiatorInstanceName) `
                 -and ($Session.InitiatorInstanceName -ne $InitiatorInstanceName))
             {
@@ -749,7 +854,8 @@ function Test-TargetResource
                         -f $NodeAddress,$TargetPortalAddress,$InitiatorPortalAddress,'Session','InitiatorInstanceName'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
-            }
+            } # if
+
             if ($Session.InitiatorPortalAddress -ne $InitiatorPortalAddress)
             {
                 Write-Verbose -Message ( @(
@@ -758,7 +864,8 @@ function Test-TargetResource
                         -f $NodeAddress,$TargetPortalAddress,$InitiatorPortalAddress,'Session','InitiatorAddress'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
-            }
+            } # if
+
             if (($IsDataDigest -ne $null) `
                 -and ($Session.IsDataDigest -ne $IsDataDigest))
             {
@@ -768,7 +875,8 @@ function Test-TargetResource
                         -f $NodeAddress,$TargetPortalAddress,$InitiatorPortalAddress,'Session','IsDataDigest'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
-            }
+            } # if
+
             if (($IsHeaderDigest -ne $null) `
                 -and ($Session.IsHeaderDigest -ne $IsHeaderDigest))
             {
@@ -778,7 +886,8 @@ function Test-TargetResource
                         -f $NodeAddress,$TargetPortalAddress,$InitiatorPortalAddress,'Session','IsHeaderDigest'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
-            }
+            } # if
+
             if (($IsPersistent -ne $null) `
                 -and ($Session.IsPersistent -ne $IsPersistent))
             {
@@ -788,7 +897,7 @@ function Test-TargetResource
                         -f $NodeAddress,$TargetPortalAddress,$InitiatorPortalAddress,'Session','IsPersistent'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
-            }
+            } # if
         }
         else
         {
@@ -799,7 +908,20 @@ function Test-TargetResource
                     -f $TargetPortalAddress,$InitiatorPortalAddress
                 ) -join '' )
             $desiredConfigurationMatch = $false
-        }
+        } # if
+
+        # Check the iSNS Server setting
+        if ($PSBoundParameters.ContainsKey('iSNSServer') `
+            -and ($iSNSServerCurrent.iSNSServerAddress -ne $iSNSServer))
+        {
+            # The iSNS Server is different so needs update
+            Write-Verbose -Message ( @(
+                "$($MyInvocation.MyCommand): "
+                $($LocalizedData.iSNSServerNeedsUpdateMessage) `
+                    -f $iSNSServerCurrent.iSNSServerAddress,$iSNSServer
+                ) -join '' )
+            $desiredConfigurationMatch = $false
+        } # if
     }
     else
     {
@@ -816,8 +938,8 @@ function Test-TargetResource
                     -f $NodeAddress
                 ) -join '' )
             $desiredConfigurationMatch = $false
-        }
-        
+        } # if
+
         # The iSCSI Target Portal should not exist
         if ($TargetPortal)
         {
@@ -837,7 +959,18 @@ function Test-TargetResource
                  $($LocalizedData.iSCSITargetPortalDoesNotExistAndShouldNotMessage) `
                     -f $TargetPortalAddress,$InitiatorPortalAddress
                 ) -join '' )
-        }
+        } # if
+
+        # Check the iSNS Server setting
+        if ($iSNSServerCurrent)
+        {
+            # The iSNS Server is set but should not be
+            Write-Verbose -Message ( @(
+                "$($MyInvocation.MyCommand): "
+                $($LocalizedData.iSNSServerIsSetButShouldNotBeMessage)
+                ) -join '' )
+            $desiredConfigurationMatch = $false
+        } # if
     } # if
     return $desiredConfigurationMatch
 } # Test-TargetResource
@@ -854,7 +987,7 @@ Function Get-TargetPortal
         
         [parameter(Mandatory = $true)]
         [System.String]
-        $InitiatorPortalAddress        
+        $InitiatorPortalAddress
     )
     try
     {

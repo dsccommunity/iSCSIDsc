@@ -9,11 +9,20 @@ SettingiSCSIServerTargetMessage=Setting iSCSI Server Target "{0}".
 EnsureiSCSIServerTargetExistsMessage=Ensuring iSCSI Server Target "{0}" exists.
 EnsureiSCSIServerTargetDoesNotExistMessage=Ensuring iSCSI Server Target "{0}" does not exist.
 iSCSIServerTargetCreatedMessage=iSCSI Server Target "{0}" has been created.
+iSCSIServerTargetDiskAddedMessage=iSCSI Server Target "{0}" Virtual Disk "{1}" added.
+iSCSIServerTargetDiskRemovedMessage=iSCSI Server Target "{0}" Virtual Disk "{1}" removed.
 iSCSIServerTargetUpdatedMessage=iSCSI Server Target "{0}" has been updated.
 iSCSIServerTargetRemovedMessage=iSCSI Server Target "{0}" has been removed.
+iSNSServerRemovedMessage=iSNS Server has been cleared.
+iSNSServerUpdatedMessage=iSNS Server has been set to "{0}".
+iSNSServerUpdateErrorMessage=An error occurred setting the iSNS Server to "{0}". This is usually caused by the iSNS Server not being accessible.
 TestingiSCSIServerTargetMessage=Testing iSCSI Server Target "{0}".
 iSCSIServerTargetParameterNeedsUpdateMessage=iSCSI Server Target "{0}" {1} is different. Change required.
+iSCSIServerTargetExistsButShouldNotMessage=iSCSI Server Target "{0}" exists but should not. Change required.
+iSCSIServerTargetDoesNotExistButShouldMessage=iSCSI Server Target "{0}" does not exist but should. Change required.
 iSCSIServerTargetDoesNotExistAndShouldNotMessage=iSCSI Server Target "{0}" does not exist and should not. Change not required.
+iSNSServerNeedsUpdateMessage=iSNS Server is "{0}" but should be "{1}". Change required.
+iSNSServerIsSetButShouldBeNotMessage=iSNS Server is set but should not be. Change required.
 '@
 }
 
@@ -33,9 +42,9 @@ function Get-TargetResource
         
         [parameter(Mandatory = $true)]
         [System.String[]]
-        $Paths        
+        $Paths
     )
-    
+
     Write-Verbose -Message ( @(
         "$($MyInvocation.MyCommand): "
         $($LocalizedData.GettingiSCSIServerTargetMessage) `
@@ -72,6 +81,17 @@ function Get-TargetResource
         $returnValue += @{
             Ensure = 'Absent'
         }
+    } # if
+
+    # Get the iSNS Server
+    $iSNSServerCurrent = Get-WmiObject `
+        -Class WT_iSNSServer `
+        -Namespace root\wmi
+    if ($iSNSServerCurrent)
+    {
+        $returnValue += @{
+            iSNSServer = $iSNSServerCurrent.ServerName
+        }
     }
 
     $returnValue
@@ -89,14 +109,17 @@ function Set-TargetResource
         [ValidateSet('Present','Absent')]
         [System.String]
         $Ensure = 'Present',
-        
+
         [parameter(Mandatory = $true)]
         [System.String[]]
         $InitiatorIds,
-        
+
         [parameter(Mandatory = $true)]
         [System.String[]]
-        $Paths
+        $Paths,
+
+        [System.String]
+        $iSNSServer
     )
 
     Write-Verbose -Message ( @(
@@ -105,12 +128,13 @@ function Set-TargetResource
             -f $TargetName
         ) -join '' )
 
-    # Remove any parameters that can't be splatted.
-    $null = $PSBoundParameters.Remove('Ensure')
-    $null = $PSBoundParameters.Remove('Paths')
-
     # Lookup the existing iSCSI Server Target
     $ServerTarget = Get-ServerTarget -TargetName $TargetName
+
+    # Get the iSNS Server
+    $iSNSServerCurrent = Get-WmiObject `
+        -Class WT_iSNSServer `
+        -Namespace root\wmi
 
     if ($Ensure -eq 'Present')
     {
@@ -139,13 +163,14 @@ function Set-TargetResource
                     $($LocalizedData.iSCSIServerTargetUpdatedMessage) `
                         -f $TargetName
                     ) -join '' )
-            }
+            } # if
         }
         else
         {
             # Create the iSCSI Server Target
             New-iSCSIServerTarget `
-                @PSBoundParameters `
+                -TargetName $TargetName `
+                -InitiatorIds $InitiatorIds `
                 -ComputerName LOCALHOST `
                 -ErrorAction Stop
 
@@ -154,8 +179,8 @@ function Set-TargetResource
                 $($LocalizedData.iSCSIServerTargetCreatedMessage) `
                     -f $TargetName
                 ) -join '' )
-        }
-        
+        } # if
+
         # Check that the Paths match in the Server Target
         foreach ($Path in $Paths)
         {
@@ -166,8 +191,14 @@ function Set-TargetResource
                     -ComputerName LOCALHOST `
                     -TargetName $TargetName `
                     -Path $Path
-            }
-        }
+
+                Write-Verbose -Message ( @(
+                    "$($MyInvocation.MyCommand): "
+                    $($LocalizedData.iSCSIServerTargetDiskAddedMessage) `
+                        -f $TargetName,$Path
+                    ) -join '' )
+            } # if
+        } # foreach
         foreach ($Path in $ServerTarget.LunMappings.Path)
         {
             if ($Path -notin $Paths)
@@ -177,8 +208,59 @@ function Set-TargetResource
                     -ComputerName LOCALHOST `
                     -TargetName $TargetName `
                     -Path $Path
+
+                Write-Verbose -Message ( @(
+                    "$($MyInvocation.MyCommand): "
+                    $($LocalizedData.iSCSIServerTargetDiskRemovedMessage) `
+                        -f $TargetName,$Path
+                    ) -join '' )
+            } # if
+        } # foreach
+
+        # Check the iSNS Server setting
+        if ($PSBoundParameters.ContainsKey('iSNSServer'))
+        {
+            if ([String]::IsNullOrEmpty($iSNSServer))
+            {
+                if ($iSNSServerCurrent)
+                {
+                    # The iSNS Server is set but should not be - remove it
+                    Remove-WmiObject `
+                       -Path $iSNSServerCurrent.Path `
+                       -ErrorAction Stop
+
+                    Write-Verbose -Message ( @(
+                        "$($MyInvocation.MyCommand): "
+                        $($LocalizedData.iSNSServerRemovedMessage)
+                        ) -join '' )
+                } # if
             }
-        }
+            else
+            {
+                try
+                {
+                    Set-WmiInstance `
+                        -Namespace root\wmi `
+                        -Class WT_iSNSServer `
+                        -Arguments @{ServerName=$iSNSServer} `
+                        -ErrorAction Stop
+
+                    Write-Verbose -Message ( @(
+                        "$($MyInvocation.MyCommand): "
+                        $($LocalizedData.iSNSServerUpdatedMessage) `
+                            -f $iSNSServer
+                        ) -join '' )
+                }
+                catch
+                {
+                    Write-Verbose -Message ( @(
+                        "$($MyInvocation.MyCommand): "
+                        $($LocalizedData.iSNSServerUpdateErrorMessage) `
+                            -f $iSNSServer
+                        ) -join '' )
+                }
+            } # if
+        } # if
     }
     else
     {
@@ -202,6 +284,19 @@ function Set-TargetResource
                     -f $TargetName
                 ) -join '' )
         } # if
+
+        if ($iSNSServerCurrent)
+        {
+            # The iSNS Server is set but should not be - remove it
+            Remove-WmiObject `
+                -Path $iSNSServerCurrent.Path `
+                -ErrorAction Stop
+
+            Write-Verbose -Message ( @(
+                "$($MyInvocation.MyCommand): "
+                $($LocalizedData.iSNSServerRemovedMessage)
+                ) -join '' )
+        } # if
     } # if
 } # Set-TargetResource
 
@@ -218,16 +313,19 @@ function Test-TargetResource
         [ValidateSet('Present','Absent')]
         [System.String]
         $Ensure = 'Present',
-        
+
         [parameter(Mandatory = $true)]
         [System.String[]]
         $InitiatorIds,
-        
+
         [parameter(Mandatory = $true)]
         [System.String[]]
-        $Paths
+        $Paths,
+
+        [System.String]
+        $iSNSServer
     )
-   
+
     # Flag to signal whether settings are correct
     [Boolean] $desiredConfigurationMatch = $true
 
@@ -239,6 +337,11 @@ function Test-TargetResource
 
     # Lookup the existing iSCSI Server Target
     $ServerTarget = Get-ServerTarget -TargetName $TargetName
+
+    # Get the iSNS Server
+    $iSNSServerCurrent = Get-WmiObject `
+        -Class WT_iSNSServer `
+        -Namespace root\wmi
 
     if ($Ensure -eq 'Present')
     {
@@ -257,7 +360,7 @@ function Test-TargetResource
                         -f $TargetName,'InitiatorIds'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
-            }
+            } # if
 
             [String[]] $ExistingPaths = @($ServerTarget.LunMappings.Path)
             if (($Paths) -and (Compare-Object `
@@ -270,18 +373,31 @@ function Test-TargetResource
                         -f $TargetName,'Paths'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
-            }
+            } # if
         }
         else
         {
             # Ths iSCSI Server Target doesn't exist but should
             Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                 $($LocalizedData.iSCSIServerTargetDoesNotExistButShouldMessage) `
+                $($LocalizedData.iSCSIServerTargetDoesNotExistButShouldMessage) `
                     -f $TargetName
                 ) -join '' )
             $desiredConfigurationMatch = $false
-        }
+        } # if
+
+        # Check the iSNS Server setting
+        if ($PSBoundParameters.ContainsKey('iSNSServer') `
+            -and ($iSNSServerCurrent.ServerName -ne $iSNSServer))
+        {
+            # The iSNS Server is different so needs update
+            Write-Verbose -Message ( @(
+                "$($MyInvocation.MyCommand): "
+                $($LocalizedData.iSNSServerNeedsUpdateMessage) `
+                    -f $iSNSServerCurrent.ServerName,$iSNSServer
+                ) -join '' )
+            $desiredConfigurationMatch = $false
+        } # if
     }
     else
     {
@@ -291,7 +407,7 @@ function Test-TargetResource
             # The iSCSI Server Target exists but should not
             Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                 $($LocalizedData.iSCSIServerTargetExistsButShouldNotMessage) `
+                $($LocalizedData.iSCSIServerTargetExistsButShouldNotMessage) `
                     -f $TargetName
                 ) -join '' )
             $desiredConfigurationMatch = $false
@@ -301,11 +417,23 @@ function Test-TargetResource
             # The iSCSI Server Target does not exist and should not
             Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                 $($LocalizedData.iSCSIServerTargetDoesNotExistAndShouldNotMessage) `
+                $($LocalizedData.iSCSIServerTargetDoesNotExistAndShouldNotMessage) `
                     -f $TargetName
                 ) -join '' )
-        }
+        } # if
+
+        # Check the iSNS Server setting
+        if ($iSNSServerCurrent)
+        {
+            # The iSNS Server is set but should not be
+            Write-Verbose -Message ( @(
+                "$($MyInvocation.MyCommand): "
+                $($LocalizedData.iSNSServerIsSetButShouldBeNotMessage)
+                ) -join '' )
+            $desiredConfigurationMatch = $false
+        } # if
     } # if
+
     return $desiredConfigurationMatch
 } # Test-TargetResource
 

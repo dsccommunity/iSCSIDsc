@@ -15,10 +15,11 @@ class BMD_ciSCSIInitiator : OMI_BaseResource
     [Write, Description("Indicates that the initiator has enabled Multipath I/O (MPIO) and it will be used when logging into the target portal.")] Boolean IsMultipathEnabled;
     [Write, Description("Specifies that the session is to be automatically connected after each restart.")] Boolean IsPersistent;
     [Write, Description("Specifies that the operation is reported to PNP.")] Boolean ReportToPnP;
+    [Write, Description("Specifies the name of an iSNS Server to register this Initiator with.")] String iSNSServer;
     [Read, Description("Is the target connected to the server.")] Boolean IsConnected;
     [Read, Description("This is the current connection identifier for this target connection.")] String ConnectionIdentifier;
-    [Read, Description("This is the current session identifier for this target session.")] String SessionIdentifier;    
+    [Read, Description("This is the current session identifier for this target session.")] String SessionIdentifier;
     [Read, Description("Is the target discovered in this session.")] Boolean IsDiscovered;
-    [Read, Description("The Initiator Node address assigned to this session.")] String InitiatorNodeAddress;    
-    [Read, Description("The Target Node address assigned to this session.")] String TargetNodeAddress;    
+    [Read, Description("The Initiator Node address assigned to this session.")] String InitiatorNodeAddress;
+    [Read, Description("The Target Node address assigned to this session.")] String TargetNodeAddress;
 };
