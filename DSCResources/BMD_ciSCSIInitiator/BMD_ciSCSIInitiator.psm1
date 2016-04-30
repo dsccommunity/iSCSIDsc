@@ -386,7 +386,24 @@ function Set-TargetResource
             if ($Connection -and $Session)
             {
                 # Check that the session and connection parameters are correct
-                if ($Connection.TargetAddress -ne $TargetPortalAddress)
+
+                # The Connection.TargetAddress will always be an IP Address
+                # even if the TargetPortalAddress was specified as a Hostname
+                try
+                {
+                    $TargetPortalIP = @(
+                        ([System.Net.IPAddress]$TargetPortalAddress).IPAddressToString
+                    )
+                }
+                catch
+                {
+                    # This is a TargetPortalAddress is a Hostname so resolve it to IP addresses
+                    $TargetPortalIP = @(
+                        (Resolve-DNSName -Name $TargetPortalAddress -Type A).IPAddress
+                    )
+                } # try
+
+                if ($Connection.TargetAddress -notin $TargetPortalIP)
                 {
                     $connect = $true
                 } # if
@@ -787,7 +804,24 @@ function Test-TargetResource
             } # if
 
             # Check the Connection parameters are correct
-            if ($Connection.TargetAddress -ne $TargetPortalAddress)
+
+            # The Connection.TargetAddress will always be an IP Address
+            # even if the TargetPortalAddress was specified as a Hostname
+            try
+            {
+                $TargetPortalIP = @(
+                    ([System.Net.IPAddress]$TargetPortalAddress).IPAddressToString
+                )
+            }
+            catch
+            {
+                # This is a TargetPortalAddress is a Hostname so resolve it to IP addresses
+                $TargetPortalIP = @(
+                    (Resolve-DNSName -Name $TargetPortalAddress -Type A).IPAddress
+                )
+            } # try
+
+            if ($Connection.TargetAddress -notin $TargetPortalIP)
             {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
