@@ -2,22 +2,20 @@ $Global:DSCModuleName   = 'ciSCSI'
 $Global:DSCResourceName = 'BMD_ciSCSIVirtualDisk'
 
 #region HEADER
+# Unit Test Template Version: 1.1.0
 [String] $moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $Script:MyInvocation.MyCommand.Path))
-if ((-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests'))) -or `
-    (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1'))))
+if ( (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests'))) -or `
+     (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1'))) )
 {
     & git @('clone','https://github.com/PowerShell/DscResource.Tests.git',(Join-Path -Path $moduleRoot -ChildPath '\DSCResource.Tests\'))
 }
-else
-{
-    & git @('-C', (Join-Path -Path $moduleRoot -ChildPath '\DSCResource.Tests\'), 'pull')
-}
+
 Import-Module (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1') -Force
 $TestEnvironment = Initialize-TestEnvironment `
     -DSCModuleName $Global:DSCModuleName `
     -DSCResourceName $Global:DSCResourceName `
-    -TestType Unit
-#endregion
+    -TestType Unit 
+#endregion HEADER
 
 # Begin Testing
 try
@@ -456,7 +454,7 @@ try
             Context 'Virtual Disk does exist' {
                 
                 Mock Get-iSCSIVirtualDisk -MockWith { return @($MockVirtualDisk) }
-    
+
                 It 'should return expected parameters' {
                     $Splat = $TestVirtualDisk.Clone()
                     $Result = Get-VirtualDisk -Path $Splat.Path 

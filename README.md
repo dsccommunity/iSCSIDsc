@@ -144,11 +144,11 @@ configuration Sample_ciSCSIInitiator
 
     Node $NodeName
     {
-        Service iSCSIService 
-        { 
+        Service iSCSIService
+        {
             Name = 'MSiSCSI'
             StartupType = 'Automatic'
-            State = 'Running'  
+            State = 'Running'
         }
 
         ciSCSIInitiator iSCSIInitiator
@@ -156,16 +156,20 @@ configuration Sample_ciSCSIInitiator
             Ensure = 'Present'
             NodeAddress = 'iqn.1991-05.com.microsoft:fileserver01-cluster-target'
             TargetPortalAddress = '192.168.128.10'
-            InitiatorPortalAddress = '192.168.128.20' 
-            IsPersistent = $true 
+            InitiatorPortalAddress = '192.168.128.20'
+            IsPersistent = $true
             iSNSServer = 'isns.contoso.com'
-            DependsOn = "[Service]iSCSIService" 
+            DependsOn = "[Service]iSCSIService"
         } # End of ciSCSIInitiator Resource
     } # End of Node
 } # End of Configuration
 ```
 
 ## Versions
+
+### Unreleased
+* iSCSIInitiator: Fix bug when TargetPortalAddress is set to a Hostname instead of an IP address.
+* Unit and Integration test headers updated to v1.1.0
 
 ### 1.1.0.0
 * Added iSNS Server support.
