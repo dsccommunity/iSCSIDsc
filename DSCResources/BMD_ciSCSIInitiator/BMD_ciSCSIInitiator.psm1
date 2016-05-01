@@ -2,41 +2,41 @@ data LocalizedData
 {
     # culture="en-US"
     ConvertFrom-StringData -StringData @'
-GettingiSCSIInitiatorMessage=Getting iSCSI Initiator "{0}", "{1}" from "{2}".
-iSCSITargetPortalExistsMessage=iSCSI Target Portal "{0}" from "{1}" exists.
-iSCSITargetPortalDoesNotExistMessage=iSCSI Target Portal "{0}" from "{1}" does not exist.
-iSCSITargetExistsMessage=iSCSI Target "{0}" exists.
-iSCSITargetDoesNotExistMessage=iSCSI Target "{0}" does not exist.
-iSCSIConnectionExistsMessage=iSCSI Connection "{0}" exists.
-iSCSIConnectionDoesNotExistMessage=iSCSI Connection "{0}" does not exist.
-iSCSISessionExistsMessage=iSCSI Session "{0}" exists.
-iSCSISessionDoesNotExistMessage=iSCSI Session "{0}" does not exist.
-SettingiSCSIInitiatorMessage=Setting iSCSI Initiator "{0}", "{1}" from "{2}".
-EnsureiSCSITargetPortalExistsMessage=Ensuring iSCSI Target Portal "{0}" from "{1}" exists.
-EnsureiSCSITargetPortalDoesNotExistMessage=Ensuring iSCSI Target Portal "{0}" from "{1}" does not exist.
-iSCSITargetPortalCreatedMessage=iSCSI Target Portal "{0}" from "{1}" has been created.
-iSCSITargetPortalRemovedForRecreateMessage=iSCSI Target Portal "{0}" from "{1}" has been removed so it can be recreated.
-iSCSITargetDisconnectedMessage=iSCSI Target "{0}" has been disconnected.
-iSCSITargetConnectedMessage=iSCSI Target "{0}" has been connected.
-iSCSISessionSetPersistentMessage=iSCSI Session "{0}" is set as persistent.
-iSCSISessionRemovedPersistentMessage=iSCSI Session "{0}" is no longer persistent.
-iSCSITargetPortalRemovedMessage=iSCSI Target Portal "{0}" from "{1}" has been removed.
-EnsureiSCSITargetIsConnectedMessage=Ensuring iSCSI Target "{0}" is connected.
-EnsureiSCSITargetIsDisconnectedMessage=Ensuring iSCSI Target "{0}" is disconnected.
+GettingiSCSIInitiatorMessage=Getting iSCSI Initiator '{0}', '{1}' from '{2}'.
+iSCSITargetPortalExistsMessage=iSCSI Target Portal '{0}' from '{1}' exists.
+iSCSITargetPortalDoesNotExistMessage=iSCSI Target Portal '{0}' from '{1}' does not exist.
+iSCSITargetExistsMessage=iSCSI Target '{0}' exists.
+iSCSITargetDoesNotExistMessage=iSCSI Target '{0}' does not exist.
+iSCSIConnectionExistsMessage=iSCSI Connection '{0}' exists.
+iSCSIConnectionDoesNotExistMessage=iSCSI Connection '{0}' does not exist.
+iSCSISessionExistsMessage=iSCSI Session '{0}' exists.
+iSCSISessionDoesNotExistMessage=iSCSI Session '{0}' does not exist.
+SettingiSCSIInitiatorMessage=Setting iSCSI Initiator '{0}', '{1}' from '{2}'.
+EnsureiSCSITargetPortalExistsMessage=Ensuring iSCSI Target Portal '{0}' from '{1}' exists.
+EnsureiSCSITargetPortalDoesNotExistMessage=Ensuring iSCSI Target Portal '{0}' from '{1}' does not exist.
+iSCSITargetPortalCreatedMessage=iSCSI Target Portal '{0}' from '{1}' has been created.
+iSCSITargetPortalRemovedForRecreateMessage=iSCSI Target Portal '{0}' from '{1}' has been removed so it can be recreated.
+iSCSITargetDisconnectedMessage=iSCSI Target '{0}' has been disconnected.
+iSCSITargetConnectedMessage=iSCSI Target '{0}' has been connected.
+iSCSISessionSetPersistentMessage=iSCSI Session '{0}' is set as persistent.
+iSCSISessionRemovedPersistentMessage=iSCSI Session '{0}' is no longer persistent.
+iSCSITargetPortalRemovedMessage=iSCSI Target Portal '{0}' from '{1}' has been removed.
+EnsureiSCSITargetIsConnectedMessage=Ensuring iSCSI Target '{0}' is connected.
+EnsureiSCSITargetIsDisconnectedMessage=Ensuring iSCSI Target '{0}' is disconnected.
 iSNSServerRemovedMessage=iSNS Server has been cleared.
-iSNSServerUpdatedMessage=iSNS Server has been set to "{0}".
-iSNSServerUpdateErrorMessage=An error occurred setting the iSNS Server to "{0}". This is usually caused by the iSNS Server not being accessible.
-TestingiSCSIInitiatorMessage=Testing iSCSI Initiator "{0}", "{1}" from "{2}".
-iSCSIInitiatorParameterNeedsUpdateMessage=iSCSI {3} "{0}", "{1}" from "{2}" {4} is different. Change required.
-iSCSITargetPortalDoesNotExistButShouldMessage=iSCSI Target Portal "{0}" from "{1}" does not exist but should. Change required.
-iSCSITargetPortalExistsButShouldNotMessage=iSCSI Target Portal "{0}" from "{1}" exists but should not. Change required.
-iSCSITargetExistsButShouldNotMessage=iSCSI Target "{0}" exists but should not. Change required.
-iSCSITargetPortalDoesNotExistAndShouldNotMessage=iSCSI Target Portal "{0}" from "{1}" does not exist and should not. Change not required.
-iSCSITargetDoesNotExistButShouldMessage=iSCSI Target "{0}" does not exist but should. Change required.
-iSCSITargetNotConnectedMessage=iSCSI Target "{0}" exists but is not connected. Change required.
-iSCSIConnectionDoesNotExistButShouldMessage=iSCSI Connection "{0}" does not exist but should. Change required.
-iSCSISessionDoesNotExistButShouldMessage=iSCSI Session "{0}" does not exist but should. Change required.
-iSNSServerNeedsUpdateMessage=iSNS Server is "{0}" but should be "{1}". Change required.
+iSNSServerUpdatedMessage=iSNS Server has been set to '{0}'.
+iSNSServerUpdateErrorMessage=An error occurred setting the iSNS Server to '{0}'. This is usually caused by the iSNS Server not being accessible.
+TestingiSCSIInitiatorMessage=Testing iSCSI Initiator '{0}', '{1}' from '{2}'.
+iSCSIInitiatorParameterNeedsUpdateMessage=iSCSI {3} '{0}', '{1}' from '{2}' {4} is different. Change required.
+iSCSITargetPortalDoesNotExistButShouldMessage=iSCSI Target Portal '{0}' from '{1}' does not exist but should. Change required.
+iSCSITargetPortalExistsButShouldNotMessage=iSCSI Target Portal '{0}' from '{1}' exists but should not. Change required.
+iSCSITargetExistsButShouldNotMessage=iSCSI Target '{0}' exists but should not. Change required.
+iSCSITargetPortalDoesNotExistAndShouldNotMessage=iSCSI Target Portal '{0}' from '{1}' does not exist and should not. Change not required.
+iSCSITargetDoesNotExistButShouldMessage=iSCSI Target '{0}' does not exist but should. Change required.
+iSCSITargetNotConnectedMessage=iSCSI Target '{0}' exists but is not connected. Change required.
+iSCSIConnectionDoesNotExistButShouldMessage=iSCSI Connection '{0}' does not exist but should. Change required.
+iSCSISessionDoesNotExistButShouldMessage=iSCSI Session '{0}' does not exist but should. Change required.
+iSNSServerNeedsUpdateMessage=iSNS Server is '{0}' but should be '{1}'. Change required.
 iSNSServerIsSetButShouldBeNotMessage=iSNS Server is set but should not be. Change required.
 '@
 }
@@ -54,16 +54,15 @@ function Get-TargetResource
         [parameter(Mandatory = $true)]
         [System.String]
         $TargetPortalAddress,
-        
-        [parameter(Mandatory = $true)]
-        [System.String]
-        $InitiatorPortalAddress,
 
         [ValidateSet('Present','Absent')]
         [System.String]
-        $Ensure = 'Present'
+        $Ensure = 'Present',
+
+        [System.String]
+        $InitiatorPortalAddress
     )
-    
+
     Write-Verbose -Message ( @(
         "$($MyInvocation.MyCommand): "
         $($LocalizedData.GettingiSCSIInitiatorMessage) `
@@ -219,43 +218,42 @@ function Set-TargetResource
         [parameter(Mandatory = $true)]
         [System.String]
         $TargetPortalAddress,
-        
-        [parameter(Mandatory = $true)]
-        [System.String]
-        $InitiatorPortalAddress,
 
         [ValidateSet('Present','Absent')]
         [System.String]
         $Ensure = 'Present',
-        
+
+        [System.String]
+        $InitiatorPortalAddress,
+
         [System.Uint16]
         $TargetPortalPortNumber,
-        
+
         [System.String]
         $InitiatorInstanceName,
-                
+
         [ValidateSet('None','OneWayCHAP','MutualCHAP')]
         [System.String]
         $AuthenticationType,
-        
+
         [System.String]
         $ChapUsername,
-        
+
         [System.String]
         $ChapSecret,
-        
+
         [System.Boolean]
         $IsDataDigest,
-        
+
         [System.Boolean]
         $IsHeaderDigest,
 
         [System.Boolean]
         $IsMultipathEnabled,
-        
+
         [System.Boolean]
         $IsPersistent,
-        
+
         [System.Boolean]
         $ReportToPNP,
 
@@ -272,10 +270,14 @@ function Set-TargetResource
     # Remove any parameters that can't be splatted.
     $null = $PSBoundParameters.Remove('Ensure')
 
+    $TargetSplat = @{ TargetPortalAddress = $TargetPortalAddress }
+    if ($PSBoundParameters.ContainsKey('InitiatorPortalAddress'))
+    {
+        $TargetSplat += @{ InitiatorPortalAddress = $InitiatorPortalAddress }
+    }
+
     # Lookup the existing iSCSI Target Portal
-    $TargetPortal = Get-TargetPortal `
-        -TargetPortalAddress $TargetPortalAddress `
-        -InitiatorPortalAddress $InitiatorPortalAddress
+    $TargetPortal = Get-TargetPortal @TargetSplat
 
     # Get the iSNS Server
     $iSNSServerCurrent = Get-WmiObject `
@@ -323,10 +325,7 @@ function Set-TargetResource
             {
                 # The Target Portal exists but has different parameters
                 # so it has to be removed and recreated
-                Remove-iSCSITargetPortal `
-                    -TargetPortalAddress $TargetPortalAddress `
-                    -InitiatorPortalAddress $InitiatorPortalAddress `
-                    -ErrorAction Stop
+                Remove-iSCSITargetPortal @TargetSplat -ErrorAction Stop
 
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
@@ -426,7 +425,8 @@ function Set-TargetResource
                 {
                     $connect = $true
                 } # if
-                if ($Session.InitiatorPortalAddress -ne $InitiatorPortalAddress)
+                if ($PSBoundParameters.ContainsKey('InitiatorPortalAddress') `
+                     -and ($Session.InitiatorPortalAddress -ne $InitiatorPortalAddress))
                 {
                     $connect = $true
                 } # if
@@ -603,8 +603,7 @@ function Set-TargetResource
         {
             # The iSCSI Target Portal shouldn't exist - remove it
             Remove-iSCSITargetPortal `
-                -TargetPortalAddress $TargetPortalAddress `
-                -InitiatorPortalAddress $InitiatorPortalAddress `
+                @TargetSplat `
                 -Confirm:$False `
                 -ErrorAction Stop
 
@@ -644,50 +643,49 @@ function Test-TargetResource
         [parameter(Mandatory = $true)]
         [System.String]
         $TargetPortalAddress,
-        
-        [parameter(Mandatory = $true)]
-        [System.String]
-        $InitiatorPortalAddress,
 
         [ValidateSet('Present','Absent')]
         [System.String]
         $Ensure = 'Present',
-        
+
+        [System.String]
+        $InitiatorPortalAddress,
+
         [System.Uint16]
         $TargetPortalPortNumber,
-        
+
         [System.String]
         $InitiatorInstanceName,
-                
+
         [ValidateSet('None','OneWayCHAP','MutualCHAP')]
         [System.String]
         $AuthenticationType,
-        
+
         [System.String]
         $ChapUsername,
-        
+
         [System.String]
         $ChapSecret,
-        
+
         [System.Boolean]
         $IsDataDigest,
-        
+
         [System.Boolean]
         $IsHeaderDigest,
-        
+
         [System.Boolean]
         $IsMultipathEnabled,
-        
+
         [System.Boolean]
         $IsPersistent,
-        
+
         [System.Boolean]
         $ReportToPNP,
 
         [System.String]
         $iSNSServer
     )
-   
+
     # Flag to signal whether settings are correct
     [Boolean] $desiredConfigurationMatch = $true
 
@@ -697,10 +695,14 @@ function Test-TargetResource
             -f $NodeAddress,$TargetPortalAddress,$InitiatorPortalAddress
         ) -join '' )
 
+    $TargetSplat = @{ TargetPortalAddress = $TargetPortalAddress }
+    if ($PSBoundParameters.ContainsKey('InitiatorPortalAddress'))
+    {
+        $TargetSplat += @{ InitiatorPortalAddress = $InitiatorPortalAddress }
+    }
+
     # Lookup the existing iSCSI Target Portal
-    $TargetPortal = Get-TargetPortal `
-        -TargetPortalAddress $TargetPortalAddress `
-        -InitiatorPortalAddress $InitiatorPortalAddress
+    $TargetPortal = Get-TargetPortal @TargetSplat
 
     # Get the iSNS Server
     $iSNSServerCurrent = Get-WmiObject `
@@ -831,7 +833,8 @@ function Test-TargetResource
                 $desiredConfigurationMatch = $false
             }
 
-            if ($Connection.InitiatorAddress -ne $InitiatorPortalAddress)
+            if ($PSBoundParameters.ContainsKey('InitiatorPortalAddress') `
+                -and ($Connection.InitiatorAddress -ne $InitiatorPortalAddress))
             {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
@@ -890,7 +893,8 @@ function Test-TargetResource
                 $desiredConfigurationMatch = $false
             } # if
 
-            if ($Session.InitiatorPortalAddress -ne $InitiatorPortalAddress)
+            if ($PSBoundParameters.ContainsKey('InitiatorPortalAddress') `
+                -and ($Session.InitiatorPortalAddress -ne $InitiatorPortalAddress))
             {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
@@ -1019,15 +1023,12 @@ Function Get-TargetPortal
         [System.String]
         $TargetPortalAddress,
         
-        [parameter(Mandatory = $true)]
         [System.String]
         $InitiatorPortalAddress
     )
     try
     {
-        $TargetPortal = Get-iSCSITargetPortal `
-            -TargetPortalAddress $TargetPortalAddress `
-            -InitiatorPortalAddress $InitiatorPortalAddress `
+        $TargetPortal = Get-iSCSITargetPortal @PSBoundParameters `
             -ErrorAction Stop
     }
     catch [Microsoft.PowerShell.Cmdletization.Cim.CimJobException]
@@ -1039,7 +1040,7 @@ Function Get-TargetPortal
         Throw $_
     }
     Return $TargetPortal
-}
+} # Get-TargetPortal
 
 Function Get-Target
 {
@@ -1051,8 +1052,7 @@ Function Get-Target
     )
     try
     {
-        $Target = Get-iSCSITarget `
-            -NodeAddress $NodeAddress `
+        $Target = Get-iSCSITarget @PSBoundParameters `
             -ErrorAction Stop
     }
     catch [Microsoft.PowerShell.Cmdletization.Cim.CimJobException]
@@ -1064,7 +1064,7 @@ Function Get-Target
         Throw $_
     }
     Return $Target
-}
+} # Get-Target
 
 Function Get-Session
 {
@@ -1088,7 +1088,7 @@ Function Get-Session
         Throw $_
     }
     Return $Session
-}
+} # Get-Session
 
 Function Get-Connection
 {
@@ -1112,6 +1112,6 @@ Function Get-Connection
         Throw $_
     }
     Return $Connection
-}
+} # Get-Connection
 
 Export-ModuleMember -Function *-TargetResource
