@@ -41,6 +41,22 @@ try
             ReportToPnP = $true
         }
 
+        $TestInitiatorWithoutInitiatorAddress = [PSObject]@{
+            NodeAddress = 'iqn.1991-05.com.microsoft:fileserver-cluster-target-target'
+            TargetPortalAddress = '192.168.129.24'
+            Ensure = 'Present'
+            TargetPortalPortNumber = 3260
+            InitiatorInstanceName = 'ROOT\ISCSIPRT\0000_0'
+            AuthenticationType = 'MutualCHAP'
+            ChapUsername = 'MyUsername'
+            ChapSecret = 'MySecret'
+            IsDataDigest = $false
+            IsHeaderDigest = $false
+            IsMultipathEnabled = $false
+            IsPersistent = $true
+            ReportToPnP = $true
+        }
+
         $TestInitiatorWithHostname = [PSObject]@{
             NodeAddress = 'iqn.1991-05.com.microsoft:fileserver-cluster-target-target'
             TargetPortalAddress = 'targetportal.example.com'
@@ -79,6 +95,15 @@ try
         $MockTargetPortal = [PSObject]@{
             TargetPortalAddress = $TestInitiator.TargetPortalAddress
             InitiatorPortalAddress = $TestInitiator.InitiatorPortalAddress
+            TargetPortalPortNumber = $TestInitiator.TargetPortalPortNumber
+            InitiatorInstanceName = $TestInitiator.InitiatorInstanceName
+            IsDataDigest = $TestInitiator.IsDataDigest
+            IsHeaderDigest = $TestInitiator.IsHeaderDigest
+        }
+
+        $MockTargetPortalWithoutInitiatorAddress = [PSObject]@{
+            TargetPortalAddress = $TestInitiator.TargetPortalAddress
+            InitiatorPortalAddress = $null
             TargetPortalPortNumber = $TestInitiator.TargetPortalPortNumber
             InitiatorInstanceName = $TestInitiator.InitiatorInstanceName
             IsDataDigest = $TestInitiator.IsDataDigest
@@ -216,6 +241,33 @@ try
                 }
             }
 
+            Context 'Target Portal and Target exists but not connected, Initiator Portal Address not set' {
+                Mock Get-TargetPortal -MockWith { return @($MockTargetPortalWithoutInitiatorAddress) }
+                Mock Get-Target -MockWith { return @($MockTargetNotConnected) }
+                Mock Get-Connection
+                Mock Get-Session
+                Mock Get-WMIObject
+                It 'should return absent but with Target Portal data' {
+                    $Result = Get-TargetResource `
+                        -NodeAddress $TestInitiatorWithoutInitiatorAddress.NodeAddress `
+                        -TargetPortalAddress $TestInitiatorWithoutInitiatorAddress.TargetPortalAddress
+                    $Result.Ensure                 | Should Be 'Absent'
+                    $Result.TargetPortalAddress    | Should Be $TestInitiatorWithoutInitiatorAddress.TargetPortalAddress
+                    $Result.InitiatorPortalAddress | Should BeNullOrEmpty
+                    $Result.TargetPortalPortNumber | Should Be $TestInitiatorWithoutInitiatorAddress.TargetPortalPortNumber
+                    $Result.InitiatorInstanceName  | Should Be $TestInitiatorWithoutInitiatorAddress.InitiatorInstanceName
+                    $Result.IsDataDigest           | Should Be $TestInitiatorWithoutInitiatorAddress.IsDataDigest
+                    $Result.IsHeaderDigest         | Should Be $TestInitiatorWithoutInitiatorAddress.IsHeaderDigest
+                }
+                It 'should call the expected mocks' {
+                    Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
+                    Assert-MockCalled -commandName Get-Target -Exactly 1
+                    Assert-MockCalled -commandName Get-Connection -Exactly 0
+                    Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                }
+            }
+
             Context 'Target Portal and Target exists and is Connected' {
                 Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
                 Mock Get-Target -MockWith { return @($MockTarget) }
@@ -236,6 +288,40 @@ try
                     $Result.IsHeaderDigest         | Should Be $TestInitiator.IsHeaderDigest
                     $Result.AuthenticationType     | Should Be $TestInitiator.AuthenticationType
                     $Result.InitiatorInstanceName  | Should Be $TestInitiator.InitiatorInstanceName
+                    $Result.ConnectionIdentifier   | Should Be $MockConnection.ConnectionIdentifier
+                    $Result.SessionIdentifier      | Should Be $MockSession.SessionIdentifier
+                    $Result.IsConnected            | Should Be $MockSession.IsConnected
+                    $Result.IsDiscovered           | Should Be $MockSession.IsDiscovered
+                    $Result.IsPersistent           | Should Be $MockSession.IsPersistent
+                }
+                It 'should call the expected mocks' {
+                    Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
+                    Assert-MockCalled -commandName Get-Target -Exactly 1
+                    Assert-MockCalled -commandName Get-Connection -Exactly 1
+                    Assert-MockCalled -commandName Get-Session -Exactly 1
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                }
+            }
+
+            Context 'Target Portal and Target exists and is Connected, Initiator Portal Address not set' {
+                Mock Get-TargetPortal -MockWith { return @($MockTargetPortalWithoutInitiatorAddress) }
+                Mock Get-Target -MockWith { return @($MockTarget) }
+                Mock Get-Connection -MockWith { return @($MockConnection) }
+                Mock Get-Session -MockWith { return @($MockSession) }
+                Mock Get-WMIObject
+                It 'should return correct data' {
+                    $Result = Get-TargetResource `
+                        -NodeAddress $TestInitiatorWithoutInitiatorAddress.NodeAddress `
+                        -TargetPortalAddress $TestInitiatorWithoutInitiatorAddress.TargetPortalAddress
+                    $Result.Ensure                 | Should Be 'Present'
+                    $Result.TargetPortalAddress    | Should Be $TestInitiatorWithoutInitiatorAddress.TargetPortalAddress
+                    $Result.InitiatorPortalAddress | Should Be $MockConnection.InitiatorAddress
+                    $Result.TargetPortalPortNumber | Should Be $TestInitiatorWithoutInitiatorAddress.TargetPortalPortNumber
+                    $Result.InitiatorInstanceName  | Should Be $TestInitiatorWithoutInitiatorAddress.InitiatorInstanceName
+                    $Result.IsDataDigest           | Should Be $TestInitiatorWithoutInitiatorAddress.IsDataDigest
+                    $Result.IsHeaderDigest         | Should Be $TestInitiatorWithoutInitiatorAddress.IsHeaderDigest
+                    $Result.AuthenticationType     | Should Be $TestInitiatorWithoutInitiatorAddress.AuthenticationType
+                    $Result.InitiatorInstanceName  | Should Be $TestInitiatorWithoutInitiatorAddress.InitiatorInstanceName
                     $Result.ConnectionIdentifier   | Should Be $MockConnection.ConnectionIdentifier
                     $Result.SessionIdentifier      | Should Be $MockSession.SessionIdentifier
                     $Result.IsConnected            | Should Be $MockSession.IsConnected
@@ -326,6 +412,43 @@ try
                 }
             }
 
+            Context 'Target Portal does not exist but should, Initiator Portal Address not set' {
+                Mock Get-TargetPortal
+                Mock New-IscsiTargetPortal
+                Mock Remove-IscsiTargetPortal
+                Mock Get-Target -MockWith { return @($MockTargetNotConnected) }
+                Mock Get-Connection
+                Mock Get-Session
+                Mock Connect-IscsiTarget -MockWith { return @($MockSession) }
+                Mock Disconnect-IscsiTarget
+                Mock Register-IscsiSession
+                Mock Unregister-IscsiSession
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
+                It 'should not throw error' {
+                    {
+                        $Splat = $TestInitiatorWithoutInitiatorAddress.Clone()
+                        Set-TargetResource @Splat
+                    } | Should Not Throw
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
+                    Assert-MockCalled -commandName New-iSCSITargetPortal -Exactly 1
+                    Assert-MockCalled -commandName Remove-iSCSITargetPortal -Exactly 0
+                    Assert-MockCalled -commandName Get-Target -Exactly 1
+                    Assert-MockCalled -commandName Get-Connection -Exactly 1
+                    Assert-MockCalled -commandName Get-Session -Exactly 1
+                    Assert-MockCalled -commandName Connect-IscsiTarget -Exactly 1
+                    Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
+                    Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
+                    Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
+                }
+            }
+
             Context 'Target Portal does exist and should but Target is disconnected' {
                 Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
                 Mock New-IscsiTargetPortal
@@ -343,6 +466,43 @@ try
                 It 'should not throw error' {
                     {
                         $Splat = $TestInitiator.Clone()
+                        Set-TargetResource @Splat
+                    } | Should Not Throw
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
+                    Assert-MockCalled -commandName New-iSCSITargetPortal -Exactly 0
+                    Assert-MockCalled -commandName Remove-iSCSITargetPortal -Exactly 0
+                    Assert-MockCalled -commandName Get-Target -Exactly 1
+                    Assert-MockCalled -commandName Get-Connection -Exactly 1
+                    Assert-MockCalled -commandName Get-Session -Exactly 1
+                    Assert-MockCalled -commandName Connect-IscsiTarget -Exactly 1
+                    Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
+                    Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
+                    Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
+                    Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
+                }
+            }
+
+            Context 'Target Portal does exist and should but Target is disconnected, Initiator Portal Address not set' {
+                Mock Get-TargetPortal -MockWith { return @($MockTargetPortalWithoutInitiatorAddress) }
+                Mock New-IscsiTargetPortal
+                Mock Remove-IscsiTargetPortal
+                Mock Get-Target -MockWith { return @($MockTargetNotConnected) }
+                Mock Get-Connection
+                Mock Get-Session
+                Mock Connect-IscsiTarget -MockWith { return @($MockSession) }
+                Mock Disconnect-IscsiTarget
+                Mock Register-IscsiSession
+                Mock Unregister-IscsiSession
+                Mock Get-WMIObject
+                Mock Set-WMIInstance
+                Mock Remove-WMIObject
+                It 'should not throw error' {
+                    {
+                        $Splat = $TestInitiatorWithoutInitiatorAddress.Clone()
                         Set-TargetResource @Splat
                     } | Should Not Throw
                 }
@@ -1033,6 +1193,25 @@ try
                 }
             }
 
+            Context 'Target Portal does not exist but should, Initiator Portal Address not set' {
+                Mock Get-TargetPortal
+                Mock Get-Target
+                Mock Get-Connection
+                Mock Get-Session
+                Mock Get-WMIObject
+                It 'should return false' {
+                    $Splat = $TestInitiatorWithoutInitiatorAddress.Clone()
+                    Test-TargetResource @Splat | Should Be $False
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
+                    Assert-MockCalled -commandName Get-Target -Exactly 0
+                    Assert-MockCalled -commandName Get-Connection -Exactly 0
+                    Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                }
+            }
+
             Context 'Target Portal does exist and should but Target does not exist' {
                 Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
                 Mock Get-Target
@@ -1060,6 +1239,25 @@ try
                 Mock Get-WMIObject
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
+                    Test-TargetResource @Splat | Should Be $False
+                }
+                It 'should call expected Mocks' {
+                    Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
+                    Assert-MockCalled -commandName Get-Target -Exactly 1
+                    Assert-MockCalled -commandName Get-Connection -Exactly 0
+                    Assert-MockCalled -commandName Get-Session -Exactly 0
+                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                }
+            }
+
+            Context 'Target Portal does exist and should but Target is disconnected, Initiator Portal Address not set' {
+                Mock Get-TargetPortal -MockWith { return @($MockTargetPortalWithoutInitiatorAddress) }
+                Mock Get-Target -MockWith { return @($MockTargetNotConnected) }
+                Mock Get-Connection
+                Mock Get-Session
+                Mock Get-WMIObject
+                It 'should return false' {
+                    $Splat = $TestInitiatorWithoutInitiatorAddress.Clone()
                     Test-TargetResource @Splat | Should Be $False
                 }
                 It 'should call expected Mocks' {
