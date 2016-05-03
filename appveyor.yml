@@ -17,13 +17,15 @@ install:
       $Regex = '(?<=ModuleVersion\s+=\s+'')(?<ModuleVersion>.*)(?='')'
       $Matches = @([regex]::matches($ManifestContent, $Regex, 'IgnoreCase'))
       $version = $null
-      if ($Matches)
+      if (-not $Matches)
       {
-          $version = $Matches[0].Value
+          Throw "ModuleVersion could not be found in Module Manifest '$ManifestPath'"
       }
+      $version = $Matches[0].Value
+      $version = $version -split '\.'
 
       # new version
-      $version = "$version.$env:APPVEYOR_BUILD_NUMBER"
+      $version = "$($version[0]).$($version[1]).$($version[2]).$($env:APPVEYOR_BUILD_NUMBER)"
 
       # update AppVeyor build
       Update-AppveyorBuild -Version $version
