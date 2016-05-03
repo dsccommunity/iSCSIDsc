@@ -479,7 +479,7 @@ function Set-TargetResource
             $Session = Connect-IscsiTarget `
                 @Splat `
                 -ErrorAction Stop
-            
+
             Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
                 $($LocalizedData.iSCSITargetConnectedMessage) `
@@ -487,7 +487,7 @@ function Set-TargetResource
                 ) -join '' )
         } # if
 
-        if (($IsPersistent -ne $null) `
+        if (($PSBoundParameters.ContainsKey('IsPersistent')) `
             -and ($IsPersistent -ne $Session.IsPersistent))
         {
             if ($IsPersistent -eq $true)
