@@ -162,6 +162,24 @@ try
             iSNSServerAddress   = $TestInitiatorWithiSNS.iSNSServer
         }
 
+        # Dummy functions to allow passing values from pipeline
+        Function Register-IscsiSession {
+            [CmdletBinding()]
+            param (
+                [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+                ${InputObject},
+                [Boolean] ${IsMultipathEnabled}
+            )
+        }
+
+        Function Unregister-IscsiSession {
+            [CmdletBinding()]
+            param (
+                [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+                ${InputObject}
+            )
+        }
+
         Describe "$($Global:DSCResourceName)\Get-TargetResource" {
             Context 'Target Portal and Target do not exist' {
                 Mock Get-TargetPortal

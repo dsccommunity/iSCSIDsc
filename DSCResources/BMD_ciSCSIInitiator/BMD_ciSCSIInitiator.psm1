@@ -493,8 +493,7 @@ function Set-TargetResource
             if ($IsPersistent -eq $true)
             {
                 # Ensure session is persistent
-                Register-IscsiSession `
-                    -SessionIdentifier $Session.SessionIdentifier `
+                $Session | Register-IscsiSession `
                     -IsMultipathEnabled $IsMultipathEnabled `
                     -ErrorAction Stop
 
@@ -507,8 +506,7 @@ function Set-TargetResource
             else
             {
                 # Ensure session is not persistent
-                Unregister-IscsiSession `
-                    -SessionIdentifier $Session.SessionIdentifier `
+                $Session | Unregister-IscsiSession `
                     -ErrorAction Stop
 
                 Write-Verbose -Message ( @(
