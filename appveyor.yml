@@ -31,7 +31,7 @@ install:
       Update-AppveyorBuild -Version $version
 
       # Set version number
-      $ManifestContent = $ManifestContent -replace '(?<=ModuleVersion\s+=\s+'')(?<ModuleVersion>.*)(?='')', ('${{ModuleVersion}}.{0}' -f $env:APPVEYOR_BUILD_NUMBER)
+      $ManifestContent = $ManifestContent -replace '(?<=ModuleVersion\s+=\s+'')(?<ModuleVersion>.*)(?='')', $version
       Set-Content -Path $ManifestPath -Value $ManifestContent
 
       Import-Module .\DscResource.Tests\TestHelper.psm1 -Force
