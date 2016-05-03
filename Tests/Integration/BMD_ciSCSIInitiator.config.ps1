@@ -1,11 +1,11 @@
-(Get-NetIPAddress -InterfaceIndex (Get-NetConnectionProfile -IPv4Connectivity Internet).InterfaceIndex -AddressFamily IPv4).IPAddress
+$IPAddress = (Get-NetIPAddress -InterfaceIndex (Get-NetConnectionProfile -IPv4Connectivity Internet).InterfaceIndex -AddressFamily IPv4).IPAddress
 $TargetName = 'TestServerTarget'
 $Initiator = @{
     NodeAddress            = "iqn.1991-05.com.microsoft:$($ENV:ComputerName)-$TargetName-target-target"
     TargetPortalAddress    = $ENV:ComputerName
     InitiatorPortalAddress = $ENV:ComputerName
     Ensure                 = 'Present'
-    TargePortalPortNumber  = 3260 
+    TargePortalPortNumber  = 3260
     InitiatorInstanceName  = 'ROOT\ISCSIPRT\0000_0'
     AuthenticationType     = 'OneWayCHAP'
     ChapUsername           = 'MyUsername'

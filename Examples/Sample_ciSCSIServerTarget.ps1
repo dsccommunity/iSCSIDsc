@@ -9,7 +9,7 @@ configuration Sample_ciSCSIServerTarget
 
     Node $NodeName
     {
-        WindowsFeature iSCSITargetServerInstall 
+        WindowsFeature iSCSITargetServerInstall
         { 
             Ensure = "Present"
             Name = "FS-iSCSITarget-Server"
@@ -22,7 +22,7 @@ configuration Sample_ciSCSIServerTarget
             DiskType = 'Dynamic'
             SizeBytes = 20GB
             Description = 'Cluster Virtual Disk 01'
-            DependsOn = "[WindowsFeature]ISCSITargetServerInstall" 
+            DependsOn = "[WindowsFeature]ISCSITargetServerInstall"
         } # End of ciSCSIVirtualDisk Resource
 
         ciSCSIVirtualDisk iSCSIClusterVDisk02
@@ -32,7 +32,7 @@ configuration Sample_ciSCSIServerTarget
             DiskType = 'Dynamic'
             SizeBytes = 10GB
             Description = 'Cluster Virtual Disk 02'
-            DependsOn = "[WindowsFeature]ISCSITargetServerInstall" 
+            DependsOn = "[WindowsFeature]ISCSITargetServerInstall"
         } # End of ciSCSIVirtualDisk Resource
 
         ciSCSIServerTarget iSCSIClusterTarget
@@ -42,7 +42,7 @@ configuration Sample_ciSCSIServerTarget
             InitiatorIds = 'iqn.1991-05.com.microsoft:cluster01.contoso.com','iqn.1991-05.com.microsoft:cluster02.contoso.com','iqn.1991-05.com.microsoft:cluster03.contoso.com'
             Paths = 'D:\iSCSIVirtualDisks\ClusterVdisk01.vhdx','D:\iSCSIVirtualDisks\ClusterVdisk02.vhdx'
             iSNSServer = 'isns.contoso.com'
-            DependsOn = "[ciSCSIVirtualDisk]iSCSIClusterVDisk01","[ciSCSIVirtualDisk]iSCSIClusterVDisk01" 
+            DependsOn = "[ciSCSIVirtualDisk]iSCSIClusterVDisk01","[ciSCSIVirtualDisk]iSCSIClusterVDisk01"
         } # End of ciSCSIServerTarget Resource
     } # End of Node
 } # End of Configuration

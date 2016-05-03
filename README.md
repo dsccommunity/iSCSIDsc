@@ -36,49 +36,49 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 This resource is used to create or remove Virtual Disks for use by iSCSI Targets.
 
 #### Parameters
-* **Ensure**: Ensures that Virtual Disk is either Absent or Present. Required.
-* **Path**: Specifies the path of the VHDX file that is associated with the iSCSI virtual disk. Required.
-* **SizeBytes**: Specifies the size, in bytes, of the iSCSI virtual disk. Required.
-* **BlockSizeBytes**: Specifies the block size, in bytes, for the VHDX. For fixed VHDX, if the value of the SizeBytes parameter is less than 32 MB, the default size if 2 MB. Otherwise, the default value is 32 MB. For dynamic VHDX, the default size is 2 MB. For differencing VHDX, the default size is the parent BlockSize. Optional.
-* **DiskType**: Specifies the type of the VHDX. { Dynamic | Fixed | Differencing }. Defaults to Dynamics. Optional.
-* **LogicalSectorSizeBytes**: Specifies the logical sector size, in bytes, for the VHDX. { 512 | 4096 }. Defaults to 512. Optional.
-* **PhysicalSectorSizeBytes**: Specifies the physical sector size, in bytes, for the VHDX. { 512 | 4096 }. Defaults to 512. Optional.
-* **Description**: Specifies the description for the iSCSI virtual disk. Optional.
-* **ParentPath**: Specifies the parent virtual disk path if the VHDX is a differencing disk. Optional.
- 
+- **Ensure**: Ensures that Virtual Disk is either Absent or Present. Required.
+- **Path**: Specifies the path of the VHDX file that is associated with the iSCSI virtual disk. Required.
+- **SizeBytes**: Specifies the size, in bytes, of the iSCSI virtual disk. Required.
+- **BlockSizeBytes**: Specifies the block size, in bytes, for the VHDX. For fixed VHDX, if the value of the SizeBytes parameter is less than 32 MB, the default size if 2 MB. Otherwise, the default value is 32 MB. For dynamic VHDX, the default size is 2 MB. For differencing VHDX, the default size is the parent BlockSize. Optional.
+- **DiskType**: Specifies the type of the VHDX. { Dynamic | Fixed | Differencing }. Defaults to Dynamics. Optional.
+- **LogicalSectorSizeBytes**: Specifies the logical sector size, in bytes, for the VHDX. { 512 | 4096 }. Defaults to 512. Optional.
+- **PhysicalSectorSizeBytes**: Specifies the physical sector size, in bytes, for the VHDX. { 512 | 4096 }. Defaults to 512. Optional.
+- **Description**: Specifies the description for the iSCSI virtual disk. Optional.
+- **ParentPath**: Specifies the parent virtual disk path if the VHDX is a differencing disk. Optional.
+
 ### ciSCSIServerTarget
 This resource is used to create or remove iSCSI Server Targets.
 
 #### Parameters
-* **Ensure**: Ensures that Server Target is either Absent or Present. Required.
-* **TargetName**: Specifies the name of the iSCSI target. Required.
-* **InitiatorIds**: Specifies the iSCSI initiator identifiers (IDs) to which the iSCSI target is assigned. Required.
-* **Paths**: Specifies the path of the virtual hard disk (VHD) files that are associated with the Server Target. Required.
-* **iSNSServer**: Specifies an iSNS Server to register this Server Target with. Optional.
+- **Ensure**: Ensures that Server Target is either Absent or Present. Required.
+- **TargetName**: Specifies the name of the iSCSI target. Required.
+- **InitiatorIds**: Specifies the iSCSI initiator identifiers (IDs) to which the iSCSI target is assigned. Required.
+- **Paths**: Specifies the path of the virtual hard disk (VHD) files that are associated with the Server Target. Required.
+- **iSNSServer**: Specifies an iSNS Server to register this Server Target with. Optional.
 
 ## iSCSI Initiator Resources
 ### ciSCSIInitiator
 This resource is used to add or remove an iSCSI Target Portals and connect to an iSCSI Targets on them.
 
 #### Parameters
-* **Ensure**: Ensures that Target is Absent or Present. Required.
-* **NodeAddress**: Represents the IQN of the discovered target. Required.
-* **TargetPortalAddress**: Represents the IP address or DNS name of the target portal. Required.
-* **InitiatorPortalAddress**: Specifies the IP address or DNS name associated with the portal. Required.
-* **TargetPortalPortNumber**: Specifies the TCP/IP port number for the target portal. Defaults to 3260. Optional.
-* **InitiatorInstanceName**: The name of the initiator instance that the iSCSI initiator service uses to send SendTargets requests to the target portal. If no instance name is specified, the iSCSI initiator service chooses the initiator instance. Optional.
-* **AuthenticationType**: Specifies the type of authentication to use when logging into the target. { None | OneWayCHAP | MutualCHAP } Defaults to None. Optional.
-* **ChapUsername**: Specifies the user name to use when establishing a connection authenticated by using Mutual CHAP. Optional.
-* **ChapSecret**: Specifies the CHAP secret to use when establishing a connection authenticated by using CHAP. Optional.
-* **IsDataDigest**: Enables data digest when the initiator logs into the target portal. Defaults to False. Optional.
-* **IsHeaderDigest**: Enables header digest when the initiator logs into the target portal. By not specifying this parameter, the digest setting is determined by the initiator kernel mode driver. Defaults to False. Optional.
-* **IsMultipathEnabled**: Indicates that the initiator has enabled Multipath I/O (MPIO) and it will be used when logging into the target portal. Defaults to False. Optional.
-* **IsPersistent**: Specifies that the session is to be automatically connected after each restart. Defaults to True. Optional.
-* **ReportToPnP**: Specifies that the operation is reported to PNP. Defaults to True. Optional.
-* **iSNSServer**: Specifies an iSNS Server to register this Initiator with. Optional.
+- **NodeAddress**: Represents the IQN of the discovered target. Required.
+- **TargetPortalAddress**: Represents the IP address or DNS name of the target portal. Required.
+- **Ensure**: Ensures that Target is Absent or Present. Defaults to Present. Optional.
+- **InitiatorPortalAddress**: Specifies the IP address associated with the portal. Optional.
+- **TargetPortalPortNumber**: Specifies the TCP/IP port number for the target portal. Defaults to 3260. Optional.
+- **InitiatorInstanceName**: The name of the initiator instance that the iSCSI initiator service uses to send SendTargets requests to the target portal. If no instance name is specified, the iSCSI initiator service chooses the initiator instance. Optional.
+- **AuthenticationType**: Specifies the type of authentication to use when logging into the target. { None | OneWayCHAP | MutualCHAP } Defaults to None. Optional.
+- **ChapUsername**: Specifies the user name to use when establishing a connection authenticated by using Mutual CHAP. Optional.
+- **ChapSecret**: Specifies the CHAP secret to use when establishing a connection authenticated by using CHAP. Optional.
+- **IsDataDigest**: Enables data digest when the initiator logs into the target portal. Defaults to False. Optional.
+- **IsHeaderDigest**: Enables header digest when the initiator logs into the target portal. By not specifying this parameter, the digest setting is determined by the initiator kernel mode driver. Defaults to False. Optional.
+- **IsMultipathEnabled**: Indicates that the initiator has enabled Multipath I/O (MPIO) and it will be used when logging into the target portal. Defaults to False. Optional.
+- **IsPersistent**: Specifies that the session is to be automatically connected after each restart. Defaults to True. Optional.
+- **ReportToPnP**: Specifies that the operation is reported to PNP. Defaults to True. Optional.
+- **iSNSServer**: Specifies an iSNS Server to register this Initiator with. Optional.
 
 ## Examples
-This example installs the iSCSI Target Server, creates two iSCSI Virtal Disks and then a new iSCSI Target called Cluster with the two Virtual Disks assigned. The iSCSI target will accept connections from cluster01.contoso.com, cluster02.contoso.com or cluster03.contoso.com. 
+This example installs the iSCSI Target Server, creates two iSCSI Virtal Disks and then a new iSCSI Target called Cluster with the two Virtual Disks assigned. The iSCSI target will accept connections from cluster01.contoso.com, cluster02.contoso.com or cluster03.contoso.com.
 
 ```powershell
 configuration Sample_ciSCSIServerTarget
@@ -92,10 +92,10 @@ configuration Sample_ciSCSIServerTarget
 
     Node $NodeName
     {
-        WindowsFeature iSCSITargetServerInstall 
+        WindowsFeature iSCSITargetServerInstall
         { 
-            Ensure = "Present" 
-            Name = "FS-iSCSITarget-Server" 
+            Ensure = "Present"
+            Name = "FS-iSCSITarget-Server"
         }
 
         ciSCSIVirtualDisk iSCSIClusterVDisk01
@@ -105,7 +105,7 @@ configuration Sample_ciSCSIServerTarget
             DiskType = 'Dynamic'
             SizeBytes = 20GB
             Description = 'Cluster Virtual Disk 01'
-            DependsOn = "[WindowsFeature]ISCSITargetServerInstall" 
+            DependsOn = "[WindowsFeature]ISCSITargetServerInstall"
         } # End of ciSCSIVirtualDisk Resource
 
         ciSCSIVirtualDisk iSCSIClusterVDisk02
@@ -115,7 +115,7 @@ configuration Sample_ciSCSIServerTarget
             DiskType = 'Dynamic'
             UseFixed = $false
             Description = 'Cluster Virtual Disk 02'
-            DependsOn = "[WindowsFeature]ISCSITargetServerInstall" 
+            DependsOn = "[WindowsFeature]ISCSITargetServerInstall"
         } # End of ciSCSIVirtualDisk Resource
 
         ciSCSIServerTarget iSCSIClusterTarget
@@ -144,11 +144,11 @@ configuration Sample_ciSCSIInitiator
 
     Node $NodeName
     {
-        Service iSCSIService 
-        { 
+        Service iSCSIService
+        {
             Name = 'MSiSCSI'
             StartupType = 'Automatic'
-            State = 'Running'  
+            State = 'Running'
         }
 
         ciSCSIInitiator iSCSIInitiator
@@ -156,16 +156,21 @@ configuration Sample_ciSCSIInitiator
             Ensure = 'Present'
             NodeAddress = 'iqn.1991-05.com.microsoft:fileserver01-cluster-target'
             TargetPortalAddress = '192.168.128.10'
-            InitiatorPortalAddress = '192.168.128.20' 
-            IsPersistent = $true 
+            InitiatorPortalAddress = '192.168.128.20'
+            IsPersistent = $true
             iSNSServer = 'isns.contoso.com'
-            DependsOn = "[Service]iSCSIService" 
+            DependsOn = "[Service]iSCSIService"
         } # End of ciSCSIInitiator Resource
     } # End of Node
 } # End of Configuration
 ```
 
 ## Versions
+
+### 1.2.0.0
+* iSCSIInitiator: Fix bug when TargetPortalAddress is set to a Hostname instead of an IP address.
+*                 InitiatorPortalAddress property made optional.
+* Unit and Integration test headers updated to v1.1.0
 
 ### 1.1.0.0
 * Added iSNS Server support.
