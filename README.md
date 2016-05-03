@@ -11,7 +11,7 @@ The **ciSCSI** module contains DSC resources for configuring Windows iSCSI Targe
 
 ## Installation
 ```powershell
-Install-Module -Name ciSCSI -MinimumVersion 1.1.0.0
+Install-Module -Name ciSCSI -MinimumVersion 1.2.0.0
 ```
 
 ## Important Information
