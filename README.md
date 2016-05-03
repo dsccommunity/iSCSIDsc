@@ -167,7 +167,7 @@ configuration Sample_ciSCSIInitiator
 
 ## Versions
 
-### Unreleased
+### 1.2.0.0
 * iSCSIInitiator: Fix bug when TargetPortalAddress is set to a Hostname instead of an IP address.
 *                 InitiatorPortalAddress property made optional.
 * Unit and Integration test headers updated to v1.1.0
