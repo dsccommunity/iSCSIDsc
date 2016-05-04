@@ -167,6 +167,9 @@ configuration Sample_ciSCSIInitiator
 
 ## Versions
 
+### Unreleased
+* iSCSIInitiator: Fix bug when converting connected target to IsPersistent.
+
 ### 1.2.0.0
 * iSCSIInitiator: Fix bug when TargetPortalAddress is set to a Hostname instead of an IP address.
 *                 InitiatorPortalAddress property made optional.
