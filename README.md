@@ -11,7 +11,7 @@ The **ciSCSI** module contains DSC resources for configuring Windows iSCSI Targe
 
 ## Installation
 ```powershell
-Install-Module -Name ciSCSI -MinimumVersion 1.2.0.0
+Install-Module -Name ciSCSI -MinimumVersion 1.2.1.0
 ```
 
 ## Important Information
@@ -167,7 +167,7 @@ configuration Sample_ciSCSIInitiator
 
 ## Versions
 
-### Unreleased
+### 1.2.1.0
 * iSCSIInitiator: Fix bug when converting connected target to IsPersistent.
 
 ### 1.2.0.0
