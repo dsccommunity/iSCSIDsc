@@ -93,7 +93,7 @@ configuration Sample_ciSCSIServerTarget
     Node $NodeName
     {
         WindowsFeature iSCSITargetServerInstall
-        { 
+        {
             Ensure = "Present"
             Name = "FS-iSCSITarget-Server"
         }
@@ -166,6 +166,10 @@ configuration Sample_ciSCSIInitiator
 ```
 
 ## Versions
+
+### Unreleased
+* Converted AppVeyor.yml to pull Pester from PSGallery instead of Chocolatey.
+* Changed AppVeyor.yml to use default image
 
 ### 1.2.1.0
 * iSCSIInitiator: Fix bug when converting connected target to IsPersistent.
