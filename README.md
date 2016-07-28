@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/v49l0db5aks56r9c/branch/dev?svg=true)](https://ci.appveyor.com/project/PlagueHO/iscscidsc/branch/dev)
+[![Build status](https://ci.appveyor.com/api/projects/status/xnuik3kpyag237mv/branch/dev?svg=true)](https://ci.appveyor.com/project/PlagueHO/iscsidsc/branch/dev)
 
 # iSCSIDsc
 
