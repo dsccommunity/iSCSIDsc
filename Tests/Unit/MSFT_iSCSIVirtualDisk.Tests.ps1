@@ -1,5 +1,5 @@
-$Global:DSCModuleName   = 'ciSCSI'
-$Global:DSCResourceName = 'BMD_ciSCSIVirtualDisk'
+$Global:DSCModuleName   = 'iSCSIDsc'
+$Global:DSCResourceName = 'MSFT_iSCSIVirtualDisk'
 
 #region HEADER
 # Unit Test Template Version: 1.1.0
@@ -14,15 +14,15 @@ Import-Module (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHel
 $TestEnvironment = Initialize-TestEnvironment `
     -DSCModuleName $Global:DSCModuleName `
     -DSCResourceName $Global:DSCResourceName `
-    -TestType Unit 
+    -TestType Unit
 #endregion HEADER
 
 # Begin Testing
 try
-{    
-    #region Pester Tests     
+{
+    #region Pester Tests
     InModuleScope $Global:DSCResourceName {
-    
+
         # Create the Mock Objects that will be used for running tests
         $TestVirtualDisk = [PSObject]@{
             Path                    = Join-Path -Path $ENV:Temp -ChildPath 'TestiSCSIVirtualDisk.vhdx'
@@ -35,7 +35,7 @@ try
             LogicalSectorSizeBytes  = 512
             ParentPath              = 'c:\Parent.vhdx'
         }
-        
+
         $MockVirtualDisk = [PSObject]@{
             Path                    = $TestVirtualDisk.Path
             DiskType                = $TestVirtualDisk.DiskType
@@ -43,7 +43,7 @@ try
             Description             = $TestVirtualDisk.Description
             ParentPath              = $TestVirtualDisk.ParentPath
         }
-       
+
         # Ensure that the tests can be performed on this computer
         $ProductType = (Get-CimInstance Win32_OperatingSystem).ProductType
         Describe 'Environment' {
@@ -64,7 +64,7 @@ try
                 It 'Should have the iSCSI Target Feature Installed' {
                     $Installed | Should Be $true
                 }
-            }   
+            }
         }
         if ($Installed -eq $false)
         {
@@ -72,11 +72,11 @@ try
         }
 
         Describe "$($Global:DSCResourceName)\Get-TargetResource" {
-    
+
             Context 'Virtual Disk does not exist' {
-                
+
                 Mock Get-iSCSIVirtualDisk
-    
+
                 It 'should return absent Virtual Disk' {
                     $Result = Get-TargetResource `
                         -Path $TestVirtualDisk.Path
@@ -84,13 +84,13 @@ try
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
-                } 
+                }
             }
-    
+
             Context 'Virtual Disk does exist' {
-                
+
                 Mock Get-iSCSIVirtualDisk -MockWith { return @($MockVirtualDisk) }
-    
+
                 It 'should return correct Virtual Disk' {
                     $Result = Get-TargetResource `
                         -Path $TestVirtualDisk.Path
@@ -106,18 +106,18 @@ try
                 }
             }
         }
-    
+
         Describe "$($Global:DSCResourceName)\Set-TargetResource" {
-    
+
             Context 'Virtual Disk does not exist but should' {
-                
+
                 Mock Get-iSCSIVirtualDisk
                 Mock New-iSCSIVirtualDisk
                 Mock Set-iSCSIVirtualDisk
                 Mock Remove-iSCSIVirtualDisk
-    
+
                 It 'should not throw error' {
-                    { 
+                    {
                         $Splat = $TestVirtualDisk.Clone()
                         Set-TargetResource @Splat
                     } | Should Not Throw
@@ -129,16 +129,16 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIVirtualDisk -Exactly 0
                 }
             }
-    
+
             Context 'Virtual Disk exists and should but has a different Description' {
-                
+
                 Mock Get-iSCSIVirtualDisk -MockWith { return @($MockVirtualDisk) }
                 Mock New-iSCSIVirtualDisk
                 Mock Set-iSCSIVirtualDisk
                 Mock Remove-iSCSIVirtualDisk
-    
+
                 It 'should not throw error' {
-                    { 
+                    {
                         $Splat = $TestVirtualDisk.Clone()
                         $Splat.Description = 'Different'
                         Set-TargetResource @Splat
@@ -151,19 +151,19 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIVirtualDisk -Exactly 0
                 }
             }
-    
+
             Context 'Virtual Disk exists and should but has a different DiskType' {
-                
+
                 Mock Get-iSCSIVirtualDisk -MockWith { return @($MockVirtualDisk) }
                 Mock New-iSCSIVirtualDisk
                 Mock Set-iSCSIVirtualDisk
                 Mock Remove-iSCSIVirtualDisk
-    
+
                 It 'should throw an iSCSIVirtualDiskRequiresRecreateError exception' {
                     $Splat = $TestVirtualDisk.Clone()
                     $Splat.DiskType = 'Fixed'
                     $Splat.ParentPath = $null
-    
+
                     $errorId = 'iSCSIVirtualDiskRequiresRecreateError'
                     $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
                     $errorMessage = $($LocalizedData.iSCSIVirtualDiskRequiresRecreateError) -f $Splat.Path
@@ -171,7 +171,7 @@ try
                         -ArgumentList $errorMessage
                     $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
                         -ArgumentList $exception, $errorId, $errorCategory, $null
-                        
+
                     { Set-TargetResource @Splat } | Should Throw $errorRecord
                 }
                 It 'should call expected Mocks' {
@@ -181,18 +181,18 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIVirtualDisk -Exactly 0
                 }
             }
-            
+
             Context 'Virtual Disk exists and should but has a different SizeBytes' {
-                
+
                 Mock Get-iSCSIVirtualDisk -MockWith { return @($MockVirtualDisk) }
                 Mock New-iSCSIVirtualDisk
                 Mock Set-iSCSIVirtualDisk
                 Mock Remove-iSCSIVirtualDisk
-    
+
                 It 'should throw an iSCSIVirtualDiskRequiresRecreateError exception' {
                     $Splat = $TestVirtualDisk.Clone()
                     $Splat.SizeBytes = $Splat.SizeBytes + 100MB
-    
+
                     $errorId = 'iSCSIVirtualDiskRequiresRecreateError'
                     $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
                     $errorMessage = $($LocalizedData.iSCSIVirtualDiskRequiresRecreateError) -f $Splat.Path
@@ -200,8 +200,8 @@ try
                         -ArgumentList $errorMessage
                     $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
                         -ArgumentList $exception, $errorId, $errorCategory, $null
-                        
-                    { Set-TargetResource @Splat } | Should Throw $errorRecord                
+
+                    { Set-TargetResource @Splat } | Should Throw $errorRecord
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -209,19 +209,19 @@ try
                     Assert-MockCalled -commandName Set-iSCSIVirtualDisk -Exactly 0
                     Assert-MockCalled -commandName Remove-iSCSIVirtualDisk -Exactly 0
                 }
-            }    
+            }
 
             Context 'Virtual Disk exists and should but has a different ParentPath' {
-                
+
                 Mock Get-iSCSIVirtualDisk -MockWith { return @($MockVirtualDisk) }
                 Mock New-iSCSIVirtualDisk
                 Mock Set-iSCSIVirtualDisk
                 Mock Remove-iSCSIVirtualDisk
-    
+
                 It 'should throw an iSCSIVirtualDiskRequiresRecreateError exception' {
                     $Splat = $TestVirtualDisk.Clone()
                     $Splat.ParentPath = 'c:\NewParent.vhdx'
-    
+
                     $errorId = 'iSCSIVirtualDiskRequiresRecreateError'
                     $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
                     $errorMessage = $($LocalizedData.iSCSIVirtualDiskRequiresRecreateError) -f $Splat.Path
@@ -229,8 +229,8 @@ try
                         -ArgumentList $errorMessage
                     $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
                         -ArgumentList $exception, $errorId, $errorCategory, $null
-                        
-                    { Set-TargetResource @Splat } | Should Throw $errorRecord                
+
+                    { Set-TargetResource @Splat } | Should Throw $errorRecord
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -238,17 +238,17 @@ try
                     Assert-MockCalled -commandName Set-iSCSIVirtualDisk -Exactly 0
                     Assert-MockCalled -commandName Remove-iSCSIVirtualDisk -Exactly 0
                 }
-            }    
-    
+            }
+
             Context 'Virtual Disk exists but should not' {
-                
+
                 Mock Get-iSCSIVirtualDisk -MockWith { return @($MockVirtualDisk) }
                 Mock New-iSCSIVirtualDisk
                 Mock Set-iSCSIVirtualDisk
                 Mock Remove-iSCSIVirtualDisk
-    
+
                 It 'should not throw error' {
-                    { 
+                    {
                         $Splat = $TestVirtualDisk.Clone()
                         $Splat.Ensure = 'Absent'
                         Set-TargetResource @Splat
@@ -261,16 +261,16 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIVirtualDisk -Exactly 1
                 }
             }
-    
+
             Context 'Virtual Disk does not exist and should not' {
-                
+
                 Mock Get-iSCSIVirtualDisk
                 Mock New-iSCSIVirtualDisk
                 Mock Set-iSCSIVirtualDisk
                 Mock Remove-iSCSIVirtualDisk
-                    
+
                 It 'should not throw error' {
-                    { 
+                    {
                         $Splat = $TestVirtualDisk.Clone()
                         $Splat.Ensure = 'Absent'
                         Set-TargetResource @Splat
@@ -284,29 +284,29 @@ try
                 }
             }
         }
-    
+
         Describe "$($Global:DSCResourceName)\Test-TargetResource" {
-    
+
             Context 'Virtual Disk does not exist but should' {
-                
+
                 Mock Get-iSCSIVirtualDisk
-    
+
                 It 'should return false' {
                     $Splat = $TestVirtualDisk.Clone()
                     Test-TargetResource @Splat | Should Be $False
-                    
+
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
                 }
             }
-    
+
             Context 'Virtual Disk exists and should but has a different Description' {
-                
+
                 Mock Get-iSCSIVirtualDisk -MockWith { return @($MockVirtualDisk) }
-    
+
                 It 'should return false' {
-                    { 
+                    {
                         $Splat = $TestVirtualDisk.Clone()
                         $Splat.Description = 'Different'
                         Test-TargetResource @Splat | Should Be $False
@@ -316,16 +316,16 @@ try
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
                 }
             }
-    
+
             Context 'Virtual Disk exists and should but has a different DiskType' {
-                
+
                 Mock Get-iSCSIVirtualDisk -MockWith { return @($MockVirtualDisk) }
-    
+
                 It 'should throw an iSCSIVirtualDiskRequiresRecreateError exception' {
                     $Splat = $TestVirtualDisk.Clone()
                     $Splat.DiskType = 'Fixed'
                     $Splat.ParentPath = $null
-    
+
                     $errorId = 'iSCSIVirtualDiskRequiresRecreateError'
                     $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
                     $errorMessage = $($LocalizedData.iSCSIVirtualDiskRequiresRecreateError) -f $Splat.Path
@@ -333,7 +333,7 @@ try
                         -ArgumentList $errorMessage
                     $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
                         -ArgumentList $exception, $errorId, $errorCategory, $null
-                        
+
                     { Test-TargetResource @Splat } | Should Throw $errorRecord
                 }
                 It 'should call expected Mocks' {
@@ -342,13 +342,13 @@ try
             }
 
             Context 'Virtual Disk exists and should but has a different SizeBytes' {
-                
+
                 Mock Get-iSCSIVirtualDisk -MockWith { return @($MockVirtualDisk) }
-    
+
                 It 'should throw an iSCSIVirtualDiskRequiresRecreateError exception' {
                     $Splat = $TestVirtualDisk.Clone()
                     $Splat.SizeBytes = $Splat.SizeBytes + 100MB
-    
+
                     $errorId = 'iSCSIVirtualDiskRequiresRecreateError'
                     $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
                     $errorMessage = $($LocalizedData.iSCSIVirtualDiskRequiresRecreateError) -f $Splat.Path
@@ -356,7 +356,7 @@ try
                         -ArgumentList $errorMessage
                     $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
                         -ArgumentList $exception, $errorId, $errorCategory, $null
-                        
+
                     { Test-TargetResource @Splat } | Should Throw $errorRecord
                 }
                 It 'should call expected Mocks' {
@@ -365,13 +365,13 @@ try
             }
 
             Context 'Virtual Disk exists and should but has a different ParentPath' {
-                
+
                 Mock Get-iSCSIVirtualDisk -MockWith { return @($MockVirtualDisk) }
-    
+
                 It 'should throw an iSCSIVirtualDiskRequiresRecreateError exception' {
                     $Splat = $TestVirtualDisk.Clone()
                     $Splat.ParentPath = 'c:\NewParent.vhdx'
-    
+
                     $errorId = 'iSCSIVirtualDiskRequiresRecreateError'
                     $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
                     $errorMessage = $($LocalizedData.iSCSIVirtualDiskRequiresRecreateError) -f $Splat.Path
@@ -379,7 +379,7 @@ try
                         -ArgumentList $errorMessage
                     $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
                         -ArgumentList $exception, $errorId, $errorCategory, $null
-                        
+
                     { Test-TargetResource @Splat } | Should Throw $errorRecord
                 }
                 It 'should call expected Mocks' {
@@ -388,11 +388,11 @@ try
             }
 
             Context 'Virtual Disk exists and should and all parameters match' {
-                
+
                 Mock Get-iSCSIVirtualDisk -MockWith { return @($MockVirtualDisk) }
-    
+
                 It 'should return true' {
-                    { 
+                    {
                         $Splat = $TestVirtualDisk.Clone()
                         Test-TargetResource @Splat | Should Be $True
                     } | Should Not Throw
@@ -401,13 +401,13 @@ try
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
                 }
             }
-    
+
             Context 'Virtual Disk exists but should not' {
-                
+
                 Mock Get-iSCSIVirtualDisk -MockWith { return @($MockVirtualDisk) }
-    
+
                 It 'should return false' {
-                    { 
+                    {
                         $Splat = $TestVirtualDisk.Clone()
                         $Splat.Ensure = 'Absent'
                     Test-TargetResource @Splat | Should Be $False
@@ -417,13 +417,13 @@ try
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
                 }
             }
-    
+
             Context 'Virtual Disk does not exist and should not' {
-                
+
                 Mock Get-iSCSIVirtualDisk
-    
+
                 It 'should return true' {
-                    { 
+                    {
                         $Splat = $TestVirtualDisk.Clone()
                         $Splat.Ensure = 'Absent'
                         Test-TargetResource @Splat | Should Be $True
@@ -436,15 +436,15 @@ try
         }
 
         Describe "$($Global:DSCResourceName)\Get-VirtualDisk" {
-    
+
             Context 'Virtual Disk does not exist' {
-                
+
                 Mock Get-iSCSIVirtualDisk
-    
+
                 It 'should return null' {
                     $Splat = $TestVirtualDisk.Clone()
-                    $Result = Get-VirtualDisk -Path $Splat.Path 
-                    $Result | Should Be $null             
+                    $Result = Get-VirtualDisk -Path $Splat.Path
+                    $Result | Should Be $null
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -452,12 +452,12 @@ try
             }
 
             Context 'Virtual Disk does exist' {
-                
+
                 Mock Get-iSCSIVirtualDisk -MockWith { return @($MockVirtualDisk) }
 
                 It 'should return expected parameters' {
                     $Splat = $TestVirtualDisk.Clone()
-                    $Result = Get-VirtualDisk -Path $Splat.Path 
+                    $Result = Get-VirtualDisk -Path $Splat.Path
                     $Result.Path                    | Should Be $MockVirtualDisk.Path
                     $Result.DiskType                | Should Be $MockVirtualDisk.DiskType
                     $Result.Size                    | Should Be $MockVirtualDisk.Size

@@ -6,10 +6,10 @@ $VirtualDisk = @{
     Description     = 'Integration Test iSCSI Virtual Disk'
 }
 
-Configuration BMD_ciSCSIVirtualDisk_Config {
-    Import-DscResource -ModuleName ciSCSI
+Configuration MSFT_iSCSIVirtualDisk_Config {
+    Import-DscResource -ModuleName iSCSIDsc
     node localhost {
-        ciSCSIVirtualDisk Integration_Test {
+        iSCSIVirtualDisk Integration_Test {
             Path            = $VirtualDisk.Path
             Ensure          = $VirtualDisk.Ensure
             DiskType        = $VirtualDisk.DiskType

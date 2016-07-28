@@ -9,10 +9,10 @@ $ServerTarget = @{
     iSNSServer   = 'isns.contoso.com'
 }
 
-Configuration BMD_ciSCSIServerTarget_Config {
-    Import-DscResource -ModuleName ciSCSI
+Configuration MSFT_iSCSIServerTarget_Config {
+    Import-DscResource -ModuleName iSCSIDsc
     node localhost {
-        ciSCSIServerTarget Integration_Test {
+        iSCSIServerTarget Integration_Test {
             TargetName   = $ServerTarget.TargetName
             Ensure       = $ServerTarget.Ensure
             InitiatorIds = $ServerTarget.InitiatorIds

@@ -1,5 +1,5 @@
-$Global:DSCModuleName   = 'ciSCSI'
-$Global:DSCResourceName = 'BMD_ciSCSIInitiator'
+$Global:DSCModuleName   = 'iSCSIDsc'
+$Global:DSCResourceName = 'MSFT_iSCSIInitiator'
 
 # These tests are disabled because they require iSCSI Loopback
 # iSCSI Loopback is supposed to work in Windows Server 2012 R2
@@ -49,7 +49,7 @@ try
             It 'Should have the iSCSI Target Feature Installed' {
                 $Installed | Should Be $true
             }
-        }   
+        }
     }
     if ($Installed -eq $false)
     {
@@ -66,7 +66,7 @@ try
         New-iSCSIVirtualDisk `
             -ComputerName LOCALHOST `
             -Path $VirtualDiskPath `
-            -SizeBytes 500MB 
+            -SizeBytes 500MB
         New-iSCSIServerTarget `
             -TargetName $TargetName `
             -InitiatorIds "Iqn:iqn.1991-05.com.microsoft:$($Initiator.InitiatorPortalAddress)" `
@@ -124,7 +124,7 @@ try
             # The iSNS Server is not usually accessible so won't be able to be set
             # $Initiator.iSNSServer          | Should Be $iSNSServerNew.iSNSServerAddress
         }
-        
+
         # Clean up
         Disconnect-IscsiTarget `
             -NodeAddress $Initiator.NodeAddress `

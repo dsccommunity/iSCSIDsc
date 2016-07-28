@@ -1,5 +1,5 @@
-[ClassVersion("1.0.0.0"), FriendlyName("ciSCSIServerTarget")]
-class BMD_ciSCSIServerTarget : OMI_BaseResource
+[ClassVersion("1.0.0.0"), FriendlyName("iSCSIServerTarget")]
+class MSFT_iSCSIServerTarget : OMI_BaseResource
 {
     [Key, Description("Specifies the name of the iSCSI target.")] String TargetName;
     [Write, Description("Ensures that Server Target is either Absent or Present."), ValueMap{"Present","Absent"}, Values{"Present","Absent"}] String Ensure;

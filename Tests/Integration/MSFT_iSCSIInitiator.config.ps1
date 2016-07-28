@@ -18,10 +18,10 @@ $Initiator = @{
     iSNSServer             = "isns.contoso.com"
 }
 
-Configuration BMD_ciSCSIInitiator_Config {
-    Import-DscResource -ModuleName ciSCSI
+Configuration MSFT_iSCSIInitiator_Config {
+    Import-DscResource -ModuleName iSCSIDsc
     node localhost {
-        ciSCSIInitiator Integration_Test {
+        iSCSIInitiator Integration_Test {
             NodeAddress            = $Initiator.NodeAddress
             TargetPortalAddress    = $Initiator.TargetPortalAddress
             InitiatorPortalAddress = $Initiator.InitiatorPortalAddress

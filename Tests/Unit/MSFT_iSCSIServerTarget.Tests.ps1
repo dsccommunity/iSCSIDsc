@@ -1,5 +1,5 @@
-$Global:DSCModuleName   = 'ciSCSI'
-$Global:DSCResourceName = 'BMD_ciSCSIServerTarget'
+$Global:DSCModuleName   = 'iSCSIDsc'
+$Global:DSCResourceName = 'MSFT_iSCSIServerTarget'
 
 #region HEADER
 # Unit Test Template Version: 1.1.0
@@ -14,12 +14,12 @@ Import-Module (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHel
 $TestEnvironment = Initialize-TestEnvironment `
     -DSCModuleName $Global:DSCModuleName `
     -DSCResourceName $Global:DSCResourceName `
-    -TestType Unit 
+    -TestType Unit
 #endregion HEADER
 
 # Begin Testing
 try
-{    
+{
     #region Pester Tests
     InModuleScope $Global:DSCResourceName {
 
@@ -83,7 +83,7 @@ try
                 It 'Should have the iSCSI Target Feature Installed' {
                     $Installed | Should Be $true
                 }
-            }   
+            }
         }
         if ($Installed -eq $false)
         {
@@ -169,7 +169,7 @@ try
                 Mock Remove-WMIObject
 
                 It 'should not throw error' {
-                    { 
+                    {
                         $Splat = $TestServerTarget.Clone()
                         Set-TargetResource @Splat
                     } | Should Not Throw
@@ -200,7 +200,7 @@ try
                 Mock Remove-WMIObject
 
                 It 'should not throw error' {
-                    { 
+                    {
                         $Splat = $TestServerTarget.Clone()
                         $Splat.Paths += @( 'd:\NewVHD.vhdx' )
                         Set-TargetResource @Splat
@@ -643,7 +643,7 @@ try
 
                 It 'should return null' {
                     $Splat = $TestServerTarget.Clone()
-                    $Result = Get-ServerTarget -TargetName $Splat.TargetName 
+                    $Result = Get-ServerTarget -TargetName $Splat.TargetName
                     $Result | Should Be $null
                 }
                 It 'should call expected Mocks' {
@@ -652,12 +652,12 @@ try
             }
 
             Context 'Server Target does exist' {
-                
+
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
 
                 It 'should return expected parameters' {
                     $Splat = $TestServerTarget.Clone()
-                    $Result = Get-ServerTarget -TargetName $Splat.TargetName 
+                    $Result = Get-ServerTarget -TargetName $Splat.TargetName
                     $Result.InitiatorIds            | Should Be $MockServerTarget.InitiatorIds
                     $Result.Paths                   | Should Be $MockServerTarget.Paths
                 }

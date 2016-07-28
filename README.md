@@ -1,8 +1,8 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/c3ib1g51tly89xoh/branch/master?svg=true)](https://ci.appveyor.com/project/PlagueHO/ciscsi/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/v49l0db5aks56r9c/branch/dev?svg=true)](https://ci.appveyor.com/project/PlagueHO/iscscidsc/branch/dev)
 
-# ciSCSI
+# iSCSIDsc
 
-The **ciSCSI** module contains DSC resources for configuring Windows iSCSI Targets and Initiators.
+The **iSCSIDsc** module contains DSC resources for configuring Windows iSCSI Targets and Initiators.
 
 ## Requirements
 - The iSCSI Target resources can only be used on Windows Server 2012 and above. They can not be used Windows Desktop operating systems.
@@ -11,7 +11,7 @@ The **ciSCSI** module contains DSC resources for configuring Windows iSCSI Targe
 
 ## Installation
 ```powershell
-Install-Module -Name ciSCSI -MinimumVersion 1.2.1.0
+Install-Module -Name iSCSIDsc -MinimumVersion 1.2.1.0
 ```
 
 ## Important Information
@@ -22,7 +22,7 @@ This error will be reported in the DSC verbose logs however.
 This means that the configuration will continue to be applied until the **iSNS Server** is contactable so that the **iSNS Server** setting will be configured as soon as the **iSNS Server** becomes contactable.
 
 ## Known Issues
-- Integration Tests on the ciSCSIInitiator resource are currently disabled because it requires **iSCSI Initiator Loopback**, but this isn't documented anywhere so could not be made to work.
+- Integration Tests on the iSCSIInitiator resource are currently disabled because it requires **iSCSI Initiator Loopback**, but this isn't documented anywhere so could not be made to work.
   Note: **iSCSI Initiator Loopback** is supported according to [this document](http://blogs.technet.com/b/filecab/archive/2012/05/21/introduction-of-iscsi-target-in-windows-server-2012.aspx).
   This issue won't prevent this resource from working correctly, it simply reduces the effectiveness of automated testing of the resource.
 - Integration Tests on **iSNS Server** settings on the _Server Target_ and _Initiator_ resources are currently disabled because they require access to an **iSNS server**.
@@ -32,7 +32,7 @@ This means that the configuration will continue to be applied until the **iSNS S
 Please check out common DSC Resources [contributing guidelines](https://github.com/PowerShell/DscResource.Kit/blob/master/CONTRIBUTING.md).
 
 ## iSCSI Target Resources
-### ciSCSIVirtualDisk
+### iSCSIVirtualDisk
 This resource is used to create or remove Virtual Disks for use by iSCSI Targets.
 
 #### Parameters
@@ -46,7 +46,7 @@ This resource is used to create or remove Virtual Disks for use by iSCSI Targets
 - **Description**: Specifies the description for the iSCSI virtual disk. Optional.
 - **ParentPath**: Specifies the parent virtual disk path if the VHDX is a differencing disk. Optional.
 
-### ciSCSIServerTarget
+### iSCSIServerTarget
 This resource is used to create or remove iSCSI Server Targets.
 
 #### Parameters
@@ -57,7 +57,7 @@ This resource is used to create or remove iSCSI Server Targets.
 - **iSNSServer**: Specifies an iSNS Server to register this Server Target with. Optional.
 
 ## iSCSI Initiator Resources
-### ciSCSIInitiator
+### iSCSIInitiator
 This resource is used to add or remove an iSCSI Target Portals and connect to an iSCSI Targets on them.
 
 #### Parameters
@@ -81,14 +81,14 @@ This resource is used to add or remove an iSCSI Target Portals and connect to an
 This example installs the iSCSI Target Server, creates two iSCSI Virtal Disks and then a new iSCSI Target called Cluster with the two Virtual Disks assigned. The iSCSI target will accept connections from cluster01.contoso.com, cluster02.contoso.com or cluster03.contoso.com.
 
 ```powershell
-configuration Sample_ciSCSIServerTarget
+configuration Sample_iSCSIServerTarget
 {
     Param
     (
         [String] $NodeName = 'LocalHost'
     )
 
-    Import-DscResource -Module ciSCSI
+    Import-DscResource -Module iSCSIDSc
 
     Node $NodeName
     {
@@ -98,7 +98,7 @@ configuration Sample_ciSCSIServerTarget
             Name = "FS-iSCSITarget-Server"
         }
 
-        ciSCSIVirtualDisk iSCSIClusterVDisk01
+        iSCSIVirtualDisk iSCSIClusterVDisk01
         {
             Ensure = 'Present'
             Path = 'D:\iSCSIVirtualDisks\ClusterVdisk01.vhdx'
@@ -106,9 +106,9 @@ configuration Sample_ciSCSIServerTarget
             SizeBytes = 20GB
             Description = 'Cluster Virtual Disk 01'
             DependsOn = "[WindowsFeature]ISCSITargetServerInstall"
-        } # End of ciSCSIVirtualDisk Resource
+        } # End of iSCSIVirtualDisk Resource
 
-        ciSCSIVirtualDisk iSCSIClusterVDisk02
+        iSCSIVirtualDisk iSCSIClusterVDisk02
         {
             Ensure = 'Present'
             Path = 'D:\iSCSIVirtualDisks\ClusterVdisk02.vhdx'
@@ -116,31 +116,31 @@ configuration Sample_ciSCSIServerTarget
             UseFixed = $false
             Description = 'Cluster Virtual Disk 02'
             DependsOn = "[WindowsFeature]ISCSITargetServerInstall"
-        } # End of ciSCSIVirtualDisk Resource
+        } # End of iSCSIVirtualDisk Resource
 
-        ciSCSIServerTarget iSCSIClusterTarget
+        iSCSIServerTarget iSCSIClusterTarget
         {
             Ensure = 'Present'
             TargetName = 'Cluster'
             InitiatorIds = 'iqn.1991-05.com.microsoft:cluster01.contoso.com','iqn.1991-05.com.microsoft:cluster02.contoso.com','iqn.1991-05.com.microsoft:cluster03.contoso.com'
             Paths = 'D:\iSCSIVirtualDisks\ClusterVdisk01.vhdx','D:\iSCSIVirtualDisks\ClusterVdisk02.vhdx'
             iSNSServer = 'isns.contoso.com'
-            DependsOn = "[ciSCSIVirtualDisk]iSCSIClusterVDisk01","[ciSCSIVirtualDisk]iSCSIClusterVDisk01"
-        } # End of ciSCSIServerTarget Resource
+            DependsOn = "[iSCSIVirtualDisk]iSCSIClusterVDisk01","[iSCSIVirtualDisk]iSCSIClusterVDisk01"
+        } # End of iSCSIServerTarget Resource
     } # End of Node
 } # End of Configuration
 ```
 
 This example starts the MSiSCSI service on a cluster node and then configures an iSCSI Target Portal and then connects to the iSCSI Target.
 ```powershell
-configuration Sample_ciSCSIInitiator
+configuration Sample_iSCSIInitiator
 {
     Param
     (
          [String] $NodeName = 'LocalHost'
     )
 
-    Import-DscResource -Module ciSCSI
+    Import-DscResource -Module iSCSIDsc
 
     Node $NodeName
     {
@@ -151,7 +151,7 @@ configuration Sample_ciSCSIInitiator
             State = 'Running'
         }
 
-        ciSCSIInitiator iSCSIInitiator
+        iSCSIInitiator iSCSIInitiator
         {
             Ensure = 'Present'
             NodeAddress = 'iqn.1991-05.com.microsoft:fileserver01-cluster-target'
@@ -160,7 +160,7 @@ configuration Sample_ciSCSIInitiator
             IsPersistent = $true
             iSNSServer = 'isns.contoso.com'
             DependsOn = "[Service]iSCSIService"
-        } # End of ciSCSIInitiator Resource
+        } # End of iSCSIInitiator Resource
     } # End of Node
 } # End of Configuration
 ```
@@ -168,6 +168,7 @@ configuration Sample_ciSCSIInitiator
 ## Versions
 
 ### Unreleased
+* Converted resource module to be compliant with HQRM.
 * Converted AppVeyor.yml to pull Pester from PSGallery instead of Chocolatey.
 * Changed AppVeyor.yml to use default image
 
@@ -184,7 +185,3 @@ configuration Sample_ciSCSIInitiator
 
 ### 1.0.0.0
 * Initial release.
-
-## Links
-* **[GitHub Repo](https://github.com/PlagueHO/ciSCSI)**: Raise any issues, requests or PRs here.
-* **[My Blog](https://dscottraynsford.wordpress.com)**: See my PowerShell and Programming Blog.

@@ -1,5 +1,5 @@
-[ClassVersion("1.0.0.0"), FriendlyName("ciSCSIInitiator")]
-class BMD_ciSCSIInitiator : OMI_BaseResource
+[ClassVersion("1.0.0.0"), FriendlyName("iSCSIInitiator")]
+class MSFT_iSCSIInitiator : OMI_BaseResource
 {
     [Key, Description("Represents the IQN of the discovered target.")] String NodeAddress;
     [Required, Description("Specifies the IP address or DNS name of the target portal.")] String TargetPortalAddress;

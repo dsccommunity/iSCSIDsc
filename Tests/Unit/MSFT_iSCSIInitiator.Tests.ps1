@@ -1,5 +1,5 @@
-$Global:DSCModuleName = 'ciSCSI'
-$Global:DSCResourceName = 'BMD_ciSCSIInitiator'
+$Global:DSCModuleName = 'iSCSIDsc'
+$Global:DSCResourceName = 'MSFT_iSCSIInitiator'
 
 #region HEADER
 # Unit Test Template Version: 1.1.0
@@ -14,7 +14,7 @@ Import-Module (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHel
 $TestEnvironment = Initialize-TestEnvironment `
     -DSCModuleName $Global:DSCModuleName `
     -DSCResourceName $Global:DSCResourceName `
-    -TestType Unit 
+    -TestType Unit
 #endregion HEADER
 
 # Begin Testing
@@ -1307,7 +1307,7 @@ try
                     Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
-            
+
             Context 'Target Portal does exist and should but InitiatorInstanceName is different' {
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
@@ -1477,7 +1477,7 @@ try
                     Assert-MockCalled -commandName Get-WMIObject -Exactly 1
                 }
             }
-            
+
             Context 'Target Portal exists but should not and Target is not connected' {
                 Mock Get-TargetPortal -MockWith { return @($MockTargetPortal) }
                 Mock Get-Target -MockWith { return @($MockTargetNotConnected) }
@@ -1632,7 +1632,7 @@ try
                     Assert-MockCalled -commandName Get-iSCSITargetPortal -Exactly 1
                 }
             }
-            
+
             Context 'Target Portal does exist' {
                 Mock Get-iSCSITargetPortal -MockWith { return @($MockTargetPortal) }
                 It 'should return expected parameters' {
@@ -1666,7 +1666,7 @@ try
                     Assert-MockCalled -commandName Get-iSCSITarget -Exactly 1
                 }
             }
-            
+
             Context 'Target does exist' {
                Mock Get-iSCSITarget -MockWith { return @($MockTarget) }
                It 'should return expected parameters' {
