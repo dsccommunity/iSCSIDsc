@@ -11,7 +11,8 @@ install:
         Pop-Location
         Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
         Install-Module -Name Pester -Repository PSGallery -Force
-        Install-WindowsFeature -Name fs-resource-manager
+        Install-WindowsFeature FS-iSCSITarget-Server,ISNS
+        Start-Service msiscsi
 #---------------------------------#
 #      build configuration        #
 #---------------------------------#
