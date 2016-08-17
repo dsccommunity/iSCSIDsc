@@ -53,12 +53,12 @@ function Get-TargetResource
             -f $TargetName
         ) -join '' )
 
-    $ServerTarget =  Get-ServerTarget -TargetName $TargetName
+    $serverTarget =  Get-ServerTarget -TargetName $TargetName
 
     $returnValue = @{
         TargetName = $TargetName
     }
-    if ($ServerTarget)
+    if ($serverTarget)
     {
         Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
@@ -68,8 +68,8 @@ function Get-TargetResource
 
         $returnValue += @{
             Ensure = 'Present'
-            InitiatorIds = @($ServerTarget.InitiatorIds.Value)
-            Paths = @($ServerTarget.LunMappings.Path)
+            InitiatorIds = @($serverTarget.InitiatorIds.Value)
+            Paths = @($serverTarget.LunMappings.Path)
         }
     }
     else
@@ -147,7 +147,7 @@ function Set-TargetResource
         ) -join '' )
 
     # Lookup the existing iSCSI Server Target
-    $ServerTarget = Get-ServerTarget -TargetName $TargetName
+    $serverTarget = Get-ServerTarget -TargetName $TargetName
 
     # Get the iSNS Server
     $iSNSServerCurrent = Get-WmiObject `
@@ -162,13 +162,13 @@ function Set-TargetResource
                 -f $TargetName
             ) -join '' )
 
-        if ($ServerTarget)
+        if ($serverTarget)
         {
             # The iSCSI Server Target exists
-            [String[]] $ExistingInitiatorIds = @($ServerTarget.InitiatorIds.Value)
+            [String[]] $existingInitiatorIds = @($serverTarget.InitiatorIds.Value)
             if (($InitiatorIds) -and (Compare-Object `
                 -ReferenceObject $InitiatorIds `
-                -DifferenceObject $ExistingInitiatorIds).Count -ne 0)
+                -DifferenceObject $existingInitiatorIds).Count -ne 0)
             {
                 Set-iSCSIServerTarget `
                     -ComputerName LOCALHOST `
@@ -202,7 +202,7 @@ function Set-TargetResource
         # Check that the Paths match in the Server Target
         foreach ($Path in $Paths)
         {
-            if ($Path -notin $ServerTarget.LunMappings.Path)
+            if ($Path -notin $serverTarget.LunMappings.Path)
             {
                 # Path is not in the LunMappings - so add it
                 Add-IscsiVirtualDiskTargetMapping `
@@ -217,7 +217,7 @@ function Set-TargetResource
                     ) -join '' )
             } # if
         } # foreach
-        foreach ($Path in $ServerTarget.LunMappings.Path)
+        foreach ($Path in $serverTarget.LunMappings.Path)
         {
             if ($Path -notin $Paths)
             {
@@ -288,7 +288,7 @@ function Set-TargetResource
                 -f $TargetName
             ) -join '' )
 
-        if ($ServerTarget)
+        if ($serverTarget)
         {
             # The iSCSI Server Target shouldn't exist - remove it
             Remove-iSCSIServerTarget `
@@ -370,7 +370,7 @@ function Test-TargetResource
         ) -join '' )
 
     # Lookup the existing iSCSI Server Target
-    $ServerTarget = Get-ServerTarget -TargetName $TargetName
+    $serverTarget = Get-ServerTarget -TargetName $TargetName
 
     # Get the iSNS Server
     $iSNSServerCurrent = Get-WmiObject `
@@ -380,13 +380,13 @@ function Test-TargetResource
     if ($Ensure -eq 'Present')
     {
         # The iSCSI Server Target should exist
-        if ($ServerTarget)
+        if ($serverTarget)
         {
             # The iSCSI Server Target exists already - check the parameters
-            [String[]] $ExistingInitiatorIds = @($ServerTarget.InitiatorIds.Value)
+            [String[]] $existingInitiatorIds = @($serverTarget.InitiatorIds.Value)
             if (($InitiatorIds) -and (Compare-Object `
                 -ReferenceObject $InitiatorIds `
-                -DifferenceObject $ExistingInitiatorIds).Count -ne 0)
+                -DifferenceObject $existingInitiatorIds).Count -ne 0)
             {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
@@ -396,7 +396,7 @@ function Test-TargetResource
                 $desiredConfigurationMatch = $false
             } # if
 
-            [String[]] $ExistingPaths = @($ServerTarget.LunMappings.Path)
+            [String[]] $ExistingPaths = @($serverTarget.LunMappings.Path)
             if (($Paths) -and (Compare-Object `
                 -ReferenceObject $Paths `
                 -DifferenceObject $ExistingPaths).Count -ne 0)
@@ -436,7 +436,7 @@ function Test-TargetResource
     else
     {
         # The iSCSI Server Target should not exist
-        if ($ServerTarget)
+        if ($serverTarget)
         {
             # The iSCSI Server Target exists but should not
             Write-Verbose -Message ( @(
@@ -489,20 +489,20 @@ Function Get-ServerTarget
     )
     try
     {
-        $ServerTarget = Get-iSCSIServerTarget `
+        $serverTarget = Get-iSCSIServerTarget `
             -ComputerName LOCALHOST `
             -TargetName $TargetName `
             -ErrorAction Stop
     }
     catch [Microsoft.Iscsi.Target.Commands.IscsiCmdException]
     {
-        $ServerTarget = $null
+        $serverTarget = $null
     }
     catch
     {
         Throw $_
     }
-    Return $ServerTarget
+    Return $serverTarget
 }
 
 Export-ModuleMember -Function *-TargetResource

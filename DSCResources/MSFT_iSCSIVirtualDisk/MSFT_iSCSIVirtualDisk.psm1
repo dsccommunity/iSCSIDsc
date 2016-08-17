@@ -40,12 +40,12 @@ function Get-TargetResource
             -f $Path
         ) -join '' )
 
-    $VirtualDisk =  Get-VirtualDisk -Path $Path
+    $virtualDisk =  Get-VirtualDisk -Path $Path
 
     $returnValue = @{
         Path = $Path
     }
-    if ($VirtualDisk)
+    if ($virtualDisk)
     {
         Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
@@ -55,10 +55,10 @@ function Get-TargetResource
 
         $returnValue += @{
             Ensure = 'Present'
-            SizeBytes = $VirtualDisk.Size
-            DiskType = $VirtualDisk.DiskType
-            Description = $VirtualDisk.Description
-            ParentPath = $VirtualDisk.ParentPath
+            SizeBytes = $virtualDisk.Size
+            DiskType = $virtualDisk.DiskType
+            Description = $virtualDisk.Description
+            ParentPath = $virtualDisk.ParentPath
         }
     }
     else
@@ -152,7 +152,7 @@ function Set-TargetResource
     $null = $PSBoundParameters.Remove('DiskType')
 
     # Lookup the existing iSCSI Virtual Disk
-    $VirtualDisk = Get-VirtualDisk -Path $Path
+    $virtualDisk = Get-VirtualDisk -Path $Path
 
     if ($Ensure -eq 'Present')
     {
@@ -162,27 +162,27 @@ function Set-TargetResource
                 -f $Path
             ) -join '' )
 
-        if ($VirtualDisk)
+        if ($virtualDisk)
         {
             # The iSCSI Virtual Disk exists
-            [Boolean] $Recreate = $false
+            [Boolean] $recreate = $false
 
             if (($DiskType) `
-                -and ($VirtualDisk.DiskType -ne $DiskType))
+                -and ($virtualDisk.DiskType -ne $DiskType))
             {
-                $Recreate = $true
+                $recreate = $true
             }
 
             if (($SizeBytes) `
-                -and ($VirtualDisk.Size -ne $SizeBytes))
+                -and ($virtualDisk.Size -ne $SizeBytes))
             {
-                $Recreate = $true
+                $recreate = $true
             }
 
             if (($ParentPath) `
-                -and ($VirtualDisk.ParentPath -ne $ParentPath))
+                -and ($virtualDisk.ParentPath -ne $ParentPath))
             {
-                $Recreate = $true
+                $recreate = $true
             }
 
             # If any parameters differ that require this Virtual Disk to be recreated
@@ -190,7 +190,7 @@ function Set-TargetResource
             # may contain data. If the Virtual Disk *must* be recreated then the user
             # will need to manually delete the Virtual Disk and the config will then
             # create a new one.
-            if ($Recreate)
+            if ($recreate)
             {
                 $errorId = 'iSCSIVirtualDiskRequiresRecreateError'
                 $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
@@ -246,7 +246,7 @@ function Set-TargetResource
                 -f $Path
             ) -join '' )
 
-        if ($VirtualDisk)
+        if ($virtualDisk)
         {
             # The iSCSI Virtual Disk shouldn't exist - remove it
             Remove-iSCSIVirtualDisk `
@@ -338,18 +338,18 @@ function Test-TargetResource
         ) -join '' )
 
     # Lookup the existing iSCSI Virtual Disk
-    $VirtualDisk = Get-VirtualDisk -Path $Path
+    $virtualDisk = Get-VirtualDisk -Path $Path
 
     if ($Ensure -eq 'Present')
     {
         # The iSCSI Virtual Disk should exist
-        if ($VirtualDisk)
+        if ($virtualDisk)
         {
             # The iSCSI Virtual Disk exists already - check the parameters
-            [Boolean] $Recreate = $false
+            [Boolean] $recreate = $false
 
             if (($Description) `
-                -and ($VirtualDisk.Description -ne $Description))
+                -and ($virtualDisk.Description -ne $Description))
             {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
@@ -360,36 +360,36 @@ function Test-TargetResource
             }
 
             if (($DiskType) `
-                -and ($VirtualDisk.DiskType -ne $DiskType))
+                -and ($virtualDisk.DiskType -ne $DiskType))
             {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
                     $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
                         -f $Path,'SizeBytes'
                     ) -join '' )
-                $Recreate = $true
+                $recreate = $true
             }
 
             if (($SizeBytes) `
-                -and ($VirtualDisk.Size -ne $SizeBytes))
+                -and ($virtualDisk.Size -ne $SizeBytes))
             {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
                     $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
                         -f $Path,'SizeBytes'
                     ) -join '' )
-                $Recreate = $true
+                $recreate = $true
             }
 
             if (($ParentPath) `
-                -and ($VirtualDisk.ParentPath -ne $ParentPath))
+                -and ($virtualDisk.ParentPath -ne $ParentPath))
             {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
                     $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
                         -f $Path,'ParentPath'
                     ) -join '' )
-                $Recreate = $true
+                $recreate = $true
             }
 
             # If any parameters differ that require this Virtual Disk to be recreated
@@ -397,7 +397,7 @@ function Test-TargetResource
             # may contain data. If the Virtual Disk *must* be recreated then the user
             # will need to manually delete the Virtual Disk and the config will then
             # create a new one.
-            if ($Recreate)
+            if ($recreate)
             {
                 $errorId = 'iSCSIVirtualDiskRequiresRecreateError'
                 $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
@@ -424,7 +424,7 @@ function Test-TargetResource
     else
     {
         # The iSCSI Virtual Disk should not exist
-        if ($VirtualDisk)
+        if ($virtualDisk)
         {
             # The iSCSI Virtual Disk exists but should not
             Write-Verbose -Message ( @(
@@ -467,20 +467,20 @@ Function Get-VirtualDisk
     {
         # Specify Localhost as computer because
         # it speeds cmdlet up significantly
-        $VirtualDisk = Get-iSCSIVirtualDisk `
+        $virtualDisk = Get-iSCSIVirtualDisk `
             -ComputerName LOCALHOST `
             -Path $Path `
             -ErrorAction Stop
     }
     catch [Microsoft.Iscsi.Target.Commands.IscsiCmdException]
     {
-        $VirtualDisk = $null
+        $virtualDisk = $null
     }
     catch
     {
         Throw $_
     }
-    Return $VirtualDisk
+    Return $virtualDisk
 }
 
 Export-ModuleMember -Function *-TargetResource
