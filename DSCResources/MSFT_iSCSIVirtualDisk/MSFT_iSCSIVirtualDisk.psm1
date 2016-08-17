@@ -1,24 +1,20 @@
-data LocalizedData
+#region localizeddata
+if (Test-Path "${PSScriptRoot}\${PSUICulture}")
 {
-    # culture="en-US"
-    ConvertFrom-StringData -StringData @'
-GettingiSCSIVirtualDiskMessage=Getting iSCSI Virtual Disk "{0}".
-iSCSIVirtualDiskExistsMessage=iSCSI Virtual Disk "{0}" exists.
-iSCSIVirtualDiskDoesNotExistMessage=iSCSI Virtual Disk "{0}" does not exist.
-SettingiSCSIVirtualDiskMessage=Setting iSCSI Virtual Disk "{0}".
-EnsureiSCSIVirtualDiskExistsMessage=Ensuring iSCSI Virtual Disk "{0}" exists.
-EnsureiSCSIVirtualDiskDoesNotExistMessage=Ensuring iSCSI Virtual Disk "{0}" does not exist.
-iSCSIVirtualDiskCreatedMessage=iSCSI Virtual Disk "{0}" has been created.
-iSCSIVirtualDiskUpdatedMessage=iSCSI Virtual Disk "{0}" has been updated.
-iSCSIVirtualDiskRemovedMessage=iSCSI Virtual Disk "{0}" has been removed.
-TestingiSCSIVirtualDiskMessage=Testing iSCSI Virtual Disk "{0}".
-iSCSIVirtualDiskParameterNeedsUpdateMessage=iSCSI Virtual Disk "{0}" {1} is different. Change required.
-iSCSIVirtualDiskDoesNotExistButShouldMessage=iSCSI Virtual Disk "{0}" does not exist but should. Change required.
-iSCSIVirtualDiskExistsButShouldNotMessage=iSCSI Virtual Disk "{0}" exists but should not. Change required.
-iSCSIVirtualDiskDoesNotExistAndShouldNotMessage=iSCSI Virtual Disk "{0}" does not exist and should not. Change not required.
-iSCSIVirtualDiskRequiresRecreateError=iSCSI Virtual Disk "{0}" needs to be deleted and recreated. Please perform this manually.
-'@
+    Import-LocalizedData `
+        -BindingVariable LocalizedData `
+        -Filename MSFT_iSCSIVirtualDisk.psd1 `
+        -BaseDirectory "${PSScriptRoot}\${PSUICulture}"
 }
+else
+{
+    #fallback to en-US
+    Import-LocalizedData `
+        -BindingVariable LocalizedData `
+        -Filename MSFT_iSCSIVirtualDisk.psd1 `
+        -BaseDirectory "${PSScriptRoot}\en-US"
+}
+#endregion
 
 function Get-TargetResource
 {
@@ -30,7 +26,7 @@ function Get-TargetResource
         [System.String]
         $Path
     )
-    
+
     Write-Verbose -Message ( @(
         "$($MyInvocation.MyCommand): "
         $($LocalizedData.GettingiSCSIVirtualDiskMessage) `
@@ -93,21 +89,21 @@ function Set-TargetResource
 
         [System.Uint64]
         $SizeBytes,
-        
+
         [System.Uint32]
         $BlockSizeBytes,
-       
+
         [ValidateSet(512,4096)]
         [System.Uint32]
         $LogicalSectorSizeBytes,
-        
+
         [ValidateSet(512,4096)]
         [System.UInt32]
         $PhysicalSectorSizeBytes,
-        
+
         [System.String]
         $Description,
-        
+
         [System.String]
         $ParentPath
     )
@@ -137,7 +133,7 @@ function Set-TargetResource
         {
             # The iSCSI Virtual Disk exists
             [Boolean] $Recreate = $false
-            
+
             if (($DiskType) `
                 -and ($VirtualDisk.DiskType -ne $DiskType))
             {
@@ -254,25 +250,25 @@ function Test-TargetResource
 
         [System.Uint64]
         $SizeBytes,
-        
+
         [System.Uint32]
         $BlockSizeBytes,
 
         [ValidateSet(512,4096)]
         [System.Uint32]
         $LogicalSectorSizeBytes,
-        
+
         [ValidateSet(512,4096)]
         [System.UInt32]
         $PhysicalSectorSizeBytes,
-        
+
         [System.String]
         $Description,
-        
+
         [System.String]
         $ParentPath
     )
-   
+
     # Flag to signal whether settings are correct
     [Boolean] $desiredConfigurationMatch = $true
 
@@ -303,7 +299,7 @@ function Test-TargetResource
                     ) -join '' )
                 $desiredConfigurationMatch = $false
             }
-            
+
             if (($DiskType) `
                 -and ($VirtualDisk.DiskType -ne $DiskType))
             {

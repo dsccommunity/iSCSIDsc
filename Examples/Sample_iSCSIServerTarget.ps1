@@ -1,3 +1,6 @@
+# This example installs the iSCSI Target Server, creates two iSCSI Virtal Disks and then a new
+# iSCSI Target called Cluster with the two Virtual Disks assigned. The iSCSI target will accept
+# connections from cluster01.contoso.com, cluster02.contoso.com or cluster03.contoso.com.
 configuration Sample_ciSCSIServerTarget
 {
     Param
@@ -10,7 +13,7 @@ configuration Sample_ciSCSIServerTarget
     Node $NodeName
     {
         WindowsFeature iSCSITargetServerInstall
-        { 
+        {
             Ensure = "Present"
             Name = "FS-iSCSITarget-Server"
         }
@@ -46,3 +49,6 @@ configuration Sample_ciSCSIServerTarget
         } # End of ciSCSIServerTarget Resource
     } # End of Node
 } # End of Configuration
+
+Sample_iSCSIServerTarget
+Start-DscConfiguration -Path Sample_iSCSIServerTarget -Wait -Verbose -Force

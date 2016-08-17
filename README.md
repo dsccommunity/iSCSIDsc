@@ -4,14 +4,17 @@
 
 The **iSCSIDsc** module contains DSC resources for configuring Windows iSCSI Targets and Initiators.
 
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
 ## Requirements
-- The iSCSI Target resources can only be used on Windows Server 2012 and above. They can not be used Windows Desktop operating systems.
+- The iSCSI Target resources can only be used on Windows Server 2012 and above. They can not be used on Windows Desktop operating systems.
 - The iSCSI Target resources can only be used on Windows Servers that have the iSCSI Target Server (FS-iSCSITarget-Server) feature installed.
 - Before the iSCSI Initiator resource is used in a config, the **msiscsi** service must be started. It is recommended that this service is set to startup automatically in any iSCSI Initiator configurations.
 
 ## Installation
 ```powershell
-Install-Module -Name iSCSIDsc -MinimumVersion 1.2.1.0
+Install-Module -Name iSCSIDsc
 ```
 
 ## Important Information
@@ -36,11 +39,11 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 This resource is used to create or remove Virtual Disks for use by iSCSI Targets.
 
 #### Parameters
-- **Ensure**: Ensures that Virtual Disk is either Absent or Present. Required.
+- **Ensure**: Ensures that Virtual Disk is either Absent or Present. Defaults to Present. Optional.
 - **Path**: Specifies the path of the VHDX file that is associated with the iSCSI virtual disk. Required.
-- **SizeBytes**: Specifies the size, in bytes, of the iSCSI virtual disk. Required.
-- **BlockSizeBytes**: Specifies the block size, in bytes, for the VHDX. For fixed VHDX, if the value of the SizeBytes parameter is less than 32 MB, the default size if 2 MB. Otherwise, the default value is 32 MB. For dynamic VHDX, the default size is 2 MB. For differencing VHDX, the default size is the parent BlockSize. Optional.
-- **DiskType**: Specifies the type of the VHDX. { Dynamic | Fixed | Differencing }. Defaults to Dynamics. Optional.
+- **SizeBytes**: Specifies the size, in bytes, of the iSCSI virtual disk. Optional.
+- **BlockSizeBytes**: Specifies the block size, in bytes, for the VHDX. For fixed VHDX, if the value of the SizeBytes parameter is less than 32 MB, the default size is 2 MB. Otherwise, the default value is 32 MB. For dynamic VHDX, the default size is 2 MB. For differencing VHDX, the default size is the parent BlockSize. Optional.
+- **DiskType**: Specifies the type of the VHDX. { Dynamic | Fixed | Differencing }. Defaults to Dynamic. Optional.
 - **LogicalSectorSizeBytes**: Specifies the logical sector size, in bytes, for the VHDX. { 512 | 4096 }. Defaults to 512. Optional.
 - **PhysicalSectorSizeBytes**: Specifies the physical sector size, in bytes, for the VHDX. { 512 | 4096 }. Defaults to 512. Optional.
 - **Description**: Specifies the description for the iSCSI virtual disk. Optional.
@@ -50,7 +53,7 @@ This resource is used to create or remove Virtual Disks for use by iSCSI Targets
 This resource is used to create or remove iSCSI Server Targets.
 
 #### Parameters
-- **Ensure**: Ensures that Server Target is either Absent or Present. Required.
+- **Ensure**: Ensures that Server Target is either Absent or Present. Defaults to Present. Optional.
 - **TargetName**: Specifies the name of the iSCSI target. Required.
 - **InitiatorIds**: Specifies the iSCSI initiator identifiers (IDs) to which the iSCSI target is assigned. Required.
 - **Paths**: Specifies the path of the virtual hard disk (VHD) files that are associated with the Server Target. Required.
@@ -58,7 +61,7 @@ This resource is used to create or remove iSCSI Server Targets.
 
 ## iSCSI Initiator Resources
 ### iSCSIInitiator
-This resource is used to add or remove an iSCSI Target Portals and connect to an iSCSI Targets on them.
+This resource is used to add or remove an iSCSI Target Portal and connect it to an iSCSI Target.
 
 #### Parameters
 - **NodeAddress**: Represents the IQN of the discovered target. Required.
@@ -129,6 +132,9 @@ configuration Sample_iSCSIServerTarget
         } # End of iSCSIServerTarget Resource
     } # End of Node
 } # End of Configuration
+
+Sample_iSCSIServerTarget
+Start-DscConfiguration -Path Sample_iSCSIServerTarget -Wait -Verbose -Force
 ```
 
 This example starts the MSiSCSI service on a cluster node and then configures an iSCSI Target Portal and then connects to the iSCSI Target.
@@ -163,6 +169,9 @@ configuration Sample_iSCSIInitiator
         } # End of iSCSIInitiator Resource
     } # End of Node
 } # End of Configuration
+
+Sample_iSCSIInitiator
+Start-DscConfiguration -Path Sample_iSCSIInitiator -Wait -Verbose -Force
 ```
 
 ## Versions

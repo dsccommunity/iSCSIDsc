@@ -1,45 +1,20 @@
-data LocalizedData
+#region localizeddata
+if (Test-Path "${PSScriptRoot}\${PSUICulture}")
 {
-    # culture="en-US"
-    ConvertFrom-StringData -StringData @'
-GettingiSCSIInitiatorMessage=Getting iSCSI Initiator '{0}', '{1}' from '{2}'.
-iSCSITargetPortalExistsMessage=iSCSI Target Portal '{0}' from '{1}' exists.
-iSCSITargetPortalDoesNotExistMessage=iSCSI Target Portal '{0}' from '{1}' does not exist.
-iSCSITargetExistsMessage=iSCSI Target '{0}' exists.
-iSCSITargetDoesNotExistMessage=iSCSI Target '{0}' does not exist.
-iSCSIConnectionExistsMessage=iSCSI Connection '{0}' exists.
-iSCSIConnectionDoesNotExistMessage=iSCSI Connection '{0}' does not exist.
-iSCSISessionExistsMessage=iSCSI Session '{0}' exists.
-iSCSISessionDoesNotExistMessage=iSCSI Session '{0}' does not exist.
-SettingiSCSIInitiatorMessage=Setting iSCSI Initiator '{0}', '{1}' from '{2}'.
-EnsureiSCSITargetPortalExistsMessage=Ensuring iSCSI Target Portal '{0}' from '{1}' exists.
-EnsureiSCSITargetPortalDoesNotExistMessage=Ensuring iSCSI Target Portal '{0}' from '{1}' does not exist.
-iSCSITargetPortalCreatedMessage=iSCSI Target Portal '{0}' from '{1}' has been created.
-iSCSITargetPortalRemovedForRecreateMessage=iSCSI Target Portal '{0}' from '{1}' has been removed so it can be recreated.
-iSCSITargetDisconnectedMessage=iSCSI Target '{0}' has been disconnected.
-iSCSITargetConnectedMessage=iSCSI Target '{0}' has been connected.
-iSCSISessionSetPersistentMessage=iSCSI Session '{0}' is set as persistent.
-iSCSISessionRemovedPersistentMessage=iSCSI Session '{0}' is no longer persistent.
-iSCSITargetPortalRemovedMessage=iSCSI Target Portal '{0}' from '{1}' has been removed.
-EnsureiSCSITargetIsConnectedMessage=Ensuring iSCSI Target '{0}' is connected.
-EnsureiSCSITargetIsDisconnectedMessage=Ensuring iSCSI Target '{0}' is disconnected.
-iSNSServerRemovedMessage=iSNS Server has been cleared.
-iSNSServerUpdatedMessage=iSNS Server has been set to '{0}'.
-iSNSServerUpdateErrorMessage=An error occurred setting the iSNS Server to '{0}'. This is usually caused by the iSNS Server not being accessible.
-TestingiSCSIInitiatorMessage=Testing iSCSI Initiator '{0}', '{1}' from '{2}'.
-iSCSIInitiatorParameterNeedsUpdateMessage=iSCSI {3} '{0}', '{1}' from '{2}' {4} is different. Change required.
-iSCSITargetPortalDoesNotExistButShouldMessage=iSCSI Target Portal '{0}' from '{1}' does not exist but should. Change required.
-iSCSITargetPortalExistsButShouldNotMessage=iSCSI Target Portal '{0}' from '{1}' exists but should not. Change required.
-iSCSITargetExistsButShouldNotMessage=iSCSI Target '{0}' exists but should not. Change required.
-iSCSITargetPortalDoesNotExistAndShouldNotMessage=iSCSI Target Portal '{0}' from '{1}' does not exist and should not. Change not required.
-iSCSITargetDoesNotExistButShouldMessage=iSCSI Target '{0}' does not exist but should. Change required.
-iSCSITargetNotConnectedMessage=iSCSI Target '{0}' exists but is not connected. Change required.
-iSCSIConnectionDoesNotExistButShouldMessage=iSCSI Connection '{0}' does not exist but should. Change required.
-iSCSISessionDoesNotExistButShouldMessage=iSCSI Session '{0}' does not exist but should. Change required.
-iSNSServerNeedsUpdateMessage=iSNS Server is '{0}' but should be '{1}'. Change required.
-iSNSServerIsSetButShouldBeNotMessage=iSNS Server is set but should not be. Change required.
-'@
+    Import-LocalizedData `
+        -BindingVariable LocalizedData `
+        -Filename MSFT_iSCSIInitiator.psd1 `
+        -BaseDirectory "${PSScriptRoot}\${PSUICulture}"
 }
+else
+{
+    #fallback to en-US
+    Import-LocalizedData `
+        -BindingVariable LocalizedData `
+        -Filename MSFT_iSCSIInitiator.psd1 `
+        -BaseDirectory "${PSScriptRoot}\en-US"
+}
+#endregion
 
 function Get-TargetResource
 {
@@ -80,7 +55,7 @@ function Get-TargetResource
     $TargetPortal =  Get-TargetPortal `
         -TargetPortalAddress $TargetPortalAddress `
         -InitiatorPortalAddress $InitiatorPortalAddress
-    
+
     if ($TargetPortal)
     {
         $returnValue.TargetPortalAddress        = $TargetPortal.TargetPortalAddress
@@ -89,7 +64,7 @@ function Get-TargetResource
         $returnValue.InitiatorInstanceName      = $TargetPortal.InitiatorInstanceName
         $returnValue.IsDataDigest               = $TargetPortal.IsDataDigest
         $returnValue.IsHeaderDigest             = $TargetPortal.IsHeaderDigest
-        
+
         Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
             $($LocalizedData.iSCSITargetPortalExistsMessage) `
@@ -113,7 +88,7 @@ function Get-TargetResource
     {
         $returnValue.NodeAddress                = $Target.NodeAddress
         $returnValue.IsConnected                = $Target.IsConnected
-        
+
         Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
             $($LocalizedData.iSCSITargetExistsMessage) `
@@ -202,7 +177,7 @@ function Get-TargetResource
             iSNSServer = $iSNSServerCurrent.iSNSServerAddress
         }
     }
-    
+
     $returnValue
 } # Get-TargetResource
 
@@ -449,13 +424,13 @@ function Set-TargetResource
                         -NodeAddress $NodeAddress `
                         -Confirm:$False `
                         -ErrorAction Stop
-                        
+
                     Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
                         $($LocalizedData.iSCSITargetDisconnectedMessage) `
                             -f $NodeAddress
                         ) -join '' )
-                        
+
                 } # if
             }
             else
@@ -475,7 +450,7 @@ function Set-TargetResource
             [PSObject] $Splat = [PSObject]@{} + $PSBoundParameters
             $Splat.Remove('IsMultipathEnabled')
             $Splat.Remove('iSNSServer')
-            
+
             $Session = Connect-IscsiTarget `
                 @Splat `
                 -ErrorAction Stop
@@ -964,7 +939,7 @@ function Test-TargetResource
         # Lookup the Target
         $Target = Get-Target `
             -NodeAddress $NodeAddress
-            
+
         if ($Target.IsConnected)
         {
             # The iSCSI Target exists and is connected
@@ -1020,7 +995,7 @@ Function Get-TargetPortal
         [parameter(Mandatory = $true)]
         [System.String]
         $TargetPortalAddress,
-        
+
         [System.String]
         $InitiatorPortalAddress
     )

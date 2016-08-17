@@ -1,3 +1,5 @@
+# This example starts the MSiSCSI service on a cluster node and then configures an iSCSI Target
+# Portal and then connects to the iSCSI Target.
 configuration Sample_iSCSIInitiator
 {
     Param
@@ -28,3 +30,6 @@ configuration Sample_iSCSIInitiator
         } # End of iSCSIInitiator Resource
     } # End of Node
 } # End of Configuration
+
+Sample_iSCSIInitiator
+Start-DscConfiguration -Path Sample_iSCSIInitiator -Wait -Verbose -Force
