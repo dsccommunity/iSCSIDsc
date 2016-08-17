@@ -29,6 +29,7 @@ function Get-TargetResource
     param
     (
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $Path
     )
@@ -107,6 +108,7 @@ function Set-TargetResource
     param
     (
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $Path,
 
@@ -293,6 +295,7 @@ function Test-TargetResource
     param
     (
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $Path,
 
@@ -456,6 +459,7 @@ Function Get-VirtualDisk
     param
     (
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $Path
     )

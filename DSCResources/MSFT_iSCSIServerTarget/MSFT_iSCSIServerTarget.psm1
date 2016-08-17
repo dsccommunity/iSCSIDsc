@@ -34,6 +34,7 @@ function Get-TargetResource
     param
     (
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $TargetName,
 
@@ -119,6 +120,7 @@ function Set-TargetResource
     param
     (
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $TargetName,
 
@@ -338,6 +340,7 @@ function Test-TargetResource
     param
     (
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $TargetName,
 
@@ -480,6 +483,7 @@ Function Get-ServerTarget
     param
     (
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $TargetName
     )

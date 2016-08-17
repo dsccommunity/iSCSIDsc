@@ -35,10 +35,12 @@ function Get-TargetResource
     param
     (
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $NodeAddress,
 
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $TargetPortalAddress,
 
@@ -238,10 +240,12 @@ function Set-TargetResource
     param
     (
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $NodeAddress,
 
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $TargetPortalAddress,
 
@@ -700,10 +704,12 @@ function Test-TargetResource
     param
     (
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $NodeAddress,
 
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $TargetPortalAddress,
 
@@ -1090,6 +1096,7 @@ Function Get-TargetPortal
     param
     (
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $TargetPortalAddress,
 
@@ -1123,6 +1130,7 @@ Function Get-Target
     param
     (
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $NodeAddress
     )
@@ -1153,6 +1161,7 @@ Function Get-Session
     param
     (
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         $Target
     )
     try
@@ -1183,6 +1192,7 @@ Function Get-Connection
     param
     (
         [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         $Target
     )
     try
