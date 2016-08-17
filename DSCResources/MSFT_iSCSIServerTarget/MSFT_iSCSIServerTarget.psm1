@@ -16,6 +16,17 @@ else
 }
 #endregion
 
+<#
+    .SYNOPSIS
+    Returns the current state of the specified iSCSI Server Target.
+    .PARAMETER TargetName
+    Specifies the name of the iSCSI target.
+    .PARAMETER InitiatorIds
+    Specifies the iSCSI initiator identifiers (IDs) to which the iSCSI target is assigned.
+    .PARAMETER Paths
+    Specifies the path of the virtual hard disk (VHD) files that are associated with the Server
+    Target.
+#>
 function Get-TargetResource
 {
     [CmdletBinding()]
@@ -87,6 +98,21 @@ function Get-TargetResource
     $returnValue
 } # Get-TargetResource
 
+<#
+    .SYNOPSIS
+    Creates, updates or removes an iSCSI Server Target.
+    .PARAMETER TargetName
+    Specifies the name of the iSCSI target.
+    .PARAMETER Ensure
+    Ensures that Server Target is either Absent or Present.
+    .PARAMETER InitiatorIds
+    Specifies the iSCSI initiator identifiers (IDs) to which the iSCSI target is assigned.
+    .PARAMETER Paths
+    Specifies the path of the virtual hard disk (VHD) files that are associated with the Server
+    Target.
+    .PARAMETER iSNSServer
+    Specifies an iSNS Server to register this Server Target with.
+#>
 function Set-TargetResource
 {
     [CmdletBinding()]
@@ -290,6 +316,21 @@ function Set-TargetResource
     } # if
 } # Set-TargetResource
 
+<#
+    .SYNOPSIS
+    Tests if an iSCSI Server Target needs to be created, updated or removed.
+    .PARAMETER TargetName
+    Specifies the name of the iSCSI target.
+    .PARAMETER Ensure
+    Ensures that Server Target is either Absent or Present.
+    .PARAMETER InitiatorIds
+    Specifies the iSCSI initiator identifiers (IDs) to which the iSCSI target is assigned.
+    .PARAMETER Paths
+    Specifies the path of the virtual hard disk (VHD) files that are associated with the Server
+    Target.
+    .PARAMETER iSNSServer
+    Specifies an iSNS Server to register this Server Target with.
+#>
 function Test-TargetResource
 {
     [CmdletBinding()]
@@ -428,7 +469,12 @@ function Test-TargetResource
 } # Test-TargetResource
 
 # Helper Functions
-
+<#
+    .SYNOPSIS
+    Looks up the specified iSCSI Server Target.
+    .PARAMETER TargetName
+    The Target Name of the iSCSI Server Target to look up.
+#>
 Function Get-ServerTarget
 {
     param

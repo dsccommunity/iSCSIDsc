@@ -16,6 +16,12 @@ else
 }
 #endregion
 
+<#
+    .SYNOPSIS
+    Returns the current state of the specified iSCSI Virtual Disk.
+    .PARAMETER Path
+    Specifies the path of the VHDX file that is associated with the iSCSI virtual disk.
+#>
 function Get-TargetResource
 {
     [CmdletBinding()]
@@ -70,6 +76,31 @@ function Get-TargetResource
     $returnValue
 } # Get-TargetResource
 
+<#
+    .SYNOPSIS
+    Creates, updates or removes an iSCSI Virtual Disk.
+    .PARAMETER Ensure
+    Ensures that Virtual Disk is either Absent or Present.
+    .PARAMETER Path
+    Specifies the path of the VHDX file that is associated with the iSCSI virtual disk.
+    .PARAMETER SizeBytes
+    Specifies the size, in bytes, of the iSCSI virtual disk.
+    .PARAMETER BlockSizeBytes
+    Specifies the block size, in bytes, for the VHDX. For fixed VHDX, if the value of the SizeBytes
+    parameter is less than 32 MB, the default size is 2 MB. Otherwise, the default value is 32 MB.
+    For dynamic VHDX, the default size is 2 MB. For differencing VHDX, the default size is the
+    parent BlockSize.
+    .PARAMETER DiskType
+    Specifies the type of the VHDX.
+    .PARAMETER LogicalSectorSizeBytes
+    Specifies the logical sector size, in bytes, for the VHDX.
+    .PARAMETER PhysicalSectorSizeBytes
+    Specifies the physical sector size, in bytes, for the VHDX.
+    .PARAMETER Description
+    Specifies the description for the iSCSI virtual disk.
+    .PARAMETER ParentPath
+    Specifies the parent virtual disk path if the VHDX is a differencing disk.
+#>
 function Set-TargetResource
 {
     [CmdletBinding()]
@@ -230,6 +261,31 @@ function Set-TargetResource
     } # if
 } # Set-TargetResource
 
+<#
+    .SYNOPSIS
+    Tests if an iSCSI Virtual Disk needs to be created, updated or removed.
+    .PARAMETER Ensure
+    Ensures that Virtual Disk is either Absent or Present.
+    .PARAMETER Path
+    Specifies the path of the VHDX file that is associated with the iSCSI virtual disk.
+    .PARAMETER SizeBytes
+    Specifies the size, in bytes, of the iSCSI virtual disk.
+    .PARAMETER BlockSizeBytes
+    Specifies the block size, in bytes, for the VHDX. For fixed VHDX, if the value of the SizeBytes
+    parameter is less than 32 MB, the default size is 2 MB. Otherwise, the default value is 32 MB.
+    For dynamic VHDX, the default size is 2 MB. For differencing VHDX, the default size is the
+    parent BlockSize.
+    .PARAMETER DiskType
+    Specifies the type of the VHDX.
+    .PARAMETER LogicalSectorSizeBytes
+    Specifies the logical sector size, in bytes, for the VHDX.
+    .PARAMETER PhysicalSectorSizeBytes
+    Specifies the physical sector size, in bytes, for the VHDX.
+    .PARAMETER Description
+    Specifies the description for the iSCSI virtual disk.
+    .PARAMETER ParentPath
+    Specifies the parent virtual disk path if the VHDX is a differencing disk.
+#>
 function Test-TargetResource
 {
     [CmdletBinding()]
@@ -389,7 +445,12 @@ function Test-TargetResource
 } # Test-TargetResource
 
 # Helper Functions
-
+<#
+    .SYNOPSIS
+    Looks up the specified iSCSI Virtual Disk.
+    .PARAMETER Path
+    Specifies the path of the VHDX file that is associated with the iSCSI virtual disk.
+#>
 Function Get-VirtualDisk
 {
     param

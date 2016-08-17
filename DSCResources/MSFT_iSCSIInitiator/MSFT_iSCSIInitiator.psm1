@@ -16,6 +16,18 @@ else
 }
 #endregion
 
+<#
+    .SYNOPSIS
+    Returns the current state of the specified iSCSI Initiator.
+    .PARAMETER NodeAddress
+    Represents the IQN of the discovered target.
+    .PARAMETER TargetPortalAddress
+    Represents the IP address or DNS name of the target portal.
+    .PARAMETER Ensure
+    Ensures that Target is Absent or Present.
+    .PARAMETER InitiatorPortalAddress
+    Specifies the IP address associated with the portal.
+#>
 function Get-TargetResource
 {
     [CmdletBinding()]
@@ -181,6 +193,45 @@ function Get-TargetResource
     $returnValue
 } # Get-TargetResource
 
+<#
+    .SYNOPSIS
+    Creates, updates or removes an iSCSI Initiator.
+    .PARAMETER NodeAddress
+    Represents the IQN of the discovered target.
+    .PARAMETER TargetPortalAddress
+    Represents the IP address or DNS name of the target portal.
+    .PARAMETER Ensure
+    Ensures that Target is Absent or Present.
+    .PARAMETER InitiatorPortalAddress
+    Specifies the IP address associated with the portal.
+    .PARAMETER TargetPortalPortNumber
+    Specifies the TCP/IP port number for the target portal.
+    .PARAMETER InitiatorInstanceName
+    The name of the initiator instance that the iSCSI initiator service uses to send SendTargets
+    requests to the target portal. If no instance name is specified, the iSCSI initiator service
+    chooses the initiator instance.
+    .PARAMETER AuthenticationType
+    Specifies the type of authentication to use when logging into the target.
+    .PARAMETER ChapUsername
+    Specifies the user name to use when establishing a connection authenticated by using Mutual
+    CHAP.
+    .PARAMETER ChapSecret
+    Specifies the CHAP secret to use when establishing a connection authenticated by using CHAP.
+    .PARAMETER IsDataDigest
+    Enables data digest when the initiator logs into the target portal.
+    .PARAMETER IsHeaderDigest
+    Enables header digest when the initiator logs into the target portal. By not specifying this
+    parameter, the digest setting is determined by the initiator kernel mode driver.
+    .PARAMETER IsMultipathEnabled
+    Indicates that the initiator has enabled Multipath I/O (MPIO) and it will be used when logging
+    into the target portal.
+    .PARAMETER IsPersistent
+    Specifies that the session is to be automatically connected after each restart.
+    .PARAMETER ReportToPnP
+    Specifies that the operation is reported to PNP.
+    .PARAMETER iSNSServer
+    Specifies an iSNS Server to register this Initiator with.
+#>
 function Set-TargetResource
 {
     [CmdletBinding()]
@@ -603,6 +654,45 @@ function Set-TargetResource
     } # if
 } # Set-TargetResource
 
+<#
+    .SYNOPSIS
+    Tests if an iSCSI Initiator needs to be created, updated or removed.
+    .PARAMETER NodeAddress
+    Represents the IQN of the discovered target.
+    .PARAMETER TargetPortalAddress
+    Represents the IP address or DNS name of the target portal.
+    .PARAMETER Ensure
+    Ensures that Target is Absent or Present.
+    .PARAMETER InitiatorPortalAddress
+    Specifies the IP address associated with the portal.
+    .PARAMETER TargetPortalPortNumber
+    Specifies the TCP/IP port number for the target portal.
+    .PARAMETER InitiatorInstanceName
+    The name of the initiator instance that the iSCSI initiator service uses to send SendTargets
+    requests to the target portal. If no instance name is specified, the iSCSI initiator service
+    chooses the initiator instance.
+    .PARAMETER AuthenticationType
+    Specifies the type of authentication to use when logging into the target.
+    .PARAMETER ChapUsername
+    Specifies the user name to use when establishing a connection authenticated by using Mutual
+    CHAP.
+    .PARAMETER ChapSecret
+    Specifies the CHAP secret to use when establishing a connection authenticated by using CHAP.
+    .PARAMETER IsDataDigest
+    Enables data digest when the initiator logs into the target portal.
+    .PARAMETER IsHeaderDigest
+    Enables header digest when the initiator logs into the target portal. By not specifying this
+    parameter, the digest setting is determined by the initiator kernel mode driver.
+    .PARAMETER IsMultipathEnabled
+    Indicates that the initiator has enabled Multipath I/O (MPIO) and it will be used when logging
+    into the target portal.
+    .PARAMETER IsPersistent
+    Specifies that the session is to be automatically connected after each restart.
+    .PARAMETER ReportToPnP
+    Specifies that the operation is reported to PNP.
+    .PARAMETER iSNSServer
+    Specifies an iSNS Server to register this Initiator with.
+#>
 function Test-TargetResource
 {
     [CmdletBinding()]
@@ -987,7 +1077,14 @@ function Test-TargetResource
 } # Test-TargetResource
 
 # Helper Functions
-
+<#
+    .SYNOPSIS
+    Looks up the specified iSCSI Target Portal.
+    .PARAMETER TargetPortalAddress
+    Represents the IP address or DNS name of the target portal.
+    .PARAMETER InitiatorPortalAddress
+    Specifies the IP address associated with the portal.
+#>
 Function Get-TargetPortal
 {
     param
@@ -1015,6 +1112,12 @@ Function Get-TargetPortal
     Return $TargetPortal
 } # Get-TargetPortal
 
+<#
+    .SYNOPSIS
+    Looks up the specified iSCSI Target.
+    .PARAMETER NodeAddress
+    Represents the IQN of the discovered target.
+#>
 Function Get-Target
 {
     param
@@ -1039,6 +1142,12 @@ Function Get-Target
     Return $Target
 } # Get-Target
 
+<#
+    .SYNOPSIS
+    Looks up the specified iSCSI Session.
+    .PARAMETER Target
+    The iSCSI Target to look up the session for.
+#>
 Function Get-Session
 {
     param
@@ -1063,6 +1172,12 @@ Function Get-Session
     Return $Session
 } # Get-Session
 
+<#
+    .SYNOPSIS
+    Looks up the specified iSCSI Connection.
+    .PARAMETER Target
+    The iSCSI Target to look up the session for.
+#>
 Function Get-Connection
 {
     param
