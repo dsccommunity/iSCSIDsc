@@ -94,7 +94,7 @@ function Get-TargetResource
         $returnValue += @{
             iSNSServer = $iSNSServerCurrent.ServerName
         }
-    }
+    } # if
 
     $returnValue
 } # Get-TargetResource
