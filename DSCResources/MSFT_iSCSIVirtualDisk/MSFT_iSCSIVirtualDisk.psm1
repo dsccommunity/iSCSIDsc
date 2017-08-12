@@ -1,26 +1,21 @@
-#region localizeddata
-if (Test-Path "${PSScriptRoot}\${PSUICulture}")
-{
-    Import-LocalizedData `
-        -BindingVariable LocalizedData `
-        -Filename MSFT_iSCSIVirtualDisk.psd1 `
-        -BaseDirectory "${PSScriptRoot}\${PSUICulture}"
-}
-else
-{
-    #fallback to en-US
-    Import-LocalizedData `
-        -BindingVariable LocalizedData `
-        -Filename MSFT_iSCSIVirtualDisk.psd1 `
-        -BaseDirectory "${PSScriptRoot}\en-US"
-}
-#endregion
+$modulePath = Join-Path -Path (Split-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -Parent) -ChildPath 'DSCResources\Modules'
+
+# Import the Networking Resource Helper Module
+Import-Module -Name (Join-Path -Path $modulePath `
+        -ChildPath (Join-Path -Path 'iSCSIDsc.ResourceHelper' `
+            -ChildPath 'iSCSIDsc.ResourceHelper.psm1'))
+
+# Import Localization Strings
+$LocalizedData = Get-LocalizedData `
+    -ResourceName 'MSFT_iSCSIVirtualDisk' `
+    -ResourcePath (Split-Path -Parent $Script:MyInvocation.MyCommand.Path)
 
 <#
     .SYNOPSIS
-    Returns the current state of the specified iSCSI Virtual Disk.
+        Returns the current state of the specified iSCSI Virtual Disk.
+
     .PARAMETER Path
-    Specifies the path of the VHDX file that is associated with the iSCSI virtual disk.
+        Specifies the path of the VHDX file that is associated with the iSCSI virtual disk.
 #>
 function Get-TargetResource
 {
@@ -28,19 +23,19 @@ function Get-TargetResource
     [OutputType([System.Collections.Hashtable])]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [System.String]
         $Path
     )
 
     Write-Verbose -Message ( @(
-        "$($MyInvocation.MyCommand): "
-        $($LocalizedData.GettingiSCSIVirtualDiskMessage) `
-            -f $Path
+            "$($MyInvocation.MyCommand): "
+            $($LocalizedData.GettingiSCSIVirtualDiskMessage) `
+                -f $Path
         ) -join '' )
 
-    $virtualDisk =  Get-VirtualDisk -Path $Path
+    $virtualDisk = Get-VirtualDisk -Path $Path
 
     $returnValue = @{
         Path = $Path
@@ -48,25 +43,25 @@ function Get-TargetResource
     if ($virtualDisk)
     {
         Write-Verbose -Message ( @(
-            "$($MyInvocation.MyCommand): "
-            $($LocalizedData.iSCSIVirtualDiskExistsMessage) `
-                -f $Path
+                "$($MyInvocation.MyCommand): "
+                $($LocalizedData.iSCSIVirtualDiskExistsMessage) `
+                    -f $Path
             ) -join '' )
 
         $returnValue += @{
-            Ensure = 'Present'
-            SizeBytes = $virtualDisk.Size
-            DiskType = $virtualDisk.DiskType
+            Ensure      = 'Present'
+            SizeBytes   = $virtualDisk.Size
+            DiskType    = $virtualDisk.DiskType
             Description = $virtualDisk.Description
-            ParentPath = $virtualDisk.ParentPath
+            ParentPath  = $virtualDisk.ParentPath
         }
     }
     else
     {
         Write-Verbose -Message ( @(
-            "$($MyInvocation.MyCommand): "
-            $($LocalizedData.iSCSIVirtualDiskDoesNotExistMessage) `
-                -f $Path
+                "$($MyInvocation.MyCommand): "
+                $($LocalizedData.iSCSIVirtualDiskDoesNotExistMessage) `
+                    -f $Path
             ) -join '' )
 
         $returnValue += @{
@@ -79,72 +74,89 @@ function Get-TargetResource
 
 <#
     .SYNOPSIS
-    Creates, updates or removes an iSCSI Virtual Disk.
+        Creates, updates or removes an iSCSI Virtual Disk.
+
     .PARAMETER Ensure
-    Ensures that Virtual Disk is either Absent or Present.
+        Ensures that Virtual Disk is either Absent or Present.
+
     .PARAMETER Path
-    Specifies the path of the VHDX file that is associated with the iSCSI virtual disk.
+        Specifies the path of the VHDX file that is associated with the iSCSI virtual disk.
+
     .PARAMETER SizeBytes
-    Specifies the size, in bytes, of the iSCSI virtual disk.
+        Specifies the size, in bytes, of the iSCSI virtual disk.
+
     .PARAMETER BlockSizeBytes
-    Specifies the block size, in bytes, for the VHDX. For fixed VHDX, if the value of the SizeBytes
-    parameter is less than 32 MB, the default size is 2 MB. Otherwise, the default value is 32 MB.
-    For dynamic VHDX, the default size is 2 MB. For differencing VHDX, the default size is the
-    parent BlockSize.
+        Specifies the block size, in bytes, for the VHDX. For fixed VHDX, if the value of the SizeBytes
+        parameter is less than 32 MB, the default size is 2 MB. Otherwise, the default value is 32 MB.
+        For dynamic VHDX, the default size is 2 MB. For differencing VHDX, the default size is the
+        parent BlockSize.
+
     .PARAMETER DiskType
-    Specifies the type of the VHDX.
+        Specifies the type of the VHDX.
+
     .PARAMETER LogicalSectorSizeBytes
-    Specifies the logical sector size, in bytes, for the VHDX.
+        Specifies the logical sector size, in bytes, for the VHDX.
+
     .PARAMETER PhysicalSectorSizeBytes
-    Specifies the physical sector size, in bytes, for the VHDX.
+        Specifies the physical sector size, in bytes, for the VHDX.
+
     .PARAMETER Description
-    Specifies the description for the iSCSI virtual disk.
+        Specifies the description for the iSCSI virtual disk.
+
     .PARAMETER ParentPath
-    Specifies the parent virtual disk path if the VHDX is a differencing disk.
+        Specifies the parent virtual disk path if the VHDX is a differencing disk.
 #>
 function Set-TargetResource
 {
     [CmdletBinding()]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [System.String]
         $Path,
 
-        [ValidateSet('Present','Absent')]
+        [Parameter()]
+        [ValidateSet('Present', 'Absent')]
         [System.String]
         $Ensure = 'Present',
 
-        [ValidateSet('Dynamic','Fixed','Differencing')]
+        [Parameter()]
+        [ValidateSet('Dynamic', 'Fixed', 'Differencing')]
         [System.String]
         $DiskType = 'Dynamic',
 
+        [Parameter()]
         [System.Uint64]
         $SizeBytes,
 
+        [Parameter()]
         [System.Uint32]
         $BlockSizeBytes,
 
-        [ValidateSet(512,4096)]
+        [Parameter()]
+        [ValidateSet(512, 4096)]
         [System.Uint32]
         $LogicalSectorSizeBytes,
 
-        [ValidateSet(512,4096)]
+        [Parameter()]
+        [ValidateSet(512, 4096)]
         [System.UInt32]
         $PhysicalSectorSizeBytes,
 
+        [Parameter()]
         [System.String]
         $Description,
 
+        [Parameter()]
         [System.String]
         $ParentPath
     )
 
     Write-Verbose -Message ( @(
-        "$($MyInvocation.MyCommand): "
-        $($LocalizedData.SettingiSCSIVirtualDiskMessage) `
-            -f $Path
+            "$($MyInvocation.MyCommand): "
+            $($LocalizedData.SettingiSCSIVirtualDiskMessage) `
+                -f $Path
         ) -join '' )
 
     # Remove any parameters that can't be splatted.
@@ -157,9 +169,9 @@ function Set-TargetResource
     if ($Ensure -eq 'Present')
     {
         Write-Verbose -Message ( @(
-            "$($MyInvocation.MyCommand): "
-            $($LocalizedData.EnsureiSCSIVirtualDiskExistsMessage) `
-                -f $Path
+                "$($MyInvocation.MyCommand): "
+                $($LocalizedData.EnsureiSCSIVirtualDiskExistsMessage) `
+                    -f $Path
             ) -join '' )
 
         if ($virtualDisk)
@@ -168,28 +180,30 @@ function Set-TargetResource
             [Boolean] $recreate = $false
 
             if (($DiskType) `
-                -and ($virtualDisk.DiskType -ne $DiskType))
+                    -and ($virtualDisk.DiskType -ne $DiskType))
             {
                 $recreate = $true
             }
 
             if (($SizeBytes) `
-                -and ($virtualDisk.Size -ne $SizeBytes))
+                    -and ($virtualDisk.Size -ne $SizeBytes))
             {
                 $recreate = $true
             }
 
             if (($ParentPath) `
-                -and ($virtualDisk.ParentPath -ne $ParentPath))
+                    -and ($virtualDisk.ParentPath -ne $ParentPath))
             {
                 $recreate = $true
             }
 
-            # If any parameters differ that require this Virtual Disk to be recreated
-            # then throw an error. Recreating the Virtual Disk is too dangerous as it
-            # may contain data. If the Virtual Disk *must* be recreated then the user
-            # will need to manually delete the Virtual Disk and the config will then
-            # create a new one.
+            <#
+                If any parameters differ that require this Virtual Disk to be recreated
+                then throw an error. Recreating the Virtual Disk is too dangerous as it
+                may contain data. If the Virtual Disk *must* be recreated then the user
+                will need to manually delete the Virtual Disk and the config will then
+                create a new one.
+            #>
             if ($recreate)
             {
                 $errorId = 'iSCSIVirtualDiskRequiresRecreateError'
@@ -210,9 +224,9 @@ function Set-TargetResource
                 -ErrorAction Stop
 
             Write-Verbose -Message ( @(
-                "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSCSIVirtualDiskUpdatedMessage) `
-                    -f $Path
+                    "$($MyInvocation.MyCommand): "
+                    $($LocalizedData.iSCSIVirtualDiskUpdatedMessage) `
+                        -f $Path
                 ) -join '' )
         }
         else
@@ -220,7 +234,7 @@ function Set-TargetResource
             # Create the iSCSI Virtual Disk
             if ($DiskType -eq 'Fixed')
             {
-                $null = $PSBoundParameters.Add('UseFixed',$True)
+                $null = $PSBoundParameters.Add('UseFixed', $True)
             }
             else
             {
@@ -232,18 +246,18 @@ function Set-TargetResource
                 -ErrorAction Stop
 
             Write-Verbose -Message ( @(
-                "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSCSIVirtualDiskCreatedMessage) `
-                    -f $Path
+                    "$($MyInvocation.MyCommand): "
+                    $($LocalizedData.iSCSIVirtualDiskCreatedMessage) `
+                        -f $Path
                 ) -join '' )
         }
     }
     else
     {
         Write-Verbose -Message ( @(
-            "$($MyInvocation.MyCommand): "
-            $($LocalizedData.EnsureiSCSIVirtualDiskDoesNotExistMessage) `
-                -f $Path
+                "$($MyInvocation.MyCommand): "
+                $($LocalizedData.EnsureiSCSIVirtualDiskDoesNotExistMessage) `
+                    -f $Path
             ) -join '' )
 
         if ($virtualDisk)
@@ -255,9 +269,9 @@ function Set-TargetResource
                 -ErrorAction Stop
 
             Write-Verbose -Message ( @(
-                "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSCSIVirtualDiskRemovedMessage) `
-                    -f $Path
+                    "$($MyInvocation.MyCommand): "
+                    $($LocalizedData.iSCSIVirtualDiskRemovedMessage) `
+                        -f $Path
                 ) -join '' )
         } # if
     } # if
@@ -265,28 +279,37 @@ function Set-TargetResource
 
 <#
     .SYNOPSIS
-    Tests if an iSCSI Virtual Disk needs to be created, updated or removed.
+        Tests if an iSCSI Virtual Disk needs to be created, updated or removed.
+
     .PARAMETER Ensure
-    Ensures that Virtual Disk is either Absent or Present.
+        Ensures that Virtual Disk is either Absent or Present.
+
     .PARAMETER Path
-    Specifies the path of the VHDX file that is associated with the iSCSI virtual disk.
+        Specifies the path of the VHDX file that is associated with the iSCSI virtual disk.
+
     .PARAMETER SizeBytes
-    Specifies the size, in bytes, of the iSCSI virtual disk.
+        Specifies the size, in bytes, of the iSCSI virtual disk.
+
     .PARAMETER BlockSizeBytes
-    Specifies the block size, in bytes, for the VHDX. For fixed VHDX, if the value of the SizeBytes
-    parameter is less than 32 MB, the default size is 2 MB. Otherwise, the default value is 32 MB.
-    For dynamic VHDX, the default size is 2 MB. For differencing VHDX, the default size is the
-    parent BlockSize.
+        Specifies the block size, in bytes, for the VHDX. For fixed VHDX, if the value of the SizeBytes
+        parameter is less than 32 MB, the default size is 2 MB. Otherwise, the default value is 32 MB.
+        For dynamic VHDX, the default size is 2 MB. For differencing VHDX, the default size is the
+        parent BlockSize.
+
     .PARAMETER DiskType
-    Specifies the type of the VHDX.
+        Specifies the type of the VHDX.
+
     .PARAMETER LogicalSectorSizeBytes
-    Specifies the logical sector size, in bytes, for the VHDX.
+        Specifies the logical sector size, in bytes, for the VHDX.
+
     .PARAMETER PhysicalSectorSizeBytes
-    Specifies the physical sector size, in bytes, for the VHDX.
+        Specifies the physical sector size, in bytes, for the VHDX.
+
     .PARAMETER Description
-    Specifies the description for the iSCSI virtual disk.
+        Specifies the description for the iSCSI virtual disk.
+
     .PARAMETER ParentPath
-    Specifies the parent virtual disk path if the VHDX is a differencing disk.
+        Specifies the parent virtual disk path if the VHDX is a differencing disk.
 #>
 function Test-TargetResource
 {
@@ -294,36 +317,44 @@ function Test-TargetResource
     [OutputType([System.Boolean])]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [System.String]
         $Path,
 
-        [ValidateSet('Present','Absent')]
+        [Parameter()]
+        [ValidateSet('Present', 'Absent')]
         [System.String]
         $Ensure = 'Present',
 
-        [ValidateSet('Dynamic','Fixed','Differencing')]
+        [Parameter()]
+        [ValidateSet('Dynamic', 'Fixed', 'Differencing')]
         [System.String]
         $DiskType = 'Dynamic',
 
+        [Parameter()]
         [System.Uint64]
         $SizeBytes,
 
+        [Parameter()]
         [System.Uint32]
         $BlockSizeBytes,
 
-        [ValidateSet(512,4096)]
+        [Parameter()]
+        [ValidateSet(512, 4096)]
         [System.Uint32]
         $LogicalSectorSizeBytes,
 
-        [ValidateSet(512,4096)]
+        [Parameter()]
+        [ValidateSet(512, 4096)]
         [System.UInt32]
         $PhysicalSectorSizeBytes,
 
+        [Parameter()]
         [System.String]
         $Description,
 
+        [Parameter()]
         [System.String]
         $ParentPath
     )
@@ -332,9 +363,9 @@ function Test-TargetResource
     [Boolean] $desiredConfigurationMatch = $true
 
     Write-Verbose -Message ( @(
-        "$($MyInvocation.MyCommand): "
-        $($LocalizedData.TestingiSCSIVirtualDiskMessage) `
-            -f $Path
+            "$($MyInvocation.MyCommand): "
+            $($LocalizedData.TestingiSCSIVirtualDiskMessage) `
+                -f $Path
         ) -join '' )
 
     # Lookup the existing iSCSI Virtual Disk
@@ -349,54 +380,56 @@ function Test-TargetResource
             [Boolean] $recreate = $false
 
             if (($Description) `
-                -and ($virtualDisk.Description -ne $Description))
+                    -and ($virtualDisk.Description -ne $Description))
             {
                 Write-Verbose -Message ( @(
-                    "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
-                        -f $Path,'Description'
+                        "$($MyInvocation.MyCommand): "
+                        $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
+                            -f $Path, 'Description'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
             }
 
             if (($DiskType) `
-                -and ($virtualDisk.DiskType -ne $DiskType))
+                    -and ($virtualDisk.DiskType -ne $DiskType))
             {
                 Write-Verbose -Message ( @(
-                    "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
-                        -f $Path,'SizeBytes'
+                        "$($MyInvocation.MyCommand): "
+                        $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
+                            -f $Path, 'SizeBytes'
                     ) -join '' )
                 $recreate = $true
             }
 
             if (($SizeBytes) `
-                -and ($virtualDisk.Size -ne $SizeBytes))
+                    -and ($virtualDisk.Size -ne $SizeBytes))
             {
                 Write-Verbose -Message ( @(
-                    "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
-                        -f $Path,'SizeBytes'
+                        "$($MyInvocation.MyCommand): "
+                        $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
+                            -f $Path, 'SizeBytes'
                     ) -join '' )
                 $recreate = $true
             }
 
             if (($ParentPath) `
-                -and ($virtualDisk.ParentPath -ne $ParentPath))
+                    -and ($virtualDisk.ParentPath -ne $ParentPath))
             {
                 Write-Verbose -Message ( @(
-                    "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
-                        -f $Path,'ParentPath'
+                        "$($MyInvocation.MyCommand): "
+                        $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
+                            -f $Path, 'ParentPath'
                     ) -join '' )
                 $recreate = $true
             }
 
-            # If any parameters differ that require this Virtual Disk to be recreated
-            # then throw an error. Recreating the Virtual Disk is too dangerous as it
-            # may contain data. If the Virtual Disk *must* be recreated then the user
-            # will need to manually delete the Virtual Disk and the config will then
-            # create a new one.
+            <#
+                If any parameters differ that require this Virtual Disk to be recreated
+                then throw an error. Recreating the Virtual Disk is too dangerous as it
+                may contain data. If the Virtual Disk *must* be recreated then the user
+                will need to manually delete the Virtual Disk and the config will then
+                create a new one.
+            #>
             if ($recreate)
             {
                 $errorId = 'iSCSIVirtualDiskRequiresRecreateError'
@@ -414,9 +447,9 @@ function Test-TargetResource
         {
             # Ths iSCSI Virtual Disk doesn't exist but should
             Write-Verbose -Message ( @(
-                "$($MyInvocation.MyCommand): "
-                 $($LocalizedData.iSCSIVirtualDiskDoesNotExistButShouldMessage) `
-                    -f $Path
+                    "$($MyInvocation.MyCommand): "
+                    $($LocalizedData.iSCSIVirtualDiskDoesNotExistButShouldMessage) `
+                        -f $Path
                 ) -join '' )
             $desiredConfigurationMatch = $false
         }
@@ -428,9 +461,9 @@ function Test-TargetResource
         {
             # The iSCSI Virtual Disk exists but should not
             Write-Verbose -Message ( @(
-                "$($MyInvocation.MyCommand): "
-                 $($LocalizedData.iSCSIVirtualDiskExistsButShouldNotMessage) `
-                    -f $Path
+                    "$($MyInvocation.MyCommand): "
+                    $($LocalizedData.iSCSIVirtualDiskExistsButShouldNotMessage) `
+                        -f $Path
                 ) -join '' )
             $desiredConfigurationMatch = $false
         }
@@ -438,9 +471,9 @@ function Test-TargetResource
         {
             # The iSCSI Virtual Disk does not exist and should not
             Write-Verbose -Message ( @(
-                "$($MyInvocation.MyCommand): "
-                 $($LocalizedData.iSCSIVirtualDiskDoesNotExistAndShouldNotMessage) `
-                    -f $Path
+                    "$($MyInvocation.MyCommand): "
+                    $($LocalizedData.iSCSIVirtualDiskDoesNotExistAndShouldNotMessage) `
+                        -f $Path
                 ) -join '' )
         }
     } # if
@@ -450,15 +483,16 @@ function Test-TargetResource
 # Helper Functions
 <#
     .SYNOPSIS
-    Looks up the specified iSCSI Virtual Disk.
+        Looks up the specified iSCSI Virtual Disk.
+
     .PARAMETER Path
-    Specifies the path of the VHDX file that is associated with the iSCSI virtual disk.
+        Specifies the path of the VHDX file that is associated with the iSCSI virtual disk.
 #>
-Function Get-VirtualDisk
+function Get-VirtualDisk
 {
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [System.String]
         $Path
@@ -483,4 +517,4 @@ Function Get-VirtualDisk
     Return $virtualDisk
 }
 
-Export-ModuleMember -Function *-TargetResource
+Export-ModuleMember -function *-TargetResource
