@@ -6,6 +6,8 @@ install:
     - git clone https://github.com/PowerShell/DscResource.Tests
 
     - ps: |
+        Install-WindowsFeature FS-iSCSITarget-Server,ISNS
+        Start-Service msiscsi
         Import-Module "$env:APPVEYOR_BUILD_FOLDER\DscResource.Tests\AppVeyor.psm1"
         Invoke-AppveyorInstallTask
 
