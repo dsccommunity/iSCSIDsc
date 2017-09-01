@@ -21,7 +21,7 @@ Module Guidelines](https://github.com/PowerShell/DscResources/blob/master/HighQu
 ## Documentation and Examples
 
 For a full list of resources in iSCSIDsc and examples on their use, check out
-the [iSCSIDsc wiki](https://github.com/PowerShell/iSCSIDsc/wiki).
+the [iSCSIDsc wiki](https://github.com/PlagueHO/iSCSIDsc/wiki).
 
 ## Branches
 
