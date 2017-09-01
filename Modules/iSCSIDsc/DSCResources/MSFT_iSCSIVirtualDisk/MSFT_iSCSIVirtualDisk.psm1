@@ -1,9 +1,9 @@
-$modulePath = Join-Path -Path (Split-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -Parent) -ChildPath 'DSCResources\Modules'
+$modulePath = Join-Path -Path (Split-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -Parent) -ChildPath 'Modules'
 
 # Import the Networking Resource Helper Module
 Import-Module -Name (Join-Path -Path $modulePath `
-        -ChildPath (Join-Path -Path 'iSCSIDsc.ResourceHelper' `
-            -ChildPath 'iSCSIDsc.ResourceHelper.psm1'))
+    -ChildPath (Join-Path -Path 'iSCSIDsc.ResourceHelper' `
+        -ChildPath 'iSCSIDsc.ResourceHelper.psm1'))
 
 # Import Localization Strings
 $LocalizedData = Get-LocalizedData `

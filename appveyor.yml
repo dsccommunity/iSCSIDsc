@@ -1,13 +1,15 @@
 #---------------------------------#
 #      environment configuration  #
 #---------------------------------#
-version: 1.3.{build}.0
+version: 1.4.{build}.0
 install:
     - git clone https://github.com/PowerShell/DscResource.Tests
 
     - ps: |
         Install-WindowsFeature FS-iSCSITarget-Server,ISNS
         Start-Service msiscsi
+        $moduleName = 'iSCSIDsc'
+        $mainModuleFolder = "Modules\$moduleName"
         Import-Module "$env:APPVEYOR_BUILD_FOLDER\DscResource.Tests\AppVeyor.psm1"
         Invoke-AppveyorInstallTask
 
@@ -23,9 +25,9 @@ build: false
 
 test_script:
     - ps: |
-          Invoke-AppveyorTestScriptTask `
-            -ExcludeTag @() `
-            -CodeCoverage `
+        Invoke-AppveyorTestScriptTask `
+            -Type 'Harness' `
+            -MainModulePath $mainModuleFolder `
             -CodeCovIo
 
 #---------------------------------#
@@ -35,4 +37,7 @@ test_script:
 # scripts to run before deployment
 deploy_script:
     - ps: |
-          Invoke-AppveyorAfterTestTask
+        Invoke-AppveyorAfterTestTask `
+            -Type 'Wiki' `
+            -MainModulePath $mainModuleFolder `
+            -ResourceModuleName $moduleName
