@@ -4,19 +4,19 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '1.2.1.0'
+ModuleVersion = '1.4.0.0'
 
 # ID used to uniquely identify this module
 GUID = 'f2793754-6dc7-439a-a779-b1529b5e704c'
 
 # Author of this module
-Author = 'Microsoft Corporation'
+Author = 'Daniel Scott-Raynsford'
 
 # Company or vendor of this module
-CompanyName = 'Microsoft Corporation'
+CompanyName = ''
 
 # Copyright statement for this module
-Copyright = '(c) 2015 Microsoft Corporation. All rights reserved.'
+Copyright = '(c) 2017 Daniel Scott-Raynsford. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'DSC resources for configuring Windows iSCSI Targets and Initiators.'
@@ -87,10 +87,10 @@ PrivateData = @{
         Tags = 'DSC','DesiredStateConfiguration','iSCSI','Target','Initiator'
 
         # A URL to the license for this module.
-        LicenseUri = 'https://github.com/PowerShell/DscResources/blob/master/LICENSE'
+        LicenseUri = 'https://github.com/PlagueHO/iSCSIDsc/blob/dev/LICENSE'
 
         # A URL to the main website for this project.
-        ProjectUri = 'https://github.com/PowerShell/iSCSIDsc'
+        ProjectUri = 'https://github.com/PlagueHO/iSCSIDsc'
 
         # A URL to an icon representing this module.
         # IconUri = ''

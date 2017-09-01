@@ -1,19 +1,21 @@
-$Global:DSCModuleName = 'iSCSIDsc'
-$Global:DSCResourceName = 'MSFT_iSCSIInitiator'
+$script:DSCModuleName = 'iSCSIDsc'
+$script:DSCResourceName = 'MSFT_iSCSIInitiator'
+
+Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers') -ChildPath 'CommonTestHelper.psm1') -Global
 
 #region HEADER
 # Unit Test Template Version: 1.1.0
-[String] $moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $Script:MyInvocation.MyCommand.Path))
-if ( (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests'))) -or `
-     (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1'))) )
+[System.String] $script:moduleRoot = Join-Path -Path $(Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $Script:MyInvocation.MyCommand.Path))) -ChildPath 'Modules\iSCSIDsc'
+if ( (-not (Test-Path -Path (Join-Path -Path $script:moduleRoot -ChildPath 'DSCResource.Tests'))) -or `
+     (-not (Test-Path -Path (Join-Path -Path $script:moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1'))) )
 {
-    & git @('clone','https://github.com/PowerShell/DscResource.Tests.git',(Join-Path -Path $moduleRoot -ChildPath '\DSCResource.Tests\'))
+    & git @('clone','https://github.com/PowerShell/DscResource.Tests.git',(Join-Path -Path $script:moduleRoot -ChildPath '\DSCResource.Tests\'))
 }
 
-Import-Module (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1') -Force
+Import-Module (Join-Path -Path $script:moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1') -Force
 $TestEnvironment = Initialize-TestEnvironment `
-    -DSCModuleName $Global:DSCModuleName `
-    -DSCResourceName $Global:DSCResourceName `
+    -DSCModuleName $script:DSCModuleName `
+    -DSCResourceName $script:DSCResourceName `
     -TestType Unit
 #endregion HEADER
 
@@ -21,7 +23,7 @@ $TestEnvironment = Initialize-TestEnvironment `
 try
 {
     #region Pester Tests
-    InModuleScope $Global:DSCResourceName {
+    InModuleScope $script:DSCResourceName {
 
         # Create the Mock Objects that will be used for running tests
         $TestInitiator = [PSObject]@{
@@ -180,7 +182,7 @@ try
             )
         }
 
-        Describe "$($Global:DSCResourceName)\Get-TargetResource" {
+        Describe "MSFT_iSCSIInitiator\Get-TargetResource" {
             Context 'Target Portal and Target do not exist' {
                 Mock Get-TargetPortal
                 Mock Get-Target
@@ -392,7 +394,7 @@ try
             }
         }
 
-        Describe "$($Global:DSCResourceName)\Set-TargetResource" {
+        Describe "MSFT_iSCSIInitiator\Set-TargetResource" {
             Context 'Target Portal does not exist but should' {
                 Mock Get-TargetPortal
                 Mock New-IscsiTargetPortal
@@ -1191,7 +1193,7 @@ try
             }
         }
 
-        Describe "$($Global:DSCResourceName)\Test-TargetResource" {
+        Describe "MSFT_iSCSIInitiator\Test-TargetResource" {
             Context 'Target Portal does not exist but should' {
                 Mock Get-TargetPortal
                 Mock Get-Target
@@ -1618,7 +1620,7 @@ try
             }
         }
 
-        Describe "$($Global:DSCResourceName)\Get-TargetPortal" {
+        Describe "MSFT_iSCSIInitiator\Get-TargetPortal" {
             Context 'Target Portal does not exist' {
                 Mock Get-iSCSITargetPortal
                 It 'should return null' {
@@ -1653,7 +1655,7 @@ try
             }
         }
 
-        Describe "$($Global:DSCResourceName)\Get-Target" {
+        Describe "MSFT_iSCSIInitiator\Get-Target" {
             Context 'Target does not exist' {
                 Mock Get-iSCSITarget
                 It 'should return null' {
