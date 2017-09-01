@@ -1,5 +1,5 @@
 [ClassVersion("1.0.0.0"), FriendlyName("iSCSIVirtualDisk")]
-class MSFT_iSCSIVirtualDisk : OMI_BaseResource
+class DSR_iSCSIVirtualDisk : OMI_BaseResource
 {
     [Key, Description("Specifies the path of the VHDX file that is associated with the iSCSI virtual disk.")] String Path;
     [Write, Description("Ensures that Virtual Disk is either Absent or Present."), ValueMap{"Present","Absent"}, Values{"Present","Absent"}] String Ensure;

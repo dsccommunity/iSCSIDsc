@@ -1,5 +1,5 @@
 $script:DSCModuleName   = 'iSCSIDsc'
-$script:DSCResourceName = 'MSFT_iSCSIInitiator'
+$script:DSCResourceName = 'DSR_iSCSIInitiator'
 
 # These tests are disabled because they require iSCSI Loopback
 # iSCSI Loopback is supposed to work in Windows Server 2012 R2

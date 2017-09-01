@@ -1,5 +1,5 @@
 $script:DSCModuleName   = 'iSCSIDsc'
-$script:DSCResourceName = 'MSFT_iSCSIVirtualDisk'
+$script:DSCResourceName = 'DSR_iSCSIVirtualDisk'
 
 Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers') -ChildPath 'CommonTestHelper.psm1') -Global
 
@@ -73,7 +73,7 @@ try
             Break
         }
 
-        Describe "MSFT_iSCSIVirtualDisk\Get-TargetResource" {
+        Describe "DSR_iSCSIVirtualDisk\Get-TargetResource" {
 
             Context 'Virtual Disk does not exist' {
 
@@ -109,7 +109,7 @@ try
             }
         }
 
-        Describe "MSFT_iSCSIVirtualDisk\Set-TargetResource" {
+        Describe "DSR_iSCSIVirtualDisk\Set-TargetResource" {
 
             Context 'Virtual Disk does not exist but should' {
 
@@ -287,7 +287,7 @@ try
             }
         }
 
-        Describe "MSFT_iSCSIVirtualDisk\Test-TargetResource" {
+        Describe "DSR_iSCSIVirtualDisk\Test-TargetResource" {
 
             Context 'Virtual Disk does not exist but should' {
 
@@ -437,7 +437,7 @@ try
             }
         }
 
-        Describe "MSFT_iSCSIVirtualDisk\Get-VirtualDisk" {
+        Describe "DSR_iSCSIVirtualDisk\Get-VirtualDisk" {
 
             Context 'Virtual Disk does not exist' {
 

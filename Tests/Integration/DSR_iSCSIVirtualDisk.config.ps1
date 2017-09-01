@@ -6,7 +6,7 @@ $VirtualDisk = @{
     Description     = 'Integration Test iSCSI Virtual Disk'
 }
 
-Configuration MSFT_iSCSIVirtualDisk_Config {
+Configuration DSR_iSCSIVirtualDisk_Config {
     Import-DscResource -ModuleName iSCSIDsc
     node localhost {
         iSCSIVirtualDisk Integration_Test {

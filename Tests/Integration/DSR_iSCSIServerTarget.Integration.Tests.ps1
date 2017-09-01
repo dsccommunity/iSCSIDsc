@@ -1,5 +1,5 @@
 $script:DSCModuleName   = 'iSCSIDsc'
-$script:DSCResourceName = 'MSFT_iSCSIVirtualDisk'
+$script:DSCResourceName = 'DSR_iSCSIServerTarget'
 
 #region HEADER
 # Integration Test Template Version: 1.1.1
@@ -54,6 +54,12 @@ try
     . $ConfigFile
 
     Describe "$($script:DSCResourceName)_Integration" {
+        BeforeAll {
+            New-iSCSIVirtualDisk `
+                -Path $VirtualDisk.Path `
+                -Size 10GB
+        } # BeforeAll
+
         #region DEFAULT TESTS
         It 'Should compile and apply the MOF without throwing' {
             {
@@ -69,15 +75,22 @@ try
 
         It 'Should have set the resource and all the parameters should match' {
             # Get the Rule details
-            $virtualDiskNew = Get-iSCSIVirtualDisk -Path $VirtualDisk.Path
-            $VirtualDisk.Path               | Should Be $virtualDiskNew.Path
-            $VirtualDisk.DiskType           | Should Be $virtualDiskNew.DiskType
-            $VirtualDisk.Size               | Should Be $virtualDiskNew.Size
-            $VirtualDisk.Description        | Should Be $virtualDiskNew.Description
+            $ServerTargetNew = Get-iSCSIServerTarget -TargetName $ServerTarget.TargetName
+            $ServerTargetNew.TargetName       | Should Be $ServerTarget.TargetName
+            $ServerTargetNew.InitiatorIds     | Should Be $ServerTarget.InitiatorIds
+            $ServerTargetNew.LunMappings.Path | Should Be $ServerTarget.Paths
+            $iSNSServerNew = Get-WmiObject -Class WT_iSNSServer -Namespace root\wmi
+            # The iSNS Server is not usually accessible so won't be able to be set
+            # $iSNSServerNew.ServerName         | Should Be $ServerTarget.iSNSServer
         }
 
         AfterAll {
             # Clean up
+            Get-WmiObject `
+                -Class WT_iSNSServer `
+                -Namespace root\wmi | Remove-WmiObject
+            Remove-iSCSIServerTarget `
+                -TargetName $ServerTarget.TargetName
             Remove-iSCSIVirtualDisk `
                 -Path $VirtualDisk.Path
             Remove-Item `

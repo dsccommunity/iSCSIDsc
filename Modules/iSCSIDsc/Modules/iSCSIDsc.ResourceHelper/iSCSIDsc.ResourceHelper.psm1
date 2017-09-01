@@ -131,9 +131,9 @@ function New-InvalidOperationException
         The name of the resource as it appears before '.strings.psd1' of the localized string file.
 
         For example:
-            For WindowsOptionalFeature: MSFT_xWindowsOptionalFeature
-            For Service: MSFT_xServiceResource
-            For Registry: MSFT_xRegistryResource
+            For WindowsOptionalFeature: DSR_xWindowsOptionalFeature
+            For Service: DSR_xServiceResource
+            For Registry: DSR_xRegistryResource
 
     .PARAMETER ResourcePath
         The path the resource file is located in.
