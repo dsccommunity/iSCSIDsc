@@ -18,7 +18,7 @@ $Initiator = @{
     iSNSServer             = "isns.contoso.com"
 }
 
-Configuration MSFT_iSCSIInitiator_Config {
+Configuration DSR_iSCSIInitiator_Config {
     Import-DscResource -ModuleName iSCSIDsc
     node localhost {
         iSCSIInitiator Integration_Test {

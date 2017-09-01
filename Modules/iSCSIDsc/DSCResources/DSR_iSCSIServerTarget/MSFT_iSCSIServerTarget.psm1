@@ -7,7 +7,7 @@ Import-Module -Name (Join-Path -Path $modulePath `
 
 # Import Localization Strings
 $LocalizedData = Get-LocalizedData `
-    -ResourceName 'MSFT_iSCSIServerTarget' `
+    -ResourceName 'DSR_iSCSIServerTarget' `
     -ResourcePath (Split-Path -Parent $Script:MyInvocation.MyCommand.Path)
 
 <#

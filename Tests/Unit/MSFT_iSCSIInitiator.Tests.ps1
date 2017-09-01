@@ -1,5 +1,5 @@
 $script:DSCModuleName = 'iSCSIDsc'
-$script:DSCResourceName = 'MSFT_iSCSIInitiator'
+$script:DSCResourceName = 'DSR_iSCSIInitiator'
 
 Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers') -ChildPath 'CommonTestHelper.psm1') -Global
 
@@ -182,7 +182,7 @@ try
             )
         }
 
-        Describe "MSFT_iSCSIInitiator\Get-TargetResource" {
+        Describe "DSR_iSCSIInitiator\Get-TargetResource" {
             Context 'Target Portal and Target do not exist' {
                 Mock Get-TargetPortal
                 Mock Get-Target
@@ -394,7 +394,7 @@ try
             }
         }
 
-        Describe "MSFT_iSCSIInitiator\Set-TargetResource" {
+        Describe "DSR_iSCSIInitiator\Set-TargetResource" {
             Context 'Target Portal does not exist but should' {
                 Mock Get-TargetPortal
                 Mock New-IscsiTargetPortal
@@ -1193,7 +1193,7 @@ try
             }
         }
 
-        Describe "MSFT_iSCSIInitiator\Test-TargetResource" {
+        Describe "DSR_iSCSIInitiator\Test-TargetResource" {
             Context 'Target Portal does not exist but should' {
                 Mock Get-TargetPortal
                 Mock Get-Target
@@ -1620,7 +1620,7 @@ try
             }
         }
 
-        Describe "MSFT_iSCSIInitiator\Get-TargetPortal" {
+        Describe "DSR_iSCSIInitiator\Get-TargetPortal" {
             Context 'Target Portal does not exist' {
                 Mock Get-iSCSITargetPortal
                 It 'should return null' {
@@ -1655,7 +1655,7 @@ try
             }
         }
 
-        Describe "MSFT_iSCSIInitiator\Get-Target" {
+        Describe "DSR_iSCSIInitiator\Get-Target" {
             Context 'Target does not exist' {
                 Mock Get-iSCSITarget
                 It 'should return null' {

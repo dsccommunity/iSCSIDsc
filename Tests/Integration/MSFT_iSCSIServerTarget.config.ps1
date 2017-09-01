@@ -9,7 +9,7 @@ $ServerTarget = @{
     iSNSServer   = 'isns.contoso.com'
 }
 
-Configuration MSFT_iSCSIServerTarget_Config {
+Configuration DSR_iSCSIServerTarget_Config {
     Import-DscResource -ModuleName iSCSIDsc
     node localhost {
         iSCSIServerTarget Integration_Test {

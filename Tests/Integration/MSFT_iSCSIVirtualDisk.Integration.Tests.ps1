@@ -1,5 +1,5 @@
 $script:DSCModuleName   = 'iSCSIDsc'
-$script:DSCResourceName = 'MSFT_iSCSIVirtualDisk'
+$script:DSCResourceName = 'DSR_iSCSIVirtualDisk'
 
 #region HEADER
 # Integration Test Template Version: 1.1.1

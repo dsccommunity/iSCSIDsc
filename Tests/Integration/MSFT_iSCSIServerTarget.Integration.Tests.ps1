@@ -1,5 +1,5 @@
 $script:DSCModuleName   = 'iSCSIDsc'
-$script:DSCResourceName = 'MSFT_iSCSIServerTarget'
+$script:DSCResourceName = 'DSR_iSCSIServerTarget'
 
 #region HEADER
 # Integration Test Template Version: 1.1.1

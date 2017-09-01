@@ -1,5 +1,5 @@
 $script:DSCModuleName   = 'iSCSIDsc'
-$script:DSCResourceName = 'MSFT_iSCSIServerTarget'
+$script:DSCResourceName = 'DSR_iSCSIServerTarget'
 
 Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers') -ChildPath 'CommonTestHelper.psm1') -Global
 
@@ -92,7 +92,7 @@ try
             Break
         }
 
-        Describe "MSFT_iSCSIServerTarget\Get-TargetResource" {
+        Describe "DSR_iSCSIServerTarget\Get-TargetResource" {
 
             Context 'Server Target does not exist' {
 
@@ -156,7 +156,7 @@ try
             }
         }
 
-        Describe "MSFT_iSCSIServerTarget\Set-TargetResource" {
+        Describe "DSR_iSCSIServerTarget\Set-TargetResource" {
 
             Context 'Server Target does not exist but should' {
 
@@ -477,7 +477,7 @@ try
             }
         }
 
-        Describe "MSFT_iSCSIServerTarget\Test-TargetResource" {
+        Describe "DSR_iSCSIServerTarget\Test-TargetResource" {
 
             Context 'Server Target does not exist but should' {
 
@@ -637,7 +637,7 @@ try
             }
         }
 
-        Describe "MSFT_iSCSIServerTarget\Get-ServerTarget" {
+        Describe "DSR_iSCSIServerTarget\Get-ServerTarget" {
 
             Context 'Server Target does not exist' {
 
