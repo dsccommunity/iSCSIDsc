@@ -1,5 +1,5 @@
-$Global:DSCModuleName   = 'iSCSIDsc'
-$Global:DSCResourceName = 'MSFT_iSCSIInitiator'
+$script:DSCModuleName   = 'iSCSIDsc'
+$script:DSCResourceName = 'MSFT_iSCSIInitiator'
 
 # These tests are disabled because they require iSCSI Loopback
 # iSCSI Loopback is supposed to work in Windows Server 2012 R2
@@ -10,19 +10,21 @@ $Global:DSCResourceName = 'MSFT_iSCSIInitiator'
 # how to get it going.
 return
 
+Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers') -ChildPath 'CommonTestHelper.psm1') -Global
+
 #region HEADER
-# Integration Test Template Version: 1.1.0
-[String] $moduleRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $Script:MyInvocation.MyCommand.Path))
-if ( (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests'))) -or `
-     (-not (Test-Path -Path (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1'))) )
+# Integration Test Template Version: 1.1.1
+[String] $script:moduleRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+if ( (-not (Test-Path -Path (Join-Path -Path $script:moduleRoot -ChildPath 'DSCResource.Tests'))) -or `
+     (-not (Test-Path -Path (Join-Path -Path $script:moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1'))) )
 {
-    & git @('clone','https://github.com/PowerShell/DscResource.Tests.git',(Join-Path -Path $moduleRoot -ChildPath '\DSCResource.Tests\'))
+    & git @('clone','https://github.com/PowerShell/DscResource.Tests.git',(Join-Path -Path $script:moduleRoot -ChildPath '\DSCResource.Tests\'))
 }
 
-Import-Module (Join-Path -Path $moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1') -Force
+Import-Module (Join-Path -Path $script:moduleRoot -ChildPath 'DSCResource.Tests\TestHelper.psm1') -Force
 $TestEnvironment = Initialize-TestEnvironment `
-    -DSCModuleName $Global:DSCModuleName `
-    -DSCResourceName $Global:DSCResourceName `
+    -DSCModuleName $script:DSCModuleName `
+    -DSCResourceName $script:DSCResourceName `
     -TestType Integration
 #endregion
 
@@ -57,30 +59,32 @@ try
     }
 
     #region Integration Tests
-    $ConfigFile = Join-Path -Path $PSScriptRoot -ChildPath "$($Global:DSCResourceName).config.ps1"
+    $ConfigFile = Join-Path -Path $PSScriptRoot -ChildPath "$($script:DSCResourceName).config.ps1"
     . $ConfigFile
 
-    Describe "$($Global:DSCResourceName)_Integration" {
-        # Create a Server Target on this computer to test with
-        $VirtualDiskPath = Join-Path -Path $ENV:Temp -ChildPath ([System.IO.Path]::ChangeExtension([System.IO.Path]::GetRandomFileName(),'vhdx'))
-        New-iSCSIVirtualDisk `
-            -ComputerName LOCALHOST `
-            -Path $VirtualDiskPath `
-            -SizeBytes 500MB
-        New-iSCSIServerTarget `
-            -TargetName $TargetName `
-            -InitiatorIds "Iqn:iqn.1991-05.com.microsoft:$($Initiator.InitiatorPortalAddress)" `
-            -ComputerName LOCALHOST
-        Add-IscsiVirtualDiskTargetMapping `
-            -ComputerName LOCALHOST `
-            -TargetName $TargetName `
-            -Path $VirtualDiskPath
+    Describe "$($script:DSCResourceName)_Integration" {
+        BeforeAll {
+            # Create a Server Target on this computer to test with
+            $VirtualDiskPath = Join-Path -Path $ENV:Temp -ChildPath ([System.IO.Path]::ChangeExtension([System.IO.Path]::GetRandomFileName(),'vhdx'))
+            New-iSCSIVirtualDisk `
+                -ComputerName LOCALHOST `
+                -Path $VirtualDiskPath `
+                -SizeBytes 500MB
+            New-iSCSIServerTarget `
+                -TargetName $TargetName `
+                -InitiatorIds "Iqn:iqn.1991-05.com.microsoft:$($Initiator.InitiatorPortalAddress)" `
+                -ComputerName LOCALHOST
+            Add-IscsiVirtualDiskTargetMapping `
+                -ComputerName LOCALHOST `
+                -TargetName $TargetName `
+                -Path $VirtualDiskPath
+        } # BeforeAll
 
         #region DEFAULT TESTS
-        It 'Should compile without throwing' {
+        It 'Should compile and apply the MOF without throwing' {
             {
-                Invoke-Expression -Command "$($Global:DSCResourceName)_Config -OutputPath `$TestEnvironment.WorkingFolder"
-                Start-DscConfiguration -Path $TestEnvironment.WorkingFolder -ComputerName localhost -Wait -Verbose -Force
+                & "$($script:DSCResourceName)_Config" -OutputPath $TestDrive
+                Start-DscConfiguration -Path $TestDrive -ComputerName localhost -Wait -Verbose -Force
             } | Should not throw
         }
 
@@ -125,23 +129,25 @@ try
             # $Initiator.iSNSServer          | Should Be $iSNSServerNew.iSNSServerAddress
         }
 
-        # Clean up
-        Disconnect-IscsiTarget `
-            -NodeAddress $Initiator.NodeAddress `
-            -Confirm:$False
-        Remove-IscsiTargetPortal `
-            -TargetPortalAddress $Initiator.TargetPortalAddress `
-            -InitiatorPortalAddress $Initiator.InitiatorPortalAddress `
-            -Confirm:$False
-        Remove-iSCSIServerTarget `
-            -ComputerName LOCALHOST `
-            -TargetName $TargetName
-        Remove-iSCSIVirtualDisk `
-            -ComputerName LOCALHOST `
-            -Path $VirtualDiskPath
-        Remove-Item `
-            -Path $VirtualDiskPath `
-            -Force
+        AfterAll {
+            # Clean up
+            Disconnect-IscsiTarget `
+                -NodeAddress $Initiator.NodeAddress `
+                -Confirm:$False
+            Remove-IscsiTargetPortal `
+                -TargetPortalAddress $Initiator.TargetPortalAddress `
+                -InitiatorPortalAddress $Initiator.InitiatorPortalAddress `
+                -Confirm:$False
+            Remove-iSCSIServerTarget `
+                -ComputerName LOCALHOST `
+                -TargetName $TargetName
+            Remove-iSCSIVirtualDisk `
+                -ComputerName LOCALHOST `
+                -Path $VirtualDiskPath
+            Remove-Item `
+                -Path $VirtualDiskPath `
+                -Force
+        } # AfterAll
     }
     #endregion
 }

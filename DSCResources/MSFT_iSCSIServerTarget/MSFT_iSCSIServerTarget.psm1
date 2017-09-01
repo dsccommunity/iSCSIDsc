@@ -1,46 +1,45 @@
-data LocalizedData
-{
-    # culture="en-US"
-    ConvertFrom-StringData -StringData @'
-GettingiSCSIServerTargetMessage=Getting iSCSI Server Target "{0}".
-iSCSIServerTargetExistsMessage=iSCSI Server Target "{0}" exists.
-iSCSIServerTargetDoesNotExistMessage=iSCSI Server Target "{0}" does not exist.
-SettingiSCSIServerTargetMessage=Setting iSCSI Server Target "{0}".
-EnsureiSCSIServerTargetExistsMessage=Ensuring iSCSI Server Target "{0}" exists.
-EnsureiSCSIServerTargetDoesNotExistMessage=Ensuring iSCSI Server Target "{0}" does not exist.
-iSCSIServerTargetCreatedMessage=iSCSI Server Target "{0}" has been created.
-iSCSIServerTargetDiskAddedMessage=iSCSI Server Target "{0}" Virtual Disk "{1}" added.
-iSCSIServerTargetDiskRemovedMessage=iSCSI Server Target "{0}" Virtual Disk "{1}" removed.
-iSCSIServerTargetUpdatedMessage=iSCSI Server Target "{0}" has been updated.
-iSCSIServerTargetRemovedMessage=iSCSI Server Target "{0}" has been removed.
-iSNSServerRemovedMessage=iSNS Server has been cleared.
-iSNSServerUpdatedMessage=iSNS Server has been set to "{0}".
-iSNSServerUpdateErrorMessage=An error occurred setting the iSNS Server to "{0}". This is usually caused by the iSNS Server not being accessible.
-TestingiSCSIServerTargetMessage=Testing iSCSI Server Target "{0}".
-iSCSIServerTargetParameterNeedsUpdateMessage=iSCSI Server Target "{0}" {1} is different. Change required.
-iSCSIServerTargetExistsButShouldNotMessage=iSCSI Server Target "{0}" exists but should not. Change required.
-iSCSIServerTargetDoesNotExistButShouldMessage=iSCSI Server Target "{0}" does not exist but should. Change required.
-iSCSIServerTargetDoesNotExistAndShouldNotMessage=iSCSI Server Target "{0}" does not exist and should not. Change not required.
-iSNSServerNeedsUpdateMessage=iSNS Server is "{0}" but should be "{1}". Change required.
-iSNSServerIsSetButShouldBeNotMessage=iSNS Server is set but should not be. Change required.
-'@
-}
+$modulePath = Join-Path -Path (Split-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -Parent) -ChildPath 'DSCResources\Modules'
 
+# Import the Networking Resource Helper Module
+Import-Module -Name (Join-Path -Path $modulePath `
+        -ChildPath (Join-Path -Path 'iSCSIDsc.ResourceHelper' `
+            -ChildPath 'iSCSIDsc.ResourceHelper.psm1'))
+
+# Import Localization Strings
+$LocalizedData = Get-LocalizedData `
+    -ResourceName 'MSFT_iSCSIServerTarget' `
+    -ResourcePath (Split-Path -Parent $Script:MyInvocation.MyCommand.Path)
+
+<#
+    .SYNOPSIS
+        Returns the current state of the specified iSCSI Server Target.
+
+    .PARAMETER TargetName
+        Specifies the name of the iSCSI target.
+
+    .PARAMETER InitiatorIds
+        Specifies the iSCSI initiator identifiers (IDs) to which the iSCSI target is assigned.
+
+    .PARAMETER Paths
+        Specifies the path of the virtual hard disk (VHD) files that are associated with the Server
+        Target.
+#>
 function Get-TargetResource
 {
     [CmdletBinding()]
     [OutputType([System.Collections.Hashtable])]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $TargetName,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String[]]
         $InitiatorIds,
-        
-        [parameter(Mandatory = $true)]
+
+        [Parameter(Mandatory = $true)]
         [System.String[]]
         $Paths
     )
@@ -51,12 +50,12 @@ function Get-TargetResource
             -f $TargetName
         ) -join '' )
 
-    $ServerTarget =  Get-ServerTarget -TargetName $TargetName
+    $serverTarget =  Get-ServerTarget -TargetName $TargetName
 
     $returnValue = @{
         TargetName = $TargetName
     }
-    if ($ServerTarget)
+    if ($serverTarget)
     {
         Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
@@ -66,8 +65,8 @@ function Get-TargetResource
 
         $returnValue += @{
             Ensure = 'Present'
-            InitiatorIds = @($ServerTarget.InitiatorIds.Value)
-            Paths = @($ServerTarget.LunMappings.Path)
+            InitiatorIds = @($serverTarget.InitiatorIds.Value)
+            Paths = @($serverTarget.LunMappings.Path)
         }
     }
     else
@@ -92,32 +91,55 @@ function Get-TargetResource
         $returnValue += @{
             iSNSServer = $iSNSServerCurrent.ServerName
         }
-    }
+    } # if
 
     $returnValue
 } # Get-TargetResource
 
+<#
+    .SYNOPSIS
+        Creates, updates or removes an iSCSI Server Target.
+
+    .PARAMETER TargetName
+        Specifies the name of the iSCSI target.
+
+    .PARAMETER Ensure
+        Ensures that Server Target is either Absent or Present.
+
+    .PARAMETER InitiatorIds
+        Specifies the iSCSI initiator identifiers (IDs) to which the iSCSI target is assigned.
+
+    .PARAMETER Paths
+        Specifies the path of the virtual hard disk (VHD) files that are associated with the Server
+        Target.
+
+    .PARAMETER iSNSServer
+        Specifies an iSNS Server to register this Server Target with.
+#>
 function Set-TargetResource
 {
     [CmdletBinding()]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $TargetName,
 
+        [Parameter()]
         [ValidateSet('Present','Absent')]
         [System.String]
         $Ensure = 'Present',
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String[]]
         $InitiatorIds,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String[]]
         $Paths,
 
+        [Parameter()]
         [System.String]
         $iSNSServer
     )
@@ -129,7 +151,7 @@ function Set-TargetResource
         ) -join '' )
 
     # Lookup the existing iSCSI Server Target
-    $ServerTarget = Get-ServerTarget -TargetName $TargetName
+    $serverTarget = Get-ServerTarget -TargetName $TargetName
 
     # Get the iSNS Server
     $iSNSServerCurrent = Get-WmiObject `
@@ -144,13 +166,13 @@ function Set-TargetResource
                 -f $TargetName
             ) -join '' )
 
-        if ($ServerTarget)
+        if ($serverTarget)
         {
             # The iSCSI Server Target exists
-            [String[]] $ExistingInitiatorIds = @($ServerTarget.InitiatorIds.Value)
+            [String[]] $existingInitiatorIds = @($serverTarget.InitiatorIds.Value)
             if (($InitiatorIds) -and (Compare-Object `
                 -ReferenceObject $InitiatorIds `
-                -DifferenceObject $ExistingInitiatorIds).Count -ne 0)
+                -DifferenceObject $existingInitiatorIds).Count -ne 0)
             {
                 Set-iSCSIServerTarget `
                     -ComputerName LOCALHOST `
@@ -184,7 +206,7 @@ function Set-TargetResource
         # Check that the Paths match in the Server Target
         foreach ($Path in $Paths)
         {
-            if ($Path -notin $ServerTarget.LunMappings.Path)
+            if ($Path -notin $serverTarget.LunMappings.Path)
             {
                 # Path is not in the LunMappings - so add it
                 Add-IscsiVirtualDiskTargetMapping `
@@ -199,7 +221,7 @@ function Set-TargetResource
                     ) -join '' )
             } # if
         } # foreach
-        foreach ($Path in $ServerTarget.LunMappings.Path)
+        foreach ($Path in $serverTarget.LunMappings.Path)
         {
             if ($Path -notin $Paths)
             {
@@ -270,7 +292,7 @@ function Set-TargetResource
                 -f $TargetName
             ) -join '' )
 
-        if ($ServerTarget)
+        if ($serverTarget)
         {
             # The iSCSI Server Target shouldn't exist - remove it
             Remove-iSCSIServerTarget `
@@ -300,28 +322,51 @@ function Set-TargetResource
     } # if
 } # Set-TargetResource
 
+<#
+    .SYNOPSIS
+        Tests if an iSCSI Server Target needs to be created, updated or removed.
+
+    .PARAMETER TargetName
+        Specifies the name of the iSCSI target.
+
+    .PARAMETER Ensure
+        Ensures that Server Target is either Absent or Present.
+
+    .PARAMETER InitiatorIds
+        Specifies the iSCSI initiator identifiers (IDs) to which the iSCSI target is assigned.
+
+    .PARAMETER Paths
+        Specifies the path of the virtual hard disk (VHD) files that are associated with the Server
+        Target.
+
+    .PARAMETER iSNSServer
+        Specifies an iSNS Server to register this Server Target with.
+#>
 function Test-TargetResource
 {
     [CmdletBinding()]
     [OutputType([System.Boolean])]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $TargetName,
 
+        [Parameter()]
         [ValidateSet('Present','Absent')]
         [System.String]
         $Ensure = 'Present',
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String[]]
         $InitiatorIds,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String[]]
         $Paths,
 
+        [Parameter()]
         [System.String]
         $iSNSServer
     )
@@ -336,7 +381,7 @@ function Test-TargetResource
         ) -join '' )
 
     # Lookup the existing iSCSI Server Target
-    $ServerTarget = Get-ServerTarget -TargetName $TargetName
+    $serverTarget = Get-ServerTarget -TargetName $TargetName
 
     # Get the iSNS Server
     $iSNSServerCurrent = Get-WmiObject `
@@ -346,13 +391,13 @@ function Test-TargetResource
     if ($Ensure -eq 'Present')
     {
         # The iSCSI Server Target should exist
-        if ($ServerTarget)
+        if ($serverTarget)
         {
             # The iSCSI Server Target exists already - check the parameters
-            [String[]] $ExistingInitiatorIds = @($ServerTarget.InitiatorIds.Value)
+            [String[]] $existingInitiatorIds = @($serverTarget.InitiatorIds.Value)
             if (($InitiatorIds) -and (Compare-Object `
                 -ReferenceObject $InitiatorIds `
-                -DifferenceObject $ExistingInitiatorIds).Count -ne 0)
+                -DifferenceObject $existingInitiatorIds).Count -ne 0)
             {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
@@ -362,7 +407,7 @@ function Test-TargetResource
                 $desiredConfigurationMatch = $false
             } # if
 
-            [String[]] $ExistingPaths = @($ServerTarget.LunMappings.Path)
+            [String[]] $ExistingPaths = @($serverTarget.LunMappings.Path)
             if (($Paths) -and (Compare-Object `
                 -ReferenceObject $Paths `
                 -DifferenceObject $ExistingPaths).Count -ne 0)
@@ -402,7 +447,7 @@ function Test-TargetResource
     else
     {
         # The iSCSI Server Target should not exist
-        if ($ServerTarget)
+        if ($serverTarget)
         {
             # The iSCSI Server Target exists but should not
             Write-Verbose -Message ( @(
@@ -438,31 +483,38 @@ function Test-TargetResource
 } # Test-TargetResource
 
 # Helper Functions
+<#
+    .SYNOPSIS
+        Looks up the specified iSCSI Server Target.
 
-Function Get-ServerTarget
+    .PARAMETER TargetName
+        The Target Name of the iSCSI Server Target to look up.
+#>
+function Get-ServerTarget
 {
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.String]
         $TargetName
     )
     try
     {
-        $ServerTarget = Get-iSCSIServerTarget `
+        $serverTarget = Get-iSCSIServerTarget `
             -ComputerName LOCALHOST `
             -TargetName $TargetName `
             -ErrorAction Stop
     }
     catch [Microsoft.Iscsi.Target.Commands.IscsiCmdException]
     {
-        $ServerTarget = $null
+        $serverTarget = $null
     }
     catch
     {
         Throw $_
     }
-    Return $ServerTarget
+    Return $serverTarget
 }
 
-Export-ModuleMember -Function *-TargetResource
+Export-ModuleMember -function *-TargetResource

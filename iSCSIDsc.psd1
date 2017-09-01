@@ -4,7 +4,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '1.2.1.0'
+ModuleVersion = '1.3.0.0'
 
 # ID used to uniquely identify this module
 GUID = 'f2793754-6dc7-439a-a779-b1529b5e704c'
@@ -16,7 +16,7 @@ Author = 'Microsoft Corporation'
 CompanyName = 'Microsoft Corporation'
 
 # Copyright statement for this module
-Copyright = '(c) 2015 Microsoft Corporation. All rights reserved.'
+Copyright = '(c) 2016 Microsoft Corporation. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'DSC resources for configuring Windows iSCSI Targets and Initiators.'
