@@ -35,7 +35,8 @@ directly to this branch.
 
 ### dev
 
-[![Build status](https://ci.appveyor.com/api/projects/status/xnuik3kpyag237mv/branch/dev?svg=true)](https://ci.appveyor.com/project/PlagueHO/iSCSCIDsc/branch/dev)[![codecov](https://codecov.io/gh/PlagueHO/iSCSCIDsc/branch/dev/graph/badge.svg)](https://codecov.io/gh/PowerShell/iSCSCIDsc/branch/dev)
+[![Build status](https://ci.appveyor.com/api/projects/status/xnuik3kpyag237mv/branch/dev?svg=true)](https://ci.appveyor.com/project/PlagueHO/iSCSCIDsc/branch/dev)
+[![codecov](https://codecov.io/gh/PlagueHO/iSCSCIDsc/branch/dev/graph/badge.svg)](https://codecov.io/gh/PowerShell/iSCSCIDsc/branch/dev)
 
 This is the development branch to which contributions should be proposed by contributors
 as pull requests. This development branch will periodically be merged to the master
