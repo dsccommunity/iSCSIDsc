@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.5.0.0
+
 - Converted resource module to be compliant with HQRM.
 - Changed AppVeyor.yml to use AppVeyor module.
 - Converted to Autodocumentation module.
