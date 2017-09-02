@@ -27,7 +27,7 @@ the [iSCSIDsc wiki](https://github.com/PlagueHO/iSCSIDsc/wiki).
 
 ### master
 
-[![Build status](https://ci.appveyor.com/api/projects/status/xnuik3kpyag237mv/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/iSCSIDsc/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/xnuik3kpyag237mv/branch/master?svg=true)](https://ci.appveyor.com/project/PlagueHO/iSCSIDsc/branch/master)
 [![codecov](https://codecov.io/gh/PlagueHO/iSCSIDsc/branch/master/graph/badge.svg)](https://codecov.io/gh/PlagueHO/iSCSIDsc/branch/master)
 
 This is the branch containing the latest release - no contributions should be made
