@@ -51,7 +51,7 @@ try
         Describe 'Environment' {
             Context 'Operating System' {
                 It 'Should be a Server OS' {
-                    $ProductType | Should Be 3
+                    $ProductType | Should -Be 3
                 }
             }
         }
@@ -64,7 +64,7 @@ try
         Describe 'Environment' {
             Context 'Windows Features' {
                 It 'Should have the iSCSI Target Feature Installed' {
-                    $Installed | Should Be $true
+                    $Installed | Should -Be $true
                 }
             }
         }
@@ -82,7 +82,7 @@ try
                 It 'should return absent Virtual Disk' {
                     $Result = Get-TargetResource `
                         -Path $TestVirtualDisk.Path
-                    $Result.Ensure                  | Should Be 'Absent'
+                    $Result.Ensure                  | Should -Be 'Absent'
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -96,12 +96,12 @@ try
                 It 'should return correct Virtual Disk' {
                     $Result = Get-TargetResource `
                         -Path $TestVirtualDisk.Path
-                    $Result.Ensure                  | Should Be 'Present'
-                    $Result.Path                    | Should Be $TestVirtualDisk.Path
-                    $Result.DiskType                | Should Be $TestVirtualDisk.DiskType
-                    $Result.SizeBytes               | Should Be $TestVirtualDisk.SizeBytes
-                    $Result.Description             | Should Be $TestVirtualDisk.Description
-                    $Result.ParentPath              | Should Be $TestVirtualDisk.ParentPath
+                    $Result.Ensure                  | Should -Be 'Present'
+                    $Result.Path                    | Should -Be $TestVirtualDisk.Path
+                    $Result.DiskType                | Should -Be $TestVirtualDisk.DiskType
+                    $Result.SizeBytes               | Should -Be $TestVirtualDisk.SizeBytes
+                    $Result.Description             | Should -Be $TestVirtualDisk.Description
+                    $Result.ParentPath              | Should -Be $TestVirtualDisk.ParentPath
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -122,7 +122,7 @@ try
                     {
                         $Splat = $TestVirtualDisk.Clone()
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -144,7 +144,7 @@ try
                         $Splat = $TestVirtualDisk.Clone()
                         $Splat.Description = 'Different'
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -174,7 +174,7 @@ try
                     $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
                         -ArgumentList $exception, $errorId, $errorCategory, $null
 
-                    { Set-TargetResource @Splat } | Should Throw $errorRecord
+                    { Set-TargetResource @Splat } | Should -Throw $errorRecord
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -203,7 +203,7 @@ try
                     $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
                         -ArgumentList $exception, $errorId, $errorCategory, $null
 
-                    { Set-TargetResource @Splat } | Should Throw $errorRecord
+                    { Set-TargetResource @Splat } | Should -Throw $errorRecord
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -232,7 +232,7 @@ try
                     $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
                         -ArgumentList $exception, $errorId, $errorCategory, $null
 
-                    { Set-TargetResource @Splat } | Should Throw $errorRecord
+                    { Set-TargetResource @Splat } | Should -Throw $errorRecord
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -254,7 +254,7 @@ try
                         $Splat = $TestVirtualDisk.Clone()
                         $Splat.Ensure = 'Absent'
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -276,7 +276,7 @@ try
                         $Splat = $TestVirtualDisk.Clone()
                         $Splat.Ensure = 'Absent'
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -295,7 +295,7 @@ try
 
                 It 'should return false' {
                     $Splat = $TestVirtualDisk.Clone()
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
 
                 }
                 It 'should call expected Mocks' {
@@ -311,8 +311,8 @@ try
                     {
                         $Splat = $TestVirtualDisk.Clone()
                         $Splat.Description = 'Different'
-                        Test-TargetResource @Splat | Should Be $False
-                    } | Should Not Throw
+                        Test-TargetResource @Splat | Should -Be $False
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -336,7 +336,7 @@ try
                     $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
                         -ArgumentList $exception, $errorId, $errorCategory, $null
 
-                    { Test-TargetResource @Splat } | Should Throw $errorRecord
+                    { Test-TargetResource @Splat } | Should -Throw $errorRecord
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -359,7 +359,7 @@ try
                     $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
                         -ArgumentList $exception, $errorId, $errorCategory, $null
 
-                    { Test-TargetResource @Splat } | Should Throw $errorRecord
+                    { Test-TargetResource @Splat } | Should -Throw $errorRecord
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -382,7 +382,7 @@ try
                     $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
                         -ArgumentList $exception, $errorId, $errorCategory, $null
 
-                    { Test-TargetResource @Splat } | Should Throw $errorRecord
+                    { Test-TargetResource @Splat } | Should -Throw $errorRecord
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -396,8 +396,8 @@ try
                 It 'should return true' {
                     {
                         $Splat = $TestVirtualDisk.Clone()
-                        Test-TargetResource @Splat | Should Be $True
-                    } | Should Not Throw
+                        Test-TargetResource @Splat | Should -Be $True
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -412,8 +412,8 @@ try
                     {
                         $Splat = $TestVirtualDisk.Clone()
                         $Splat.Ensure = 'Absent'
-                    Test-TargetResource @Splat | Should Be $False
-                    } | Should Not Throw
+                    Test-TargetResource @Splat | Should -Be $False
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -428,8 +428,8 @@ try
                     {
                         $Splat = $TestVirtualDisk.Clone()
                         $Splat.Ensure = 'Absent'
-                        Test-TargetResource @Splat | Should Be $True
-                    } | Should Not Throw
+                        Test-TargetResource @Splat | Should -Be $True
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -446,7 +446,7 @@ try
                 It 'should return null' {
                     $Splat = $TestVirtualDisk.Clone()
                     $Result = Get-VirtualDisk -Path $Splat.Path
-                    $Result | Should Be $null
+                    $Result | Should -Be $null
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1
@@ -460,11 +460,11 @@ try
                 It 'should return expected parameters' {
                     $Splat = $TestVirtualDisk.Clone()
                     $Result = Get-VirtualDisk -Path $Splat.Path
-                    $Result.Path                    | Should Be $MockVirtualDisk.Path
-                    $Result.DiskType                | Should Be $MockVirtualDisk.DiskType
-                    $Result.Size                    | Should Be $MockVirtualDisk.Size
-                    $Result.Description             | Should Be $MockVirtualDisk.Description
-                    $Result.ParentPath              | Should Be $MockVirtualDisk.ParentPath
+                    $Result.Path                    | Should -Be $MockVirtualDisk.Path
+                    $Result.DiskType                | Should -Be $MockVirtualDisk.DiskType
+                    $Result.Size                    | Should -Be $MockVirtualDisk.Size
+                    $Result.Description             | Should -Be $MockVirtualDisk.Description
+                    $Result.ParentPath              | Should -Be $MockVirtualDisk.ParentPath
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIVirtualDisk -Exactly 1

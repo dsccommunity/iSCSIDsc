@@ -27,7 +27,7 @@ try
     Describe 'Environment' {
         Context 'Operating System' {
             It 'Should be a Server OS' {
-                $ProductType | Should Be 3
+                $ProductType | Should -Be 3
             }
         }
     }
@@ -40,7 +40,7 @@ try
     Describe 'Environment' {
         Context 'Windows Features' {
             It 'Should have the iSCSI Target Feature Installed' {
-                $Installed | Should Be $true
+                $Installed | Should -Be $true
             }
         }
     }
@@ -59,21 +59,21 @@ try
             {
                 & "$($script:DSCResourceName)_Config" -OutputPath $TestDrive
                 Start-DscConfiguration -Path $TestDrive -ComputerName localhost -Wait -Verbose -Force
-            } | Should not throw
+            } | Should -not -throw
         }
 
         It 'should be able to call Get-DscConfiguration without throwing' {
-            { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
+            { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should -Not -throw
         }
         #endregion
 
         It 'Should have set the resource and all the parameters should match' {
             # Get the Rule details
             $virtualDiskNew = Get-iSCSIVirtualDisk -Path $VirtualDisk.Path
-            $VirtualDisk.Path               | Should Be $virtualDiskNew.Path
-            $VirtualDisk.DiskType           | Should Be $virtualDiskNew.DiskType
-            $VirtualDisk.Size               | Should Be $virtualDiskNew.Size
-            $VirtualDisk.Description        | Should Be $virtualDiskNew.Description
+            $VirtualDisk.Path               | Should -Be $virtualDiskNew.Path
+            $VirtualDisk.DiskType           | Should -Be $virtualDiskNew.DiskType
+            $VirtualDisk.Size               | Should -Be $virtualDiskNew.Size
+            $VirtualDisk.Description        | Should -Be $virtualDiskNew.Description
         }
 
         AfterAll {

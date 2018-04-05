@@ -27,7 +27,7 @@ try
     Describe 'Environment' {
         Context 'Operating System' {
             It 'Should be a Server OS' {
-                $ProductType | Should Be 3
+                $ProductType | Should -Be 3
             }
         }
     }
@@ -40,7 +40,7 @@ try
     Describe 'Environment' {
         Context 'Windows Features' {
             It 'Should have the iSCSI Target Feature Installed' {
-                $Installed | Should Be $true
+                $Installed | Should -Be $true
             }
         }
     }
@@ -65,20 +65,20 @@ try
             {
                 & "$($script:DSCResourceName)_Config" -OutputPath $TestDrive
                 Start-DscConfiguration -Path $TestDrive -ComputerName localhost -Wait -Verbose -Force
-            } | Should not throw
+            } | Should -not -throw
         }
 
         It 'should be able to call Get-DscConfiguration without throwing' {
-            { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
+            { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should -Not -throw
         }
         #endregion
 
         It 'Should have set the resource and all the parameters should match' {
             # Get the Rule details
             $ServerTargetNew = Get-iSCSIServerTarget -TargetName $ServerTarget.TargetName
-            $ServerTargetNew.TargetName       | Should Be $ServerTarget.TargetName
-            $ServerTargetNew.InitiatorIds     | Should Be $ServerTarget.InitiatorIds
-            $ServerTargetNew.LunMappings.Path | Should Be $ServerTarget.Paths
+            $ServerTargetNew.TargetName       | Should -Be $ServerTarget.TargetName
+            $ServerTargetNew.InitiatorIds     | Should -Be $ServerTarget.InitiatorIds
+            $ServerTargetNew.LunMappings.Path | Should -Be $ServerTarget.Paths
             $iSNSServerNew = Get-WmiObject -Class WT_iSNSServer -Namespace root\wmi
             # The iSNS Server is not usually accessible so won't be able to be set
             # $iSNSServerNew.ServerName         | Should Be $ServerTarget.iSNSServer

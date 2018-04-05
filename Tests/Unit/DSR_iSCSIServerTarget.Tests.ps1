@@ -70,7 +70,7 @@ try
         Describe 'Environment' {
             Context 'Operating System' {
                 It 'Should be a Server OS' {
-                    $ProductType | Should Be 3
+                    $ProductType | Should -Be 3
                 }
             }
         }
@@ -83,7 +83,7 @@ try
         Describe 'Environment' {
             Context 'Windows Features' {
                 It 'Should have the iSCSI Target Feature Installed' {
-                    $Installed | Should Be $true
+                    $Installed | Should -Be $true
                 }
             }
         }
@@ -104,8 +104,8 @@ try
                         -TargetName $TestServerTarget.TargetName `
                         -InitiatorIds $TestServerTarget.InitiatorIds `
                         -Paths $TestServerTarget.Paths
-                    $Result.Ensure                  | Should Be 'Absent'
-                    $Result.iSNSServer              | Should BeNullOrEmpty
+                    $Result.Ensure                  | Should -Be 'Absent'
+                    $Result.iSNSServer              | Should -BeNullOrEmpty
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -123,10 +123,10 @@ try
                         -TargetName $TestServerTarget.TargetName `
                         -InitiatorIds $TestServerTarget.InitiatorIds `
                         -Paths $TestServerTarget.Paths
-                    $Result.Ensure                  | Should Be 'Present'
-                    $Result.InitiatorIds            | Should Be $TestServerTarget.InitiatorIds
-                    $Result.Paths                   | Should Be $TestServerTarget.Paths
-                    $Result.iSNSServer              | Should BeNullOrEmpty
+                    $Result.Ensure                  | Should -Be 'Present'
+                    $Result.InitiatorIds            | Should -Be $TestServerTarget.InitiatorIds
+                    $Result.Paths                   | Should -Be $TestServerTarget.Paths
+                    $Result.iSNSServer              | Should -BeNullOrEmpty
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -144,10 +144,10 @@ try
                         -TargetName $TestServerTargetWithiSNS.TargetName `
                         -InitiatorIds $TestServerTargetWithiSNS.InitiatorIds `
                         -Paths $TestServerTargetWithiSNS.Paths
-                    $Result.Ensure                  | Should Be 'Present'
-                    $Result.InitiatorIds            | Should Be $TestServerTargetWithiSNS.InitiatorIds
-                    $Result.Paths                   | Should Be $TestServerTargetWithiSNS.Paths
-                    $Result.iSNSServer              | Should Be $TestServerTargetWithiSNS.iSNSServer
+                    $Result.Ensure                  | Should -Be 'Present'
+                    $Result.InitiatorIds            | Should -Be $TestServerTargetWithiSNS.InitiatorIds
+                    $Result.Paths                   | Should -Be $TestServerTargetWithiSNS.Paths
+                    $Result.iSNSServer              | Should -Be $TestServerTargetWithiSNS.iSNSServer
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -174,7 +174,7 @@ try
                     {
                         $Splat = $TestServerTarget.Clone()
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -206,7 +206,7 @@ try
                         $Splat = $TestServerTarget.Clone()
                         $Splat.Paths += @( 'd:\NewVHD.vhdx' )
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -238,7 +238,7 @@ try
                         $Splat = $TestServerTarget.Clone()
                         $Splat.Paths = @( 'd:\NewVHD.vhdx' )
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -270,7 +270,7 @@ try
                         $Splat = $TestServerTarget.Clone()
                         $Splat.InitiatorIds += @( 'Iqn:iqn.1991-05.com.microsoft:fs3.contoso.com' )
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -302,7 +302,7 @@ try
                         $Splat = $TestServerTarget.Clone()
                         $Splat.Ensure = 'Absent'
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -334,7 +334,7 @@ try
                         $Splat = $TestServerTarget.Clone()
                         $Splat.Ensure = 'Absent'
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -366,7 +366,7 @@ try
                         $Splat = $TestServerTargetWithiSNS.Clone()
                         $Splat.iSNSServer = 'different.contoso.com'
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -397,7 +397,7 @@ try
                     {
                         $Splat = $TestServerTargetWithiSNS.Clone()
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -429,7 +429,7 @@ try
                         $Splat = $TestServerTargetWithiSNS.Clone()
                         $Splat.iSNSServer = ''
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -461,7 +461,7 @@ try
                         $Splat = $TestServerTarget.Clone()
                         $Splat.Ensure = 'Absent'
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -486,7 +486,7 @@ try
 
                 It 'should return false' {
                     $Splat = $TestServerTarget.Clone()
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -502,7 +502,7 @@ try
                 It 'should return false' {
                     $Splat = $TestServerTarget.Clone()
                     $Splat.Paths = @( 'd:\NewVHD.vhdx' )
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -518,7 +518,7 @@ try
                 It 'should return false' {
                     $Splat = $TestServerTarget.Clone()
                     $Splat.InitiatorIds += @( 'Iqn:iqn.1991-05.com.microsoft:fs3.contoso.com' )
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -533,7 +533,7 @@ try
 
                 It 'should return true' {
                     $Splat = $TestServerTarget.Clone()
-                    Test-TargetResource @Splat | Should Be $True
+                    Test-TargetResource @Splat | Should -Be $True
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -549,7 +549,7 @@ try
                 It 'should return false' {
                     $Splat = $TestServerTarget.Clone()
                     $Splat.Ensure = 'Absent'
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -565,7 +565,7 @@ try
                 It 'should return true' {
                     $Splat = $TestServerTarget.Clone()
                     $Splat.Ensure = 'Absent'
-                    Test-TargetResource @Splat | Should Be $True
+                    Test-TargetResource @Splat | Should -Be $True
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -580,7 +580,7 @@ try
 
                 It 'should return false' {
                     $Splat = $TestServerTargetWithiSNS.Clone()
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -596,7 +596,7 @@ try
                 It 'should return false' {
                     $Splat = $TestServerTargetWithiSNS.Clone()
                     $Splat.iSNSServer = 'different.contoso.com'
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -612,7 +612,7 @@ try
                 It 'should return false' {
                     $Splat = $TestServerTargetWithiSNS.Clone()
                     $Splat.iSNSServer = ''
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -628,7 +628,7 @@ try
                 It 'should return false' {
                     $Splat = $TestServerTarget.Clone()
                     $Splat.Ensure = 'Absent'
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -646,7 +646,7 @@ try
                 It 'should return null' {
                     $Splat = $TestServerTarget.Clone()
                     $Result = Get-ServerTarget -TargetName $Splat.TargetName
-                    $Result | Should Be $null
+                    $Result | Should -Be $null
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
@@ -660,8 +660,8 @@ try
                 It 'should return expected parameters' {
                     $Splat = $TestServerTarget.Clone()
                     $Result = Get-ServerTarget -TargetName $Splat.TargetName
-                    $Result.InitiatorIds            | Should Be $MockServerTarget.InitiatorIds
-                    $Result.Paths                   | Should Be $MockServerTarget.Paths
+                    $Result.InitiatorIds            | Should -Be $MockServerTarget.InitiatorIds
+                    $Result.Paths                   | Should -Be $MockServerTarget.Paths
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1

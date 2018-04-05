@@ -194,7 +194,7 @@ try
                         -NodeAddress $TestInitiator.NodeAddress `
                         -TargetPortalAddress $TestInitiator.TargetPortalAddress `
                         -InitiatorPortalAddress $TestInitiator.InitiatorPortalAddress
-                    $Result.Ensure | Should Be 'Absent'
+                    $Result.Ensure | Should -Be 'Absent'
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -216,13 +216,13 @@ try
                         -NodeAddress $TestInitiator.NodeAddress `
                         -TargetPortalAddress $TestInitiator.TargetPortalAddress `
                         -InitiatorPortalAddress $TestInitiator.InitiatorPortalAddress
-                    $Result.Ensure                 | Should Be 'Absent'
-                    $Result.TargetPortalAddress    | Should Be $TestInitiator.TargetPortalAddress
-                    $Result.InitiatorPortalAddress | Should Be $TestInitiator.InitiatorPortalAddress
-                    $Result.TargetPortalPortNumber | Should Be $TestInitiator.TargetPortalPortNumber
-                    $Result.InitiatorInstanceName  | Should Be $TestInitiator.InitiatorInstanceName
-                    $Result.IsDataDigest           | Should Be $TestInitiator.IsDataDigest
-                    $Result.IsHeaderDigest         | Should Be $TestInitiator.IsHeaderDigest
+                    $Result.Ensure                 | Should -Be 'Absent'
+                    $Result.TargetPortalAddress    | Should -Be $TestInitiator.TargetPortalAddress
+                    $Result.InitiatorPortalAddress | Should -Be $TestInitiator.InitiatorPortalAddress
+                    $Result.TargetPortalPortNumber | Should -Be $TestInitiator.TargetPortalPortNumber
+                    $Result.InitiatorInstanceName  | Should -Be $TestInitiator.InitiatorInstanceName
+                    $Result.IsDataDigest           | Should -Be $TestInitiator.IsDataDigest
+                    $Result.IsHeaderDigest         | Should -Be $TestInitiator.IsHeaderDigest
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -244,13 +244,13 @@ try
                         -NodeAddress $TestInitiator.NodeAddress `
                         -TargetPortalAddress $TestInitiator.TargetPortalAddress `
                         -InitiatorPortalAddress $TestInitiator.InitiatorPortalAddress
-                    $Result.Ensure                 | Should Be 'Absent'
-                    $Result.TargetPortalAddress    | Should Be $TestInitiator.TargetPortalAddress
-                    $Result.InitiatorPortalAddress | Should Be $TestInitiator.InitiatorPortalAddress
-                    $Result.TargetPortalPortNumber | Should Be $TestInitiator.TargetPortalPortNumber
-                    $Result.InitiatorInstanceName  | Should Be $TestInitiator.InitiatorInstanceName
-                    $Result.IsDataDigest           | Should Be $TestInitiator.IsDataDigest
-                    $Result.IsHeaderDigest         | Should Be $TestInitiator.IsHeaderDigest
+                    $Result.Ensure                 | Should -Be 'Absent'
+                    $Result.TargetPortalAddress    | Should -Be $TestInitiator.TargetPortalAddress
+                    $Result.InitiatorPortalAddress | Should -Be $TestInitiator.InitiatorPortalAddress
+                    $Result.TargetPortalPortNumber | Should -Be $TestInitiator.TargetPortalPortNumber
+                    $Result.InitiatorInstanceName  | Should -Be $TestInitiator.InitiatorInstanceName
+                    $Result.IsDataDigest           | Should -Be $TestInitiator.IsDataDigest
+                    $Result.IsHeaderDigest         | Should -Be $TestInitiator.IsHeaderDigest
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -271,13 +271,13 @@ try
                     $Result = Get-TargetResource `
                         -NodeAddress $TestInitiatorWithoutInitiatorAddress.NodeAddress `
                         -TargetPortalAddress $TestInitiatorWithoutInitiatorAddress.TargetPortalAddress
-                    $Result.Ensure                 | Should Be 'Absent'
-                    $Result.TargetPortalAddress    | Should Be $TestInitiatorWithoutInitiatorAddress.TargetPortalAddress
-                    $Result.InitiatorPortalAddress | Should BeNullOrEmpty
-                    $Result.TargetPortalPortNumber | Should Be $TestInitiatorWithoutInitiatorAddress.TargetPortalPortNumber
-                    $Result.InitiatorInstanceName  | Should Be $TestInitiatorWithoutInitiatorAddress.InitiatorInstanceName
-                    $Result.IsDataDigest           | Should Be $TestInitiatorWithoutInitiatorAddress.IsDataDigest
-                    $Result.IsHeaderDigest         | Should Be $TestInitiatorWithoutInitiatorAddress.IsHeaderDigest
+                    $Result.Ensure                 | Should -Be 'Absent'
+                    $Result.TargetPortalAddress    | Should -Be $TestInitiatorWithoutInitiatorAddress.TargetPortalAddress
+                    $Result.InitiatorPortalAddress | Should -BeNullOrEmpty
+                    $Result.TargetPortalPortNumber | Should -Be $TestInitiatorWithoutInitiatorAddress.TargetPortalPortNumber
+                    $Result.InitiatorInstanceName  | Should -Be $TestInitiatorWithoutInitiatorAddress.InitiatorInstanceName
+                    $Result.IsDataDigest           | Should -Be $TestInitiatorWithoutInitiatorAddress.IsDataDigest
+                    $Result.IsHeaderDigest         | Should -Be $TestInitiatorWithoutInitiatorAddress.IsHeaderDigest
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -299,20 +299,20 @@ try
                         -NodeAddress $TestInitiator.NodeAddress `
                         -TargetPortalAddress $TestInitiator.TargetPortalAddress `
                         -InitiatorPortalAddress $TestInitiator.InitiatorPortalAddress
-                    $Result.Ensure                 | Should Be 'Present'
-                    $Result.TargetPortalAddress    | Should Be $TestInitiator.TargetPortalAddress
-                    $Result.InitiatorPortalAddress | Should Be $TestInitiator.InitiatorPortalAddress
-                    $Result.TargetPortalPortNumber | Should Be $TestInitiator.TargetPortalPortNumber
-                    $Result.InitiatorInstanceName  | Should Be $TestInitiator.InitiatorInstanceName
-                    $Result.IsDataDigest           | Should Be $TestInitiator.IsDataDigest
-                    $Result.IsHeaderDigest         | Should Be $TestInitiator.IsHeaderDigest
-                    $Result.AuthenticationType     | Should Be $TestInitiator.AuthenticationType
-                    $Result.InitiatorInstanceName  | Should Be $TestInitiator.InitiatorInstanceName
-                    $Result.ConnectionIdentifier   | Should Be $MockConnection.ConnectionIdentifier
-                    $Result.SessionIdentifier      | Should Be $MockSession.SessionIdentifier
-                    $Result.IsConnected            | Should Be $MockSession.IsConnected
-                    $Result.IsDiscovered           | Should Be $MockSession.IsDiscovered
-                    $Result.IsPersistent           | Should Be $MockSession.IsPersistent
+                    $Result.Ensure                 | Should -Be 'Present'
+                    $Result.TargetPortalAddress    | Should -Be $TestInitiator.TargetPortalAddress
+                    $Result.InitiatorPortalAddress | Should -Be $TestInitiator.InitiatorPortalAddress
+                    $Result.TargetPortalPortNumber | Should -Be $TestInitiator.TargetPortalPortNumber
+                    $Result.InitiatorInstanceName  | Should -Be $TestInitiator.InitiatorInstanceName
+                    $Result.IsDataDigest           | Should -Be $TestInitiator.IsDataDigest
+                    $Result.IsHeaderDigest         | Should -Be $TestInitiator.IsHeaderDigest
+                    $Result.AuthenticationType     | Should -Be $TestInitiator.AuthenticationType
+                    $Result.InitiatorInstanceName  | Should -Be $TestInitiator.InitiatorInstanceName
+                    $Result.ConnectionIdentifier   | Should -Be $MockConnection.ConnectionIdentifier
+                    $Result.SessionIdentifier      | Should -Be $MockSession.SessionIdentifier
+                    $Result.IsConnected            | Should -Be $MockSession.IsConnected
+                    $Result.IsDiscovered           | Should -Be $MockSession.IsDiscovered
+                    $Result.IsPersistent           | Should -Be $MockSession.IsPersistent
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -333,20 +333,20 @@ try
                     $Result = Get-TargetResource `
                         -NodeAddress $TestInitiatorWithoutInitiatorAddress.NodeAddress `
                         -TargetPortalAddress $TestInitiatorWithoutInitiatorAddress.TargetPortalAddress
-                    $Result.Ensure                 | Should Be 'Present'
-                    $Result.TargetPortalAddress    | Should Be $TestInitiatorWithoutInitiatorAddress.TargetPortalAddress
-                    $Result.InitiatorPortalAddress | Should Be $MockConnection.InitiatorAddress
-                    $Result.TargetPortalPortNumber | Should Be $TestInitiatorWithoutInitiatorAddress.TargetPortalPortNumber
-                    $Result.InitiatorInstanceName  | Should Be $TestInitiatorWithoutInitiatorAddress.InitiatorInstanceName
-                    $Result.IsDataDigest           | Should Be $TestInitiatorWithoutInitiatorAddress.IsDataDigest
-                    $Result.IsHeaderDigest         | Should Be $TestInitiatorWithoutInitiatorAddress.IsHeaderDigest
-                    $Result.AuthenticationType     | Should Be $TestInitiatorWithoutInitiatorAddress.AuthenticationType
-                    $Result.InitiatorInstanceName  | Should Be $TestInitiatorWithoutInitiatorAddress.InitiatorInstanceName
-                    $Result.ConnectionIdentifier   | Should Be $MockConnection.ConnectionIdentifier
-                    $Result.SessionIdentifier      | Should Be $MockSession.SessionIdentifier
-                    $Result.IsConnected            | Should Be $MockSession.IsConnected
-                    $Result.IsDiscovered           | Should Be $MockSession.IsDiscovered
-                    $Result.IsPersistent           | Should Be $MockSession.IsPersistent
+                    $Result.Ensure                 | Should -Be 'Present'
+                    $Result.TargetPortalAddress    | Should -Be $TestInitiatorWithoutInitiatorAddress.TargetPortalAddress
+                    $Result.InitiatorPortalAddress | Should -Be $MockConnection.InitiatorAddress
+                    $Result.TargetPortalPortNumber | Should -Be $TestInitiatorWithoutInitiatorAddress.TargetPortalPortNumber
+                    $Result.InitiatorInstanceName  | Should -Be $TestInitiatorWithoutInitiatorAddress.InitiatorInstanceName
+                    $Result.IsDataDigest           | Should -Be $TestInitiatorWithoutInitiatorAddress.IsDataDigest
+                    $Result.IsHeaderDigest         | Should -Be $TestInitiatorWithoutInitiatorAddress.IsHeaderDigest
+                    $Result.AuthenticationType     | Should -Be $TestInitiatorWithoutInitiatorAddress.AuthenticationType
+                    $Result.InitiatorInstanceName  | Should -Be $TestInitiatorWithoutInitiatorAddress.InitiatorInstanceName
+                    $Result.ConnectionIdentifier   | Should -Be $MockConnection.ConnectionIdentifier
+                    $Result.SessionIdentifier      | Should -Be $MockSession.SessionIdentifier
+                    $Result.IsConnected            | Should -Be $MockSession.IsConnected
+                    $Result.IsDiscovered           | Should -Be $MockSession.IsDiscovered
+                    $Result.IsPersistent           | Should -Be $MockSession.IsPersistent
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -368,21 +368,21 @@ try
                         -NodeAddress $TestInitiator.NodeAddress `
                         -TargetPortalAddress $TestInitiator.TargetPortalAddress `
                         -InitiatorPortalAddress $TestInitiator.InitiatorPortalAddress
-                    $Result.Ensure                 | Should Be 'Present'
-                    $Result.TargetPortalAddress    | Should Be $TestInitiator.TargetPortalAddress
-                    $Result.InitiatorPortalAddress | Should Be $TestInitiator.InitiatorPortalAddress
-                    $Result.TargetPortalPortNumber | Should Be $TestInitiator.TargetPortalPortNumber
-                    $Result.InitiatorInstanceName  | Should Be $TestInitiator.InitiatorInstanceName
-                    $Result.IsDataDigest           | Should Be $TestInitiator.IsDataDigest
-                    $Result.IsHeaderDigest         | Should Be $TestInitiator.IsHeaderDigest
-                    $Result.AuthenticationType     | Should Be $TestInitiator.AuthenticationType
-                    $Result.InitiatorInstanceName  | Should Be $TestInitiator.InitiatorInstanceName
-                    $Result.ConnectionIdentifier   | Should Be $MockConnection.ConnectionIdentifier
-                    $Result.SessionIdentifier      | Should Be $MockSession.SessionIdentifier
-                    $Result.IsConnected            | Should Be $MockSession.IsConnected
-                    $Result.IsDiscovered           | Should Be $MockSession.IsDiscovered
-                    $Result.IsPersistent           | Should Be $MockSession.IsPersistent
-                    $Result.iSNSServer             | Should Be $MockiSNSSrver.iSNSServerAddress
+                    $Result.Ensure                 | Should -Be 'Present'
+                    $Result.TargetPortalAddress    | Should -Be $TestInitiator.TargetPortalAddress
+                    $Result.InitiatorPortalAddress | Should -Be $TestInitiator.InitiatorPortalAddress
+                    $Result.TargetPortalPortNumber | Should -Be $TestInitiator.TargetPortalPortNumber
+                    $Result.InitiatorInstanceName  | Should -Be $TestInitiator.InitiatorInstanceName
+                    $Result.IsDataDigest           | Should -Be $TestInitiator.IsDataDigest
+                    $Result.IsHeaderDigest         | Should -Be $TestInitiator.IsHeaderDigest
+                    $Result.AuthenticationType     | Should -Be $TestInitiator.AuthenticationType
+                    $Result.InitiatorInstanceName  | Should -Be $TestInitiator.InitiatorInstanceName
+                    $Result.ConnectionIdentifier   | Should -Be $MockConnection.ConnectionIdentifier
+                    $Result.SessionIdentifier      | Should -Be $MockSession.SessionIdentifier
+                    $Result.IsConnected            | Should -Be $MockSession.IsConnected
+                    $Result.IsDiscovered           | Should -Be $MockSession.IsDiscovered
+                    $Result.IsPersistent           | Should -Be $MockSession.IsPersistent
+                    $Result.iSNSServer             | Should -Be $MockiSNSSrver.iSNSServerAddress
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -413,7 +413,7 @@ try
                     {
                         $Splat = $TestInitiator.Clone()
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -450,7 +450,7 @@ try
                     {
                         $Splat = $TestInitiatorWithoutInitiatorAddress.Clone()
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -487,7 +487,7 @@ try
                     {
                         $Splat = $TestInitiator.Clone()
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -524,7 +524,7 @@ try
                     {
                         $Splat = $TestInitiatorWithoutInitiatorAddress.Clone()
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -563,7 +563,7 @@ try
                         $Splat = $TestInitiator.Clone()
                         $Splat.TargetPortalPortNumber = $Splat.TargetPortalPortNumber + 1
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -588,7 +588,7 @@ try
                         $Splat = $TestInitiator.Clone()
                         $Splat.InitiatorInstanceName = "Different"
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -613,7 +613,7 @@ try
                         $Splat = $TestInitiator.Clone()
                         $Splat.IsDataDigest = ! $Splat.IsDataDigest
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -638,7 +638,7 @@ try
                         $Splat = $TestInitiator.Clone()
                         $Splat.IsHeaderDigest = ! $Splat.IsHeaderDigest
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -675,7 +675,7 @@ try
                     {
                         $Splat = $TestInitiator.Clone()
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -715,7 +715,7 @@ try
                     {
                         $Splat = $TestInitiatorWithHostname.Clone()
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -756,7 +756,7 @@ try
                     {
                         $Splat = $TestInitiatorWithHostname.Clone()
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -795,7 +795,7 @@ try
                         $Splat = $TestInitiator.Clone()
                         $Splat.AuthenticationType = 'None'
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -832,7 +832,7 @@ try
                     {
                         $Splat = $TestInitiator.Clone()
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -870,7 +870,7 @@ try
                         $Splat = $TestInitiator.Clone()
                         $Splat.IsPersistent = $False
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -908,7 +908,7 @@ try
                         $Splat = $TestInitiator.Clone()
                         $Splat.Ensure = 'Absent'
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -946,7 +946,7 @@ try
                         $Splat = $TestInitiator.Clone()
                         $Splat.Ensure = 'Absent'
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -984,7 +984,7 @@ try
                         $Splat = $TestInitiator.Clone()
                         $Splat.Ensure = 'Absent'
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1022,7 +1022,7 @@ try
                         $Splat = $TestInitiator.Clone()
                         $Splat.Ensure = 'Absent'
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1060,7 +1060,7 @@ try
                         $Splat = $TestInitiatorWithiSNS.Clone()
                         $Splat.iSNSServer = 'different.contoso.com'
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1097,7 +1097,7 @@ try
                     {
                         $Splat = $TestInitiatorWithiSNS.Clone()
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1135,7 +1135,7 @@ try
                         $Splat = $TestInitiatorWithiSNS.Clone()
                         $Splat.iSNSServer = ''
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1173,7 +1173,7 @@ try
                         $Splat = $TestInitiator.Clone()
                         $Splat.Ensure = 'Absent'
                         Set-TargetResource @Splat
-                    } | Should Not Throw
+                    } | Should -Not -Throw
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1202,7 +1202,7 @@ try
                 Mock Get-WMIObject
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1221,7 +1221,7 @@ try
                 Mock Get-WMIObject
                 It 'should return false' {
                     $Splat = $TestInitiatorWithoutInitiatorAddress.Clone()
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1240,7 +1240,7 @@ try
                 Mock Get-WMIObject
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1259,7 +1259,7 @@ try
                 Mock Get-WMIObject
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1278,7 +1278,7 @@ try
                 Mock Get-WMIObject
                 It 'should return false' {
                     $Splat = $TestInitiatorWithoutInitiatorAddress.Clone()
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1299,7 +1299,7 @@ try
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.TargetPortalPortNumber = $Splat.TargetPortalPortNumber + 1
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1314,7 +1314,7 @@ try
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.InitiatorInstanceName = "Different"
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1329,7 +1329,7 @@ try
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.IsDataDigest = ! $Splat.IsDataDigest
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1344,7 +1344,7 @@ try
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.IsHeaderDigest = ! $Splat.IsHeaderDigest
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1366,7 +1366,7 @@ try
                 }
                 It 'should return true' {
                     $Splat = $TestInitiatorWithHostname.Clone()
-                    Test-TargetResource @Splat | Should Be $True
+                    Test-TargetResource @Splat | Should -Be $True
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1389,7 +1389,7 @@ try
                 }
                 It 'should return false' {
                     $Splat = $TestInitiatorWithHostname.Clone()
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1410,7 +1410,7 @@ try
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.AuthenticationType = 'None'
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1429,7 +1429,7 @@ try
                 Mock Get-WMIObject
                 It 'should return true' {
                     $Splat = $TestInitiator.Clone()
-                    Test-TargetResource @Splat | Should Be $True
+                    Test-TargetResource @Splat | Should -Be $True
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1449,7 +1449,7 @@ try
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.IsPersistent = $False
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1469,7 +1469,7 @@ try
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.Ensure = 'Absent'
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1489,7 +1489,7 @@ try
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.Ensure = 'Absent'
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1509,7 +1509,7 @@ try
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.Ensure = 'Absent'
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1529,7 +1529,7 @@ try
                 It 'should return true' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.Ensure = 'Absent'
-                    Test-TargetResource @Splat | Should Be $True
+                    Test-TargetResource @Splat | Should -Be $True
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1548,7 +1548,7 @@ try
                 Mock Get-WMIObject
                 It 'should return false' {
                     $Splat = $TestInitiatorWithiSNS.Clone()
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1568,7 +1568,7 @@ try
                 It 'should return false' {
                     $Splat = $TestInitiatorWithiSNS.Clone()
                     $Splat.iSNSServer = 'different.contoso.com'
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1588,7 +1588,7 @@ try
                 It 'should return false' {
                     $Splat = $TestInitiatorWithiSNS.Clone()
                     $Splat.iSNSServer = ''
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1608,7 +1608,7 @@ try
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.Ensure = 'Absent'
-                    Test-TargetResource @Splat | Should Be $False
+                    Test-TargetResource @Splat | Should -Be $False
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-TargetPortal -Exactly 1
@@ -1628,7 +1628,7 @@ try
                     $Result = Get-TargetPortal `
                         -TargetPortalAddress $Splat.TargetPortalAddress `
                         -InitiatorPortalAddress $Splat.InitiatorPortalAddress
-                    $Result | Should Be $null
+                    $Result | Should -Be $null
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSITargetPortal -Exactly 1
@@ -1642,12 +1642,12 @@ try
                     $Result = Get-TargetPortal `
                         -TargetPortalAddress $Splat.TargetPortalAddress `
                         -InitiatorPortalAddress $Splat.InitiatorPortalAddress
-                    $Result.TargetPortalAddress    | Should Be $MockTargetPortal.TargetPortalAddress
-                    $Result.TargetPortalPortNumber | Should Be $MockTargetPortal.TargetPortalPortNumber
-                    $Result.InitiatorInstanceName  | Should Be $MockTargetPortal.InitiatorInstanceName
-                    $Result.InitiatorPortalAddress | Should Be $MockTargetPortal.InitiatorPortalAddress
-                    $Result.IsDataDigest           | Should Be $MockTargetPortal.IsDataDigest
-                    $Result.IsHeaderDigest         | Should Be $MockTargetPortal.IsHeaderDigest
+                    $Result.TargetPortalAddress    | Should -Be $MockTargetPortal.TargetPortalAddress
+                    $Result.TargetPortalPortNumber | Should -Be $MockTargetPortal.TargetPortalPortNumber
+                    $Result.InitiatorInstanceName  | Should -Be $MockTargetPortal.InitiatorInstanceName
+                    $Result.InitiatorPortalAddress | Should -Be $MockTargetPortal.InitiatorPortalAddress
+                    $Result.IsDataDigest           | Should -Be $MockTargetPortal.IsDataDigest
+                    $Result.IsHeaderDigest         | Should -Be $MockTargetPortal.IsHeaderDigest
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSITargetPortal -Exactly 1
@@ -1662,7 +1662,7 @@ try
                     $Splat = $TestInitiator.Clone()
                     $Result = Get-Target `
                         -NodeAddress $Splat.NodeAddress
-                    $Result | Should Be $null
+                    $Result | Should -Be $null
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSITarget -Exactly 1
@@ -1675,8 +1675,8 @@ try
                     $Splat = $TestInitiator.Clone()
                     $Result = Get-Target `
                         -NodeAddress $Splat.NodeAddress
-                    $Result.NodeAddress            | Should Be $MockTarget.NodeAddress
-                    $Result.IsConnected            | Should Be $MockTarget.IsConnected
+                    $Result.NodeAddress            | Should -Be $MockTarget.NodeAddress
+                    $Result.IsConnected            | Should -Be $MockTarget.IsConnected
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSITarget -Exactly 1
