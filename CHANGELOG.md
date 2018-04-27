@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Enabled PSSA rule violations to fail build - Fixes [Issue #27](https://github.com/PlagueHO/iSCSIDsc/issues/27).
+- Updated tests to meet Pester v4 standard.
+- Added Open Code of Conduct.
+
 ## 1.5.0.0
 
 - Converted resource module to be compliant with HQRM.

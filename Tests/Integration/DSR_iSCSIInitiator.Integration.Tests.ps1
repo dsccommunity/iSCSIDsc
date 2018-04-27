@@ -36,7 +36,7 @@ try
     Describe 'Environment' {
         Context 'Operating System' {
             It 'Should be a Server OS' {
-                $ProductType | Should Be 3
+                $ProductType | Should -Be 3
             }
         }
     }
@@ -49,7 +49,7 @@ try
     Describe 'Environment' {
         Context 'Windows Features' {
             It 'Should have the iSCSI Target Feature Installed' {
-                $Installed | Should Be $true
+                $Installed | Should -Be $true
             }
         }
     }
@@ -85,11 +85,11 @@ try
             {
                 & "$($script:DSCResourceName)_Config" -OutputPath $TestDrive
                 Start-DscConfiguration -Path $TestDrive -ComputerName localhost -Wait -Verbose -Force
-            } | Should not throw
+            } | Should -Not -Throw
         }
 
         It 'should be able to call Get-DscConfiguration without throwing' {
-            { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should Not throw
+            { Get-DscConfiguration -Verbose -ErrorAction Stop } | Should -Not -throw
         }
         #endregion
 
@@ -98,32 +98,32 @@ try
             $TargetPortalNew = Get-iSCSITargetPortal `
                 -TargetPortalAddress $TargetPortal.TargetPortalAddress `
                 -InitiatorPortalAddress $TargetPortal.InitiatorPortalAddress
-            $Initiator.TargetPortalAddress    | Should Be $TargetPortalNew.TargetPortalAddress
-            $Initiator.TargetPortalPortNumber | Should Be $TargetPortalNew.TargetPortalPortNumber
-            $Initiator.InitiatorInstanceName  | Should Be $TargetPortalNew.InitiatorInstanceName
-            $Initiator.InitiatorPortalAddress | Should Be $TargetPortalNew.InitiatorPortalAddress
-            $Initiator.IsDataDigest           | Should Be $TargetPortalNew.IsDataDigest
-            $Initiator.IsHeaderDigest         | Should Be $TargetPortalNew.IsHeaderDigest
+            $Initiator.TargetPortalAddress    | Should -Be $TargetPortalNew.TargetPortalAddress
+            $Initiator.TargetPortalPortNumber | Should -Be $TargetPortalNew.TargetPortalPortNumber
+            $Initiator.InitiatorInstanceName  | Should -Be $TargetPortalNew.InitiatorInstanceName
+            $Initiator.InitiatorPortalAddress | Should -Be $TargetPortalNew.InitiatorPortalAddress
+            $Initiator.IsDataDigest           | Should -Be $TargetPortalNew.IsDataDigest
+            $Initiator.IsHeaderDigest         | Should -Be $TargetPortalNew.IsHeaderDigest
             $TargetNew = Get-iSCSITarget `
                 -NodeAddress $Target.NodeAddress
-            $Initiator.IsConnected            | Should Be $True
-            $Initiator.NodeAddress            | Should Be $TargetNew.NodeAddress
+            $Initiator.IsConnected            | Should -Be $True
+            $Initiator.NodeAddress            | Should -Be $TargetNew.NodeAddress
             $SessionNew = Get-iSCSISession `
                 -IscsiTarget $TargetNew
-            $Initiator.TargetPortalAddress    | Should Be $SessionNew.TargetAddress
-            $Initiator.InitiatorPortalAddress | Should Be $SessionNew.InitiatorAddress
-            $Initiator.TargetPortalPortNumber | Should Be $SessionNew.TargetPortNumber
-            $Initiator.ConnectionIdentifier   | Should Be $SessionNew.ConnectionIdentifier
+            $Initiator.TargetPortalAddress    | Should -Be $SessionNew.TargetAddress
+            $Initiator.InitiatorPortalAddress | Should -Be $SessionNew.InitiatorAddress
+            $Initiator.TargetPortalPortNumber | Should -Be $SessionNew.TargetPortNumber
+            $Initiator.ConnectionIdentifier   | Should -Be $SessionNew.ConnectionIdentifier
             $ConnectionNew = Get-iSCSIConnection `
                 -NodeAddress $Target.NodeAddress
-            $Initiator.AuthenticationType     | Should Be $ConnectionNew.AuthenticationType
-            $Initiator.InitiatorInstanceName  | Should Be $ConnectionNew.InitiatorInstanceName
-            $Initiator.InitiatorPortalAddress | Should Be $ConnectionNew.InitiatorPortalAddress
-            $Initiator.IsConnected            | Should Be $ConnectionNew.IsConnected
-            $Initiator.IsDataDigest           | Should Be $ConnectionNew.IsDataDigest
-            $Initiator.IsDiscovered           | Should Be $ConnectionNew.IsDiscovered
-            $Initiator.IsHeaderDigest         | Should Be $ConnectionNew.IsHeaderDigest
-            $Initiator.IsPersistent           | Should Be $ConnectionNew.IsPersistent
+            $Initiator.AuthenticationType     | Should -Be $ConnectionNew.AuthenticationType
+            $Initiator.InitiatorInstanceName  | Should -Be $ConnectionNew.InitiatorInstanceName
+            $Initiator.InitiatorPortalAddress | Should -Be $ConnectionNew.InitiatorPortalAddress
+            $Initiator.IsConnected            | Should -Be $ConnectionNew.IsConnected
+            $Initiator.IsDataDigest           | Should -Be $ConnectionNew.IsDataDigest
+            $Initiator.IsDiscovered           | Should -Be $ConnectionNew.IsDiscovered
+            $Initiator.IsHeaderDigest         | Should -Be $ConnectionNew.IsHeaderDigest
+            $Initiator.IsPersistent           | Should -Be $ConnectionNew.IsPersistent
             $iSNSServerNew = Get-WmiObject -Class MSiSCSIInitiator_iSNSServerClass -Namespace root\wmi
             # The iSNS Server is not usually accessible so won't be able to be set
             # $Initiator.iSNSServer          | Should Be $iSNSServerNew.iSNSServerAddress
