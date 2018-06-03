@@ -83,7 +83,7 @@ function Get-TargetResource
     } # if
 
     # Get the iSNS Server
-    $iSNSServerCurrent = Get-WmiObject `
+    $iSNSServerCurrent = Get-CimInstance `
         -Class WT_iSNSServer `
         -Namespace root\wmi
     if ($iSNSServerCurrent)
@@ -154,7 +154,7 @@ function Set-TargetResource
     $serverTarget = Get-ServerTarget -TargetName $TargetName
 
     # Get the iSNS Server
-    $iSNSServerCurrent = Get-WmiObject `
+    $iSNSServerCurrent = Get-CimInstance `
         -Class WT_iSNSServer `
         -Namespace root\wmi
 
@@ -384,7 +384,7 @@ function Test-TargetResource
     $serverTarget = Get-ServerTarget -TargetName $TargetName
 
     # Get the iSNS Server
-    $iSNSServerCurrent = Get-WmiObject `
+    $iSNSServerCurrent = Get-CimInstance `
         -Class WT_iSNSServer `
         -Namespace root\wmi
 
