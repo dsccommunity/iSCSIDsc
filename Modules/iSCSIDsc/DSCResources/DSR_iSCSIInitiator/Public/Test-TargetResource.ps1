@@ -141,7 +141,7 @@ function Test-TargetResource
     $targetPortal = Get-TargetPortal @TargetSplat
 
     # Get the iSNS Server
-    $iSNSServerCurrent = Get-WmiObject `
+    $iSNSServerCurrent = Get-CimInstance `
         -Class MSiSCSIInitiator_iSNSServerClass `
         -Namespace root\wmi
 
