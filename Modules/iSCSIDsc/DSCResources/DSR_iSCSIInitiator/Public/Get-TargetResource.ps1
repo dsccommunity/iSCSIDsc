@@ -171,7 +171,7 @@ function Get-TargetResource
     } # if
 
     # Get the iSNS Server
-    $iSNSServerCurrent = Get-WmiObject `
+    $iSNSServerCurrent = Get-CimInstance `
         -Class MSiSCSIInitiator_iSNSServerClass `
         -Namespace root\wmi
     if ($iSNSServerCurrent)
