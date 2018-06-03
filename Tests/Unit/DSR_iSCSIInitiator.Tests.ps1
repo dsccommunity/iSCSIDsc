@@ -188,7 +188,7 @@ try
                 Mock Get-Target
                 Mock Get-Connection
                 Mock Get-Session
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return absent' {
                     $Result = Get-TargetResource `
                         -NodeAddress $TestInitiator.NodeAddress `
@@ -201,7 +201,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -210,7 +210,7 @@ try
                 Mock Get-Target
                 Mock Get-Connection
                 Mock Get-Session
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return absent but with Target Portal data' {
                     $Result = Get-TargetResource `
                         -NodeAddress $TestInitiator.NodeAddress `
@@ -229,7 +229,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -238,7 +238,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTargetNotConnected) }
                 Mock Get-Connection
                 Mock Get-Session
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return absent but with Target Portal data' {
                     $Result = Get-TargetResource `
                         -NodeAddress $TestInitiator.NodeAddress `
@@ -257,7 +257,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -266,7 +266,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTargetNotConnected) }
                 Mock Get-Connection
                 Mock Get-Session
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return absent but with Target Portal data' {
                     $Result = Get-TargetResource `
                         -NodeAddress $TestInitiatorWithoutInitiatorAddress.NodeAddress `
@@ -284,7 +284,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -293,7 +293,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection -MockWith { return @($MockConnection) }
                 Mock Get-Session -MockWith { return @($MockSession) }
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return correct data' {
                     $Result = Get-TargetResource `
                         -NodeAddress $TestInitiator.NodeAddress `
@@ -319,7 +319,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -328,7 +328,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection -MockWith { return @($MockConnection) }
                 Mock Get-Session -MockWith { return @($MockSession) }
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return correct data' {
                     $Result = Get-TargetResource `
                         -NodeAddress $TestInitiatorWithoutInitiatorAddress.NodeAddress `
@@ -353,7 +353,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -362,7 +362,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection -MockWith { return @($MockConnection) }
                 Mock Get-Session -MockWith { return @($MockSession) }
-                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Get-CimInstance -MockWith { return @($MockiSNSSrver) }
                 It 'should return correct data' {
                     $Result = Get-TargetResource `
                         -NodeAddress $TestInitiator.NodeAddress `
@@ -389,7 +389,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
         }
@@ -406,7 +406,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 It 'should not throw error' {
@@ -426,7 +426,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -443,7 +443,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 It 'should not throw error' {
@@ -463,7 +463,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -480,7 +480,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 It 'should not throw error' {
@@ -500,7 +500,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -517,7 +517,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 It 'should not throw error' {
@@ -537,7 +537,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -553,7 +553,7 @@ try
             Mock Disconnect-IscsiTarget
             Mock Register-IscsiSession
             Mock Unregister-IscsiSession
-            Mock Get-WMIObject
+            Mock Get-CimInstance
             Mock Set-WMIInstance
             Mock Remove-WMIObject
 
@@ -576,7 +576,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -601,7 +601,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -626,7 +626,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -651,7 +651,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -668,7 +668,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 It 'should not throw error' {
@@ -688,7 +688,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -705,7 +705,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 Mock Resolve-DNSName -MockWith {
@@ -728,7 +728,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                     Assert-MockCalled -commandName Resolve-DNSName -Exactly 1
@@ -746,7 +746,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 Mock Resolve-DNSName -MockWith {
@@ -769,7 +769,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 1
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                     Assert-MockCalled -commandName Resolve-DNSName -Exactly 1
@@ -787,7 +787,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 It 'should not throw error' {
@@ -808,7 +808,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 1
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 1
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -825,7 +825,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 It 'should not throw error' {
@@ -845,7 +845,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -862,7 +862,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 It 'should not throw error' {
@@ -883,7 +883,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -900,7 +900,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 It 'should not throw error' {
@@ -921,7 +921,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 1
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -938,7 +938,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 It 'should not throw error' {
@@ -959,7 +959,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -976,7 +976,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 It 'should not throw error' {
@@ -997,7 +997,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 1
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -1014,7 +1014,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 It 'should not throw error' {
@@ -1035,7 +1035,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -1052,7 +1052,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Get-CimInstance -MockWith { return @($MockiSNSSrver) }
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 It 'should not throw error' {
@@ -1073,7 +1073,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 1
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -1090,7 +1090,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 It 'should not throw error' {
@@ -1110,7 +1110,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 1
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -1127,7 +1127,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Get-CimInstance -MockWith { return @($MockiSNSSrver) }
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 It 'should not throw error' {
@@ -1148,7 +1148,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 1
                 }
@@ -1165,7 +1165,7 @@ try
                 Mock Disconnect-IscsiTarget
                 Mock Register-IscsiSession
                 Mock Unregister-IscsiSession
-                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Get-CimInstance -MockWith { return @($MockiSNSSrver) }
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
                 It 'should not throw error' {
@@ -1186,7 +1186,7 @@ try
                     Assert-MockCalled -commandName Disconnect-IscsiTarget -Exactly 0
                     Assert-MockCalled -commandName Register-IscsiSession -Exactly 0
                     Assert-MockCalled -commandName Unregister-IscsiSession -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 1
                 }
@@ -1199,7 +1199,7 @@ try
                 Mock Get-Target
                 Mock Get-Connection
                 Mock Get-Session
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     Test-TargetResource @Splat | Should -Be $False
@@ -1209,7 +1209,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 0
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1218,7 +1218,7 @@ try
                 Mock Get-Target
                 Mock Get-Connection
                 Mock Get-Session
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return false' {
                     $Splat = $TestInitiatorWithoutInitiatorAddress.Clone()
                     Test-TargetResource @Splat | Should -Be $False
@@ -1228,7 +1228,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 0
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1237,7 +1237,7 @@ try
                 Mock Get-Target
                 Mock Get-Connection
                 Mock Get-Session
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     Test-TargetResource @Splat | Should -Be $False
@@ -1247,7 +1247,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1256,7 +1256,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTargetNotConnected) }
                 Mock Get-Connection
                 Mock Get-Session
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     Test-TargetResource @Splat | Should -Be $False
@@ -1266,7 +1266,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1275,7 +1275,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTargetNotConnected) }
                 Mock Get-Connection
                 Mock Get-Session
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return false' {
                     $Splat = $TestInitiatorWithoutInitiatorAddress.Clone()
                     Test-TargetResource @Splat | Should -Be $False
@@ -1285,7 +1285,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1293,7 +1293,7 @@ try
             Mock Get-Target -MockWith { return @($MockTarget) }
             Mock Get-Connection
             Mock Get-Session
-            Mock Get-WMIObject
+            Mock Get-CimInstance
 
             Context 'Target Portal does exist and should but TargetPortalPortNumber is different' {
                 It 'should return false' {
@@ -1306,7 +1306,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1321,7 +1321,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1336,7 +1336,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1351,7 +1351,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1360,7 +1360,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection -MockWith { return @($MockConnection) }
                 Mock Get-Session -MockWith { return @($MockSessionPersistent) }
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Resolve-DNSName -MockWith {
                     return @( @{ IPAddress = $MockConnection.TargetAddress } )
                 }
@@ -1373,7 +1373,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Resolve-DNSName -Exactly 1
                 }
             }
@@ -1383,7 +1383,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection -MockWith { return @($MockConnection) }
                 Mock Get-Session -MockWith { return @($MockSessionPersistent) }
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Resolve-DNSName -MockWith {
                     return @( @{ IPAddress = '1.1.1.1' } )
                 }
@@ -1396,7 +1396,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Resolve-DNSName -Exactly 1
                 }
             }
@@ -1406,7 +1406,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection -MockWith { return @($MockConnection) }
                 Mock Get-Session -MockWith { return @($MockSession) }
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.AuthenticationType = 'None'
@@ -1417,7 +1417,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1426,7 +1426,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection -MockWith { return @($MockConnection) }
                 Mock Get-Session -MockWith { return @($MockSessionPersistent) }
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return true' {
                     $Splat = $TestInitiator.Clone()
                     Test-TargetResource @Splat | Should -Be $True
@@ -1436,7 +1436,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1445,7 +1445,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection -MockWith { return @($MockConnection) }
                 Mock Get-Session -MockWith { return @($MockSessionPersistent) }
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.IsPersistent = $False
@@ -1456,7 +1456,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1465,7 +1465,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection
                 Mock Get-Session
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.Ensure = 'Absent'
@@ -1476,7 +1476,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1485,7 +1485,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTargetNotConnected) }
                 Mock Get-Connection
                 Mock Get-Session
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.Ensure = 'Absent'
@@ -1496,7 +1496,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1505,7 +1505,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection
                 Mock Get-Session
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.Ensure = 'Absent'
@@ -1516,7 +1516,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1525,7 +1525,7 @@ try
                 Mock Get-Target
                 Mock Get-Connection
                 Mock Get-Session
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return true' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.Ensure = 'Absent'
@@ -1536,7 +1536,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1545,7 +1545,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection -MockWith { return @($MockConnection) }
                 Mock Get-Session -MockWith { return @($MockSessionPersistent) }
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 It 'should return false' {
                     $Splat = $TestInitiatorWithiSNS.Clone()
                     Test-TargetResource @Splat | Should -Be $False
@@ -1555,7 +1555,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1564,7 +1564,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection -MockWith { return @($MockConnection) }
                 Mock Get-Session -MockWith { return @($MockSessionPersistent) }
-                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Get-CimInstance -MockWith { return @($MockiSNSSrver) }
                 It 'should return false' {
                     $Splat = $TestInitiatorWithiSNS.Clone()
                     $Splat.iSNSServer = 'different.contoso.com'
@@ -1575,7 +1575,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1584,7 +1584,7 @@ try
                 Mock Get-Target -MockWith { return @($MockTarget) }
                 Mock Get-Connection -MockWith { return @($MockConnection) }
                 Mock Get-Session -MockWith { return @($MockSessionPersistent) }
-                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Get-CimInstance -MockWith { return @($MockiSNSSrver) }
                 It 'should return false' {
                     $Splat = $TestInitiatorWithiSNS.Clone()
                     $Splat.iSNSServer = ''
@@ -1595,7 +1595,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 1
                     Assert-MockCalled -commandName Get-Session -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
@@ -1604,7 +1604,7 @@ try
                 Mock Get-Target
                 Mock Get-Connection
                 Mock Get-Session
-                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Get-CimInstance -MockWith { return @($MockiSNSSrver) }
                 It 'should return false' {
                     $Splat = $TestInitiator.Clone()
                     $Splat.Ensure = 'Absent'
@@ -1615,7 +1615,7 @@ try
                     Assert-MockCalled -commandName Get-Target -Exactly 1
                     Assert-MockCalled -commandName Get-Connection -Exactly 0
                     Assert-MockCalled -commandName Get-Session -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
         }
