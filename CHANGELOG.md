@@ -5,6 +5,9 @@
 - Enabled PSSA rule violations to fail build - Fixes [Issue #27](https://github.com/PlagueHO/iSCSIDsc/issues/27).
 - Updated tests to meet Pester v4 standard.
 - Added Open Code of Conduct.
+- Simplify Initiator code layout by moving exposed DSC functions into own files
+- Added Module manifest
+- Changed Get-WMIObject for Get-CimInstance within DSR_iSCSIServerTarget.psm1. - Fixes [Issue #18](https://github.com/PlagueHO/iSCSIDsc/issues/18)
 
 ## 1.5.0.0
 
