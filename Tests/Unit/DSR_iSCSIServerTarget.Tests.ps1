@@ -97,7 +97,7 @@ try
             Context 'Server Target does not exist' {
 
                 Mock Get-iSCSIServerTarget
-                Mock Get-WMIObject
+                Mock Get-CimInstance
 
                 It 'should return absent Server Target' {
                     $Result = Get-TargetResource `
@@ -109,14 +109,14 @@ try
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-Cimnstance -Exactly 1
                 }
             }
 
             Context 'Server Target exists and iSNS Server not set' {
 
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
-                Mock Get-WMIObject
+                Mock Get-CimInstance
 
                 It 'should return correct Server Target' {
                     $Result = Get-TargetResource `
@@ -130,14 +130,14 @@ try
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
             Context 'Server Target exists and iSNS Server set' {
 
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
-                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Get-CimInstance -MockWith { return @($MockiSNSSrver) }
 
                 It 'should return correct Server Target' {
                     $Result = Get-TargetResource `
@@ -151,7 +151,7 @@ try
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
         }
@@ -166,7 +166,7 @@ try
                 Mock Remove-iSCSIServerTarget
                 Mock Add-IscsiVirtualDiskTargetMapping
                 Mock Remove-IscsiVirtualDiskTargetMapping
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
 
@@ -183,7 +183,7 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
                     Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 1
                     Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -197,7 +197,7 @@ try
                 Mock Remove-iSCSIServerTarget
                 Mock Add-IscsiVirtualDiskTargetMapping
                 Mock Remove-IscsiVirtualDiskTargetMapping
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
 
@@ -215,7 +215,7 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
                     Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 1
                     Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -229,7 +229,7 @@ try
                 Mock Remove-iSCSIServerTarget
                 Mock Add-IscsiVirtualDiskTargetMapping
                 Mock Remove-IscsiVirtualDiskTargetMapping
-                Mock Get-WMIObject
+                Mock Get-CimInstance
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
 
@@ -247,7 +247,7 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
                     Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 1
                     Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -261,7 +261,7 @@ try
                 Mock Remove-iSCSIServerTarget
                 Mock Add-IscsiVirtualDiskTargetMapping
                 Mock Remove-IscsiVirtualDiskTargetMapping
-                Mock Get-WMIObject
+                Mock Get-CimInstnace
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
 
@@ -279,7 +279,7 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
                     Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 0
                     Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -293,7 +293,7 @@ try
                 Mock Remove-iSCSIServerTarget
                 Mock Add-IscsiVirtualDiskTargetMapping
                 Mock Remove-IscsiVirtualDiskTargetMapping
-                Mock Get-WMIObject
+                Mock Get-CimInstnace
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
 
@@ -311,7 +311,7 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 1
                     Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 0
                     Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -325,7 +325,7 @@ try
                 Mock Remove-iSCSIServerTarget
                 Mock Add-IscsiVirtualDiskTargetMapping
                 Mock Remove-IscsiVirtualDiskTargetMapping
-                Mock Get-WMIObject
+                Mock Get-CimInstnace
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
 
@@ -343,7 +343,7 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
                     Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 0
                     Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -357,7 +357,7 @@ try
                 Mock Remove-iSCSIServerTarget
                 Mock Add-IscsiVirtualDiskTargetMapping
                 Mock Remove-IscsiVirtualDiskTargetMapping
-                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Get-CimInstnace -MockWith { return @($MockiSNSSrver) }
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
 
@@ -375,7 +375,7 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
                     Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 0
                     Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 1
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -389,7 +389,7 @@ try
                 Mock Remove-iSCSIServerTarget
                 Mock Add-IscsiVirtualDiskTargetMapping
                 Mock Remove-IscsiVirtualDiskTargetMapping
-                Mock Get-WMIObject
+                Mock Get-CimInstnace
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
 
@@ -406,7 +406,7 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
                     Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 0
                     Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 1
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 0
                 }
@@ -420,7 +420,7 @@ try
                 Mock Remove-iSCSIServerTarget
                 Mock Add-IscsiVirtualDiskTargetMapping
                 Mock Remove-IscsiVirtualDiskTargetMapping
-                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Get-CimInstnace -MockWith { return @($MockiSNSSrver) }
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
 
@@ -438,7 +438,7 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
                     Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 0
                     Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 1
                 }
@@ -452,7 +452,7 @@ try
                 Mock Remove-iSCSIServerTarget
                 Mock Add-IscsiVirtualDiskTargetMapping
                 Mock Remove-IscsiVirtualDiskTargetMapping
-                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Get-CimInstnace -MockWith { return @($MockiSNSSrver) }
                 Mock Set-WMIInstance
                 Mock Remove-WMIObject
 
@@ -470,7 +470,7 @@ try
                     Assert-MockCalled -commandName Remove-iSCSIServerTarget -Exactly 0
                     Assert-MockCalled -commandName Add-IscsiVirtualDiskTargetMapping -Exactly 0
                     Assert-MockCalled -commandName Remove-IscsiVirtualDiskTargetMapping -Exactly 0
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                     Assert-MockCalled -commandName Set-WMIInstance -Exactly 0
                     Assert-MockCalled -commandName Remove-WMIObject -Exactly 1
                 }
@@ -482,7 +482,7 @@ try
             Context 'Server Target does not exist but should' {
 
                 Mock Get-iSCSIServerTarget
-                Mock Get-WMIObject
+                Mock Get-CimInstnace
 
                 It 'should return false' {
                     $Splat = $TestServerTarget.Clone()
@@ -490,14 +490,14 @@ try
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                 }
             }
 
             Context 'Server Target exists and should but has a different Paths' {
 
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
-                Mock Get-WMIObject
+                Mock Get-CimInstnace
 
                 It 'should return false' {
                     $Splat = $TestServerTarget.Clone()
@@ -506,14 +506,14 @@ try
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                 }
             }
 
             Context 'Server Target exists and should but has a different InitiatorIds' {
 
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
-                Mock Get-WMIObject
+                Mock Get-CimInstnace
 
                 It 'should return false' {
                     $Splat = $TestServerTarget.Clone()
@@ -522,14 +522,14 @@ try
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                 }
             }
 
             Context 'Server Target exists and should and all parameters match' {
 
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
-                Mock Get-WMIObject
+                Mock Get-CimInstnace
 
                 It 'should return true' {
                     $Splat = $TestServerTarget.Clone()
@@ -537,14 +537,14 @@ try
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                 }
             }
 
             Context 'Server Target exists but should not' {
 
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
-                Mock Get-WMIObject
+                Mock Get-CimInstnace
 
                 It 'should return false' {
                     $Splat = $TestServerTarget.Clone()
@@ -553,14 +553,14 @@ try
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                 }
             }
 
             Context 'Server Target does not exist and should not' {
 
                 Mock Get-iSCSIServerTarget
-                Mock Get-WMIObject
+                Mock Get-CimInstnace
 
                 It 'should return true' {
                     $Splat = $TestServerTarget.Clone()
@@ -569,14 +569,14 @@ try
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                 }
             }
 
             Context 'Server Target exists and should and iSNS Server is not set' {
 
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
-                Mock Get-WMIObject
+                Mock Get-CimInstnace
 
                 It 'should return false' {
                     $Splat = $TestServerTargetWithiSNS.Clone()
@@ -584,14 +584,14 @@ try
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                 }
             }
 
             Context 'Server Target exists and should and iSNS Server is different' {
 
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
-                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Get-CimInstnace -MockWith { return @($MockiSNSSrver) }
 
                 It 'should return false' {
                     $Splat = $TestServerTargetWithiSNS.Clone()
@@ -600,14 +600,14 @@ try
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                 }
             }
 
             Context 'Server Target exists and should and iSNS Server should be cleared' {
 
                 Mock Get-iSCSIServerTarget -MockWith { return @($MockServerTarget) }
-                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Get-CimInstnace -MockWith { return @($MockiSNSSrver) }
 
                 It 'should return false' {
                     $Splat = $TestServerTargetWithiSNS.Clone()
@@ -616,14 +616,14 @@ try
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                 }
             }
 
             Context 'Server Target does not exist and should not but iSNS Server is set' {
 
                 Mock Get-iSCSIServerTarget
-                Mock Get-WMIObject -MockWith { return @($MockiSNSSrver) }
+                Mock Get-CimInstnace -MockWith { return @($MockiSNSSrver) }
 
                 It 'should return false' {
                     $Splat = $TestServerTarget.Clone()
@@ -632,7 +632,7 @@ try
                 }
                 It 'should call expected Mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
-                    Assert-MockCalled -commandName Get-WMIObject -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstnace -Exactly 1
                 }
             }
         }
