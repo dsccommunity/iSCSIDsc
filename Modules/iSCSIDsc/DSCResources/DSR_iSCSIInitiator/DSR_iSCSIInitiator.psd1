@@ -30,7 +30,7 @@ Description = 'Desired State Configuration resource for the management of iSCSI 
 PowerShellVersion = '5.1'
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = ''
+FunctionsToExport = 'Get-TargetResource', 'Set-TargetResource', 'Test-TargetResource'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = ''
@@ -42,7 +42,7 @@ VariablesToExport = ''
 AliasesToExport = ''
 
 # DSC resources to export from this module
-DscResourcesToExport = 'Get-TargetResource', 'Set-TargetResource', 'Test-TargetResource'
+DscResourcesToExport = 'DSR_iSCSIInitiator'
 
 }
 
