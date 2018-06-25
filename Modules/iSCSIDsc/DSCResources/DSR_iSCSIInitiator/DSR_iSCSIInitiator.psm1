@@ -1,20 +1,6 @@
 # Dot Source DSC Resource Files
 Get-ChildItem -Path (Join-Path (Join-Path $PSScriptRoot "Public") "*.ps1") | ForEach-Object { . $_.FullName }
 
-<#
-function get-TargetResource
-{
-}
-
-function Test-Targetresource
-{
-}
-
-functionSet-TargetResource
-{
-}
-#>
-
 $modulePath = Join-Path -Path (Split-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -Parent) -ChildPath 'Modules'
 
 # Import the Networking Resource Helper Module
