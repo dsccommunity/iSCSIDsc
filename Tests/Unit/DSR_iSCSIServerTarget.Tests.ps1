@@ -109,7 +109,7 @@ try
                 }
                 It 'should call the expected mocks' {
                     Assert-MockCalled -commandName Get-iSCSIServerTarget -Exactly 1
-                    Assert-MockCalled -commandName Get-Cimnstance -Exactly 1
+                    Assert-MockCalled -commandName Get-CimInstance -Exactly 1
                 }
             }
 
