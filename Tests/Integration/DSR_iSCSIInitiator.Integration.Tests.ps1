@@ -124,7 +124,7 @@ try
             $Initiator.IsDiscovered           | Should -Be $ConnectionNew.IsDiscovered
             $Initiator.IsHeaderDigest         | Should -Be $ConnectionNew.IsHeaderDigest
             $Initiator.IsPersistent           | Should -Be $ConnectionNew.IsPersistent
-            $iSNSServerNew = Get-WmiObject -Class MSiSCSIInitiator_iSNSServerClass -Namespace root\wmi
+            $iSNSServerNew = Get-CimInstance -Class MSiSCSIInitiator_iSNSServerClass -Namespace root\wmi
             # The iSNS Server is not usually accessible so won't be able to be set
             # $Initiator.iSNSServer          | Should Be $iSNSServerNew.iSNSServerAddress
         }
