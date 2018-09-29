@@ -1,7 +1,7 @@
 $script:DSCModuleName   = 'iSCSIDsc'
 $script:DSCResourceName = 'DSR_iSCSIVirtualDisk'
 
-Import-Module -Name (Join-Path -Path (Join-Path -Path (Split-Path $PSScriptRoot -Parent) -ChildPath 'TestHelpers') -ChildPath 'CommonTestHelper.psm1') -Global
+[System.String] $script:moduleRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 
 #region HEADER
 # Unit Test Template Version: 1.1.0
