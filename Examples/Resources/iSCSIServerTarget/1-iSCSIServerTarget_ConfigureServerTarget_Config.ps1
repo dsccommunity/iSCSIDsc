@@ -1,23 +1,35 @@
-<#
-    .EXAMPLE
-        This example installs the iSCSI Target Server, creates two
-        iSCSI Virtal Disks and then a new iSCSI Target called Cluster
-        with the two Virtual Disks assigned. The iSCSI target will accept
-        connections from cluster01.contoso.com, cluster02.contoso.com
-        or cluster03.contoso.com.
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 23579591-4d15-492d-88fe-1f8365d8a0da
+.AUTHOR Daniel Scott-Raynsford
+.COMPANYNAME
+.COPYRIGHT (c) 2018 Daniel Scott-Raynsford. All rights reserved.
+.TAGS DSCConfiguration
+.LICENSEURI https://github.com/PlagueHO/iSCSIDsc/blob/master/LICENSE
+.PROJECTURI https://github.com/PlagueHO/iSCSIDsc
+.ICONURI
+.EXTERNALMODULEDEPENDENCIES
+.REQUIREDSCRIPTS
+.EXTERNALSCRIPTDEPENDENCIES
+.RELEASENOTES First version.
+.PRIVATEDATA 2016-Datacenter,2016-Datacenter-Server-Core
 #>
-Configuration Example
-{
-    param
-    (
-        [Parameter()]
-        [System.String[]]
-        $NodeName = 'localhost'
-    )
 
+#Requires -module iSCSIDsc
+
+<#
+    .DESCRIPTION
+    This example installs the iSCSI Target Server, creates two
+    iSCSI Virtal Disks and then a new iSCSI Target called Cluster
+    with the two Virtual Disks assigned. The iSCSI target will accept
+    connections from cluster01.contoso.com, cluster02.contoso.com
+    or cluster03.contoso.com.
+#>
+Configuration iSCSIServerTarget_ConfigureServerTarget_Config
+{
     Import-DscResource -Module iSCSIDsc
 
-    Node $NodeName
+    Node localhost
     {
         WindowsFeature iSCSITargetServerInstall
         {
