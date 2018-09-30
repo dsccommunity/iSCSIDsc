@@ -1,6 +1,6 @@
 # Versions
 
-## Unreleased
+## 1.5.1.0
 
 - Enabled PSSA rule violations to fail build - Fixes [Issue #27](https://github.com/PlagueHO/iSCSIDsc/issues/27).
 - Updated tests to meet Pester v4 standard.
