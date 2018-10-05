@@ -1,5 +1,9 @@
 # Versions
 
+## Unreleased
+
+- Added .gitattributes file to fix bug publishing examples - Fixes [Issue #40](https://github.com/PlagueHO/iSCSIDsc/issues/40).
+
 ## 1.5.1.0
 
 - Enabled PSSA rule violations to fail build - Fixes [Issue #27](https://github.com/PlagueHO/iSCSIDsc/issues/27).
