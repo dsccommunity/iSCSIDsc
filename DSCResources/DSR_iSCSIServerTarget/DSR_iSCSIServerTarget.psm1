@@ -6,7 +6,7 @@ Import-Module -Name (Join-Path -Path $modulePath `
         -ChildPath 'iSCSIDsc.Common.psm1'))
 
 # Import Localization Strings
-$LocalizedData = Get-LocalizedData `
+$script:localizedData = Get-LocalizedData `
     -ResourceName 'DSR_iSCSIServerTarget' `
     -ResourcePath (Split-Path -Parent $Script:MyInvocation.MyCommand.Path)
 
@@ -46,7 +46,7 @@ function Get-TargetResource
 
     Write-Verbose -Message ( @(
         "$($MyInvocation.MyCommand): "
-        $($LocalizedData.GettingiSCSIServerTargetMessage) `
+        $($script:localizedData.GettingiSCSIServerTargetMessage) `
             -f $TargetName
         ) -join '' )
 
@@ -59,7 +59,7 @@ function Get-TargetResource
     {
         Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
-            $($LocalizedData.iSCSIServerTargetExistsMessage) `
+            $($script:localizedData.iSCSIServerTargetExistsMessage) `
                 -f $TargetName
             ) -join '' )
 
@@ -73,7 +73,7 @@ function Get-TargetResource
     {
         Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
-            $($LocalizedData.iSCSIServerTargetDoesNotExistMessage) `
+            $($script:localizedData.iSCSIServerTargetDoesNotExistMessage) `
                 -f $TargetName
             ) -join '' )
 
@@ -146,7 +146,7 @@ function Set-TargetResource
 
     Write-Verbose -Message ( @(
         "$($MyInvocation.MyCommand): "
-        $($LocalizedData.SettingiSCSIServerTargetMessage) `
+        $($script:localizedData.SettingiSCSIServerTargetMessage) `
             -f $TargetName
         ) -join '' )
 
@@ -162,7 +162,7 @@ function Set-TargetResource
     {
         Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
-            $($LocalizedData.EnsureiSCSIServerTargetExistsMessage) `
+            $($script:localizedData.EnsureiSCSIServerTargetExistsMessage) `
                 -f $TargetName
             ) -join '' )
 
@@ -182,7 +182,7 @@ function Set-TargetResource
 
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIServerTargetUpdatedMessage) `
+                    $($script:localizedData.iSCSIServerTargetUpdatedMessage) `
                         -f $TargetName
                     ) -join '' )
             } # if
@@ -198,7 +198,7 @@ function Set-TargetResource
 
             Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSCSIServerTargetCreatedMessage) `
+                $($script:localizedData.iSCSIServerTargetCreatedMessage) `
                     -f $TargetName
                 ) -join '' )
         } # if
@@ -216,7 +216,7 @@ function Set-TargetResource
 
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIServerTargetDiskAddedMessage) `
+                    $($script:localizedData.iSCSIServerTargetDiskAddedMessage) `
                         -f $TargetName,$Path
                     ) -join '' )
             } # if
@@ -233,7 +233,7 @@ function Set-TargetResource
 
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIServerTargetDiskRemovedMessage) `
+                    $($script:localizedData.iSCSIServerTargetDiskRemovedMessage) `
                         -f $TargetName,$Path
                     ) -join '' )
             } # if
@@ -253,7 +253,7 @@ function Set-TargetResource
 
                     Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSNSServerRemovedMessage)
+                        $($script:localizedData.iSNSServerRemovedMessage)
                         ) -join '' )
                 } # if
             }
@@ -269,7 +269,7 @@ function Set-TargetResource
 
                     Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSNSServerUpdatedMessage) `
+                        $($script:localizedData.iSNSServerUpdatedMessage) `
                             -f $iSNSServer
                         ) -join '' )
                 }
@@ -277,7 +277,7 @@ function Set-TargetResource
                 {
                     Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSNSServerUpdateErrorMessage) `
+                        $($script:localizedData.iSNSServerUpdateErrorMessage) `
                             -f $iSNSServer
                         ) -join '' )
                 }
@@ -288,7 +288,7 @@ function Set-TargetResource
     {
         Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
-            $($LocalizedData.EnsureiSCSIServerTargetDoesNotExistMessage) `
+            $($script:localizedData.EnsureiSCSIServerTargetDoesNotExistMessage) `
                 -f $TargetName
             ) -join '' )
 
@@ -302,7 +302,7 @@ function Set-TargetResource
 
             Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSCSIServerTargetRemovedMessage) `
+                $($script:localizedData.iSCSIServerTargetRemovedMessage) `
                     -f $TargetName
                 ) -join '' )
         } # if
@@ -316,7 +316,7 @@ function Set-TargetResource
 
             Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSNSServerRemovedMessage)
+                $($script:localizedData.iSNSServerRemovedMessage)
                 ) -join '' )
         } # if
     } # if
@@ -376,7 +376,7 @@ function Test-TargetResource
 
     Write-Verbose -Message ( @(
         "$($MyInvocation.MyCommand): "
-        $($LocalizedData.TestingiSCSIServerTargetMessage) `
+        $($script:localizedData.TestingiSCSIServerTargetMessage) `
             -f $TargetName
         ) -join '' )
 
@@ -401,7 +401,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIServerTargetParameterNeedsUpdateMessage) `
+                    $($script:localizedData.iSCSIServerTargetParameterNeedsUpdateMessage) `
                         -f $TargetName,'InitiatorIds'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -414,7 +414,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIServerTargetParameterNeedsUpdateMessage) `
+                    $($script:localizedData.iSCSIServerTargetParameterNeedsUpdateMessage) `
                         -f $TargetName,'Paths'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -425,7 +425,7 @@ function Test-TargetResource
             # Ths iSCSI Server Target doesn't exist but should
             Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSCSIServerTargetDoesNotExistButShouldMessage) `
+                $($script:localizedData.iSCSIServerTargetDoesNotExistButShouldMessage) `
                     -f $TargetName
                 ) -join '' )
             $desiredConfigurationMatch = $false
@@ -438,7 +438,7 @@ function Test-TargetResource
             # The iSNS Server is different so needs update
             Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSNSServerNeedsUpdateMessage) `
+                $($script:localizedData.iSNSServerNeedsUpdateMessage) `
                     -f $iSNSServerCurrent.ServerName,$iSNSServer
                 ) -join '' )
             $desiredConfigurationMatch = $false
@@ -452,7 +452,7 @@ function Test-TargetResource
             # The iSCSI Server Target exists but should not
             Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSCSIServerTargetExistsButShouldNotMessage) `
+                $($script:localizedData.iSCSIServerTargetExistsButShouldNotMessage) `
                     -f $TargetName
                 ) -join '' )
             $desiredConfigurationMatch = $false
@@ -462,7 +462,7 @@ function Test-TargetResource
             # The iSCSI Server Target does not exist and should not
             Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSCSIServerTargetDoesNotExistAndShouldNotMessage) `
+                $($script:localizedData.iSCSIServerTargetDoesNotExistAndShouldNotMessage) `
                     -f $TargetName
                 ) -join '' )
         } # if
@@ -473,7 +473,7 @@ function Test-TargetResource
             # The iSNS Server is set but should not be
             Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSNSServerIsSetButShouldBeNotMessage)
+                $($script:localizedData.iSNSServerIsSetButShouldBeNotMessage)
                 ) -join '' )
             $desiredConfigurationMatch = $false
         } # if

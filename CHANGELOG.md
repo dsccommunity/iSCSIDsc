@@ -6,6 +6,9 @@
 - Opted into Common Tests 'Common Tests - Validate Localization' - Fixes [Issue #44](https://github.com/PlagueHO/iSCSIDsc/issues/44).
 - Renamed `iSCSIDsc.ResourceHelpers` module to `iSCSIDsc.Common`
   to align to other modules.
+- Renamed all localization strings so that they are detected by
+  'Common Tests - Validate Localization'.
+- Fixed issues with mismatched localization strings.
 
 ## 1.5.1.0
 
