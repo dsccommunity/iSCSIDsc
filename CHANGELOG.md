@@ -3,6 +3,8 @@
 ## Unreleased
 
 - Added .gitattributes file to fix bug publishing examples - Fixes [Issue #40](https://github.com/PlagueHO/iSCSIDsc/issues/40).
+- Opted into Common Tests 'Common Tests - Required Script Analyzer Rules',
+  and 'Common Tests - Validating Localization' - Fixes [Issue #44](https://github.com/PlagueHO/iSCSIDsc/issues/44).
 
 ## 1.5.1.0
 
