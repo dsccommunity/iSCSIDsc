@@ -4,6 +4,8 @@
 
 - Added .gitattributes file to fix bug publishing examples - Fixes [Issue #40](https://github.com/PlagueHO/iSCSIDsc/issues/40).
 - Opted into Common Tests 'Common Tests - Validate Localization' - Fixes [Issue #44](https://github.com/PlagueHO/iSCSIDsc/issues/44).
+- Renamed `iSCSIDsc.ResourceHelpers` module to `iSCSIDsc.Common`
+  to align to other modules.
 
 ## 1.5.1.0
 
