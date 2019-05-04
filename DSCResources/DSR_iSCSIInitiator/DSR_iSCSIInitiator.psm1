@@ -1,12 +1,12 @@
 $modulePath = Join-Path -Path (Split-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -Parent) -ChildPath 'Modules'
 
-# Import the Networking Resource Helper Module
+# Import the iSCSI Common Module
 Import-Module -Name (Join-Path -Path $modulePath `
-    -ChildPath (Join-Path -Path 'iSCSIDsc.ResourceHelper' `
-        -ChildPath 'iSCSIDsc.ResourceHelper.psm1'))
+    -ChildPath (Join-Path -Path 'iSCSIDsc.Common' `
+        -ChildPath 'iSCSIDsc.Common.psm1'))
 
 # Import Localization Strings
-$LocalizedData = Get-LocalizedData `
+$script:localizedData = Get-LocalizedData `
     -ResourceName 'DSR_iSCSIInitiator' `
     -ResourcePath (Split-Path -Parent $Script:MyInvocation.MyCommand.Path)
 
@@ -54,7 +54,7 @@ function Get-TargetResource
 
     Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
-            $($LocalizedData.GettingiSCSIInitiatorMessage) `
+            $($script:localizedData.GettingiSCSIInitiatorMessage) `
                 -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress
         ) -join '' )
 
@@ -81,7 +81,7 @@ function Get-TargetResource
 
         Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSCSITargetPortalExistsMessage) `
+                $($script:localizedData.iSCSITargetPortalExistsMessage) `
                     -f $TargetPortalAddress, $InitiatorPortalAddress
             ) -join '' )
     }
@@ -89,7 +89,7 @@ function Get-TargetResource
     {
         Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSCSITargetPortalDoesNotExistMessage) `
+                $($script:localizedData.iSCSITargetPortalDoesNotExistMessage) `
                     -f $TargetPortalAddress, $InitiatorPortalAddress
             ) -join '' )
     } # if
@@ -105,7 +105,7 @@ function Get-TargetResource
 
         Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSCSITargetExistsMessage) `
+                $($script:localizedData.iSCSITargetExistsMessage) `
                     -f $NodeAddress
             ) -join '' )
     }
@@ -113,7 +113,7 @@ function Get-TargetResource
     {
         Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSCSITargetDoesNotExistMessage) `
+                $($script:localizedData.iSCSITargetDoesNotExistMessage) `
                     -f $NodeAddress
             ) -join '' )
     } # if
@@ -136,7 +136,7 @@ function Get-TargetResource
 
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIConnectionExistsMessage) `
+                    $($script:localizedData.iSCSIConnectionExistsMessage) `
                         -f $NodeAddress
                 ) -join '' )
         }
@@ -144,7 +144,7 @@ function Get-TargetResource
         {
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIConnectionDoesNotExistMessage) `
+                    $($script:localizedData.iSCSIConnectionDoesNotExistMessage) `
                         -f $NodeAddress
                 ) -join '' )
         } # if
@@ -167,7 +167,7 @@ function Get-TargetResource
 
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSISessionExistsMessage) `
+                    $($script:localizedData.iSCSISessionExistsMessage) `
                         -f $NodeAddress
                 ) -join '' )
         }
@@ -175,7 +175,7 @@ function Get-TargetResource
         {
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSISessionDoesNotExistMessage) `
+                    $($script:localizedData.iSCSISessionDoesNotExistMessage) `
                         -f $NodeAddress
                 ) -join '' )
         } # if
@@ -321,7 +321,7 @@ function Set-TargetResource
 
     Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
-            $($LocalizedData.SettingiSCSIInitiatorMessage) `
+            $($script:localizedData.SettingiSCSIInitiatorMessage) `
                 -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress
         ) -join '' )
 
@@ -350,7 +350,7 @@ function Set-TargetResource
     {
         Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.EnsureiSCSITargetPortalExistsMessage) `
+                $($script:localizedData.EnsureiSCSITargetPortalExistsMessage) `
                     -f $TargetPortalAddress, $InitiatorPortalAddress
             ) -join '' )
 
@@ -388,7 +388,7 @@ function Set-TargetResource
 
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSITargetPortalRemovedForRecreateMessage) `
+                        $($script:localizedData.iSCSITargetPortalRemovedForRecreateMessage) `
                             -f $TargetPortalAddress, $InitiatorPortalAddress
                     ) -join '' )
             } # if
@@ -413,7 +413,7 @@ function Set-TargetResource
 
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSITargetPortalCreatedMessage) `
+                    $($script:localizedData.iSCSITargetPortalCreatedMessage) `
                         -f $TargetPortalAddress, $InitiatorPortalAddress
                 ) -join '' )
         }
@@ -427,7 +427,7 @@ function Set-TargetResource
 
         Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.EnsureiSCSITargetIsConnectedMessage) `
+                $($script:localizedData.EnsureiSCSITargetIsConnectedMessage) `
                     -f $NodeAddress
             ) -join '' )
 
@@ -511,7 +511,7 @@ function Set-TargetResource
 
                     Write-Verbose -Message ( @(
                             "$($MyInvocation.MyCommand): "
-                            $($LocalizedData.iSCSITargetDisconnectedMessage) `
+                            $($script:localizedData.iSCSITargetDisconnectedMessage) `
                                 -f $NodeAddress
                         ) -join '' )
 
@@ -541,7 +541,7 @@ function Set-TargetResource
 
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSITargetConnectedMessage) `
+                    $($script:localizedData.iSCSITargetConnectedMessage) `
                         -f $NodeAddress
                 ) -join '' )
         } # if
@@ -558,7 +558,7 @@ function Set-TargetResource
 
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSISessionSetPersistentMessage) `
+                        $($script:localizedData.iSCSISessionSetPersistentMessage) `
                             -f $NodeAddress
                     ) -join '' )
             }
@@ -570,7 +570,7 @@ function Set-TargetResource
 
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSISessionRemovedPersistentMessage) `
+                        $($script:localizedData.iSCSISessionRemovedPersistentMessage) `
                             -f $NodeAddress
                     ) -join '' )
             }
@@ -590,7 +590,7 @@ function Set-TargetResource
 
                     Write-Verbose -Message ( @(
                             "$($MyInvocation.MyCommand): "
-                            $($LocalizedData.iSNSServerRemovedMessage)
+                            $($script:localizedData.iSNSServerRemovedMessage)
                         ) -join '' )
                 } # if
             }
@@ -606,7 +606,7 @@ function Set-TargetResource
 
                     Write-Verbose -Message ( @(
                             "$($MyInvocation.MyCommand): "
-                            $($LocalizedData.iSNSServerUpdatedMessage) `
+                            $($script:localizedData.iSNSServerUpdatedMessage) `
                                 -f $iSNSServer
                         ) -join '' )
                 }
@@ -614,7 +614,7 @@ function Set-TargetResource
                 {
                     Write-Verbose -Message ( @(
                             "$($MyInvocation.MyCommand): "
-                            $($LocalizedData.iSNSServerUpdateErrorMessage) `
+                            $($script:localizedData.iSNSServerUpdateErrorMessage) `
                                 -f $iSNSServer
                         ) -join '' )
                 }
@@ -625,7 +625,7 @@ function Set-TargetResource
     {
         Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.EnsureiSCSITargetIsDisconnectedMessage) `
+                $($script:localizedData.EnsureiSCSITargetIsDisconnectedMessage) `
                     -f $NodeAddress
             ) -join '' )
 
@@ -644,7 +644,7 @@ function Set-TargetResource
 
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSITargetDisconnectedMessage) `
+                        $($script:localizedData.iSCSITargetDisconnectedMessage) `
                             -f $NodeAddress
                     ) -join '' )
             }
@@ -652,7 +652,7 @@ function Set-TargetResource
 
         Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.EnsureiSCSITargetPortalDoesNotExistMessage) `
+                $($script:localizedData.EnsureiSCSITargetPortalDoesNotExistMessage) `
                     -f $TargetPortalAddress, $InitiatorPortalAddress
             ) -join '' )
 
@@ -666,7 +666,7 @@ function Set-TargetResource
 
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSITargetPortalRemovedMessage) `
+                    $($script:localizedData.iSCSITargetPortalRemovedMessage) `
                         -f $TargetPortalAddress, $InitiatorPortalAddress
                 ) -join '' )
         } # if
@@ -680,7 +680,7 @@ function Set-TargetResource
 
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIServerTargetiSNSRemovedMessage) `
+                    $($script:localizedData.iSNSServerRemovedMessage) `
                         -f $TargetName
                 ) -join '' )
         } # if
@@ -816,7 +816,7 @@ function Test-TargetResource
 
     Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
-            $($LocalizedData.TestingiSCSIInitiatorMessage) `
+            $($script:localizedData.TestingiSCSIInitiatorMessage) `
                 -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress
         ) -join '' )
 
@@ -849,7 +849,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
                             -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress, 'TargetPortal', 'TargetPortalPortNumber'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -860,7 +860,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
                             -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress, 'TargetPortal', 'InitiatorInstanceName'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -871,7 +871,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
                             -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress, 'TargetPortal', 'IsDataDigest'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -882,7 +882,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
                             -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress, 'TargetPortal', 'IsHeaderDigest'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -897,7 +897,7 @@ function Test-TargetResource
                 # Ths iSCSI Target doesn't exist but should
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSITargetDoesNotExistButShouldMessage) `
+                        $($script:localizedData.iSCSITargetDoesNotExistButShouldMessage) `
                             -f $NodeAddress
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -909,7 +909,7 @@ function Test-TargetResource
                 # Ths iSCSI Target exists but is not connected
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSITargetNotConnectedMessage) `
+                        $($script:localizedData.iSCSITargetNotConnectedMessage) `
                             -f $NodeAddress
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -924,7 +924,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIConnectionDoesNotExistButShouldMessage) `
+                        $($script:localizedData.iSCSIConnectionDoesNotExistButShouldMessage) `
                             -f $NodeAddress
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -954,7 +954,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
                             -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress, 'Connection', 'TargetAddress'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -965,7 +965,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
                             -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress, 'Connection', 'InitiatorAddress'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -976,7 +976,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
                             -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress, 'Connection', 'TargetPortNumber'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -990,7 +990,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSISessionDoesNotExistButShouldMessage) `
+                        $($script:localizedData.iSCSISessionDoesNotExistButShouldMessage) `
                             -f $NodeAddress
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -1003,7 +1003,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
                             -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress, 'Session', 'AuthenticationType'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -1014,7 +1014,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
                             -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress, 'Session', 'InitiatorInstanceName'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -1025,7 +1025,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
                             -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress, 'Session', 'InitiatorAddress'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -1036,7 +1036,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
                             -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress, 'Session', 'IsDataDigest'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -1047,7 +1047,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
                             -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress, 'Session', 'IsHeaderDigest'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -1058,7 +1058,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIInitiatorParameterNeedsUpdateMessage) `
                             -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress, 'Session', 'IsPersistent'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -1069,7 +1069,7 @@ function Test-TargetResource
             # Ths iSCSI Target Portal doesn't exist but should
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSITargetPortalDoesNotExistButShouldMessage) `
+                    $($script:localizedData.iSCSITargetPortalDoesNotExistButShouldMessage) `
                         -f $TargetPortalAddress, $InitiatorPortalAddress
                 ) -join '' )
             $desiredConfigurationMatch = $false
@@ -1082,7 +1082,7 @@ function Test-TargetResource
             # The iSNS Server is different so needs update
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSNSServerNeedsUpdateMessage) `
+                    $($script:localizedData.iSNSServerNeedsUpdateMessage) `
                         -f $iSNSServerCurrent.iSNSServerAddress, $iSNSServer
                 ) -join '' )
             $desiredConfigurationMatch = $false
@@ -1099,7 +1099,7 @@ function Test-TargetResource
             # The iSCSI Target exists and is connected
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSITargetExistsButShouldNotMessage) `
+                    $($script:localizedData.iSCSITargetExistsButShouldNotMessage) `
                         -f $NodeAddress
                 ) -join '' )
             $desiredConfigurationMatch = $false
@@ -1111,7 +1111,7 @@ function Test-TargetResource
             # The iSCSI Target Portal exists but should not
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSITargetPortalExistsButShouldNotMessage) `
+                    $($script:localizedData.iSCSITargetPortalExistsButShouldNotMessage) `
                         -f $TargetPortalAddress, $InitiatorPortalAddress
                 ) -join '' )
             $desiredConfigurationMatch = $false
@@ -1121,7 +1121,7 @@ function Test-TargetResource
             # The iSCSI Target Portal does not exist and should not
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSITargetPortalDoesNotExistAndShouldNotMessage) `
+                    $($script:localizedData.iSCSITargetPortalDoesNotExistAndShouldNotMessage) `
                         -f $TargetPortalAddress, $InitiatorPortalAddress
                 ) -join '' )
         } # if
@@ -1132,7 +1132,7 @@ function Test-TargetResource
             # The iSNS Server is set but should not be
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSNSServerIsSetButShouldNotBeMessage)
+                    $($script:localizedData.iSNSServerIsSetButShouldBeNotMessage)
                 ) -join '' )
             $desiredConfigurationMatch = $false
         } # if

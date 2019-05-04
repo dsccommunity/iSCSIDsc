@@ -1,12 +1,12 @@
 $modulePath = Join-Path -Path (Split-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -Parent) -ChildPath 'Modules'
 
-# Import the Networking Resource Helper Module
+# Import the iSCSI Common Module
 Import-Module -Name (Join-Path -Path $modulePath `
-    -ChildPath (Join-Path -Path 'iSCSIDsc.ResourceHelper' `
-        -ChildPath 'iSCSIDsc.ResourceHelper.psm1'))
+    -ChildPath (Join-Path -Path 'iSCSIDsc.Common' `
+        -ChildPath 'iSCSIDsc.Common.psm1'))
 
 # Import Localization Strings
-$LocalizedData = Get-LocalizedData `
+$script:localizedData = Get-LocalizedData `
     -ResourceName 'DSR_iSCSIVirtualDisk' `
     -ResourcePath (Split-Path -Parent $Script:MyInvocation.MyCommand.Path)
 
@@ -31,7 +31,7 @@ function Get-TargetResource
 
     Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
-            $($LocalizedData.GettingiSCSIVirtualDiskMessage) `
+            $($script:localizedData.GettingiSCSIVirtualDiskMessage) `
                 -f $Path
         ) -join '' )
 
@@ -44,7 +44,7 @@ function Get-TargetResource
     {
         Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSCSIVirtualDiskExistsMessage) `
+                $($script:localizedData.iSCSIVirtualDiskExistsMessage) `
                     -f $Path
             ) -join '' )
 
@@ -60,7 +60,7 @@ function Get-TargetResource
     {
         Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.iSCSIVirtualDiskDoesNotExistMessage) `
+                $($script:localizedData.iSCSIVirtualDiskDoesNotExistMessage) `
                     -f $Path
             ) -join '' )
 
@@ -155,7 +155,7 @@ function Set-TargetResource
 
     Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
-            $($LocalizedData.SettingiSCSIVirtualDiskMessage) `
+            $($script:localizedData.SettingiSCSIVirtualDiskMessage) `
                 -f $Path
         ) -join '' )
 
@@ -170,7 +170,7 @@ function Set-TargetResource
     {
         Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.EnsureiSCSIVirtualDiskExistsMessage) `
+                $($script:localizedData.EnsureiSCSIVirtualDiskExistsMessage) `
                     -f $Path
             ) -join '' )
 
@@ -208,7 +208,7 @@ function Set-TargetResource
             {
                 $errorId = 'iSCSIVirtualDiskRequiresRecreateError'
                 $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
-                $errorMessage = $($LocalizedData.iSCSIVirtualDiskRequiresRecreateError) -f $Path
+                $errorMessage = $($script:localizedData.iSCSIVirtualDiskRequiresRecreateError) -f $Path
                 $exception = New-Object -TypeName System.InvalidOperationException `
                     -ArgumentList $errorMessage
                 $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
@@ -225,7 +225,7 @@ function Set-TargetResource
 
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIVirtualDiskUpdatedMessage) `
+                    $($script:localizedData.iSCSIVirtualDiskUpdatedMessage) `
                         -f $Path
                 ) -join '' )
         }
@@ -247,7 +247,7 @@ function Set-TargetResource
 
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIVirtualDiskCreatedMessage) `
+                    $($script:localizedData.iSCSIVirtualDiskCreatedMessage) `
                         -f $Path
                 ) -join '' )
         }
@@ -256,7 +256,7 @@ function Set-TargetResource
     {
         Write-Verbose -Message ( @(
                 "$($MyInvocation.MyCommand): "
-                $($LocalizedData.EnsureiSCSIVirtualDiskDoesNotExistMessage) `
+                $($script:localizedData.EnsureiSCSIVirtualDiskDoesNotExistMessage) `
                     -f $Path
             ) -join '' )
 
@@ -270,7 +270,7 @@ function Set-TargetResource
 
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIVirtualDiskRemovedMessage) `
+                    $($script:localizedData.iSCSIVirtualDiskRemovedMessage) `
                         -f $Path
                 ) -join '' )
         } # if
@@ -364,7 +364,7 @@ function Test-TargetResource
 
     Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
-            $($LocalizedData.TestingiSCSIVirtualDiskMessage) `
+            $($script:localizedData.TestingiSCSIVirtualDiskMessage) `
                 -f $Path
         ) -join '' )
 
@@ -384,7 +384,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
                             -f $Path, 'Description'
                     ) -join '' )
                 $desiredConfigurationMatch = $false
@@ -395,7 +395,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
                             -f $Path, 'SizeBytes'
                     ) -join '' )
                 $recreate = $true
@@ -406,7 +406,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
                             -f $Path, 'SizeBytes'
                     ) -join '' )
                 $recreate = $true
@@ -417,7 +417,7 @@ function Test-TargetResource
             {
                 Write-Verbose -Message ( @(
                         "$($MyInvocation.MyCommand): "
-                        $($LocalizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
+                        $($script:localizedData.iSCSIVirtualDiskParameterNeedsUpdateMessage) `
                             -f $Path, 'ParentPath'
                     ) -join '' )
                 $recreate = $true
@@ -434,7 +434,7 @@ function Test-TargetResource
             {
                 $errorId = 'iSCSIVirtualDiskRequiresRecreateError'
                 $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidArgument
-                $errorMessage = $($LocalizedData.iSCSIVirtualDiskRequiresRecreateError) -f $Path
+                $errorMessage = $($script:localizedData.iSCSIVirtualDiskRequiresRecreateError) -f $Path
                 $exception = New-Object -TypeName System.InvalidOperationException `
                     -ArgumentList $errorMessage
                 $errorRecord = New-Object -TypeName System.Management.Automation.ErrorRecord `
@@ -448,7 +448,7 @@ function Test-TargetResource
             # Ths iSCSI Virtual Disk doesn't exist but should
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIVirtualDiskDoesNotExistButShouldMessage) `
+                    $($script:localizedData.iSCSIVirtualDiskDoesNotExistButShouldMessage) `
                         -f $Path
                 ) -join '' )
             $desiredConfigurationMatch = $false
@@ -462,7 +462,7 @@ function Test-TargetResource
             # The iSCSI Virtual Disk exists but should not
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIVirtualDiskExistsButShouldNotMessage) `
+                    $($script:localizedData.iSCSIVirtualDiskExistsButShouldNotMessage) `
                         -f $Path
                 ) -join '' )
             $desiredConfigurationMatch = $false
@@ -472,7 +472,7 @@ function Test-TargetResource
             # The iSCSI Virtual Disk does not exist and should not
             Write-Verbose -Message ( @(
                     "$($MyInvocation.MyCommand): "
-                    $($LocalizedData.iSCSIVirtualDiskDoesNotExistAndShouldNotMessage) `
+                    $($script:localizedData.iSCSIVirtualDiskDoesNotExistAndShouldNotMessage) `
                         -f $Path
                 ) -join '' )
         }
