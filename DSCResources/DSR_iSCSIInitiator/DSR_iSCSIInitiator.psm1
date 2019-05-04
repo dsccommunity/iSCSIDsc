@@ -6,9 +6,7 @@ Import-Module -Name (Join-Path -Path $modulePath `
         -ChildPath 'iSCSIDsc.Common.psm1'))
 
 # Import Localization Strings
-$script:localizedData = Get-LocalizedData `
-    -ResourceName 'DSR_iSCSIInitiator' `
-    -ResourcePath (Split-Path -Parent $Script:MyInvocation.MyCommand.Path)
+$script:localizedData = Get-LocalizedData -ResourceName 'DSR_iSCSIInitiator'
 
 <#
     .SYNOPSIS

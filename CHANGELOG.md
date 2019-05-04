@@ -9,6 +9,8 @@
 - Renamed all localization strings so that they are detected by
   'Common Tests - Validate Localization'.
 - Fixed issues with mismatched localization strings.
+- Replaced `iSCSIDsc.Common` module with the latest version from
+  [DSCResource.Template](https://github.com/PowerShell/DSCResource.Template).
 
 ## 1.5.1.0
 
