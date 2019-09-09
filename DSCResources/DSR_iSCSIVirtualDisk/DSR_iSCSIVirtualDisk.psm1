@@ -510,9 +510,9 @@ function Get-VirtualDisk
     }
     catch
     {
-        Throw $_
+        throw $_
     }
-    Return $virtualDisk
+    return $virtualDisk
 }
 
 Export-ModuleMember -function *-TargetResource

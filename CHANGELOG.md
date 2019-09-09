@@ -11,6 +11,7 @@
 - Fixed issues with mismatched localization strings.
 - Replaced `iSCSIDsc.Common` module with the latest version from
   [DSCResource.Template](https://github.com/PowerShell/DSCResource.Template).
+- Fix minor style issues in statement case.
 
 ## 1.5.1.0
 

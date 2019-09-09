@@ -1173,7 +1173,7 @@ function Get-TargetPortal
     }
     catch
     {
-        Throw $_
+        throw $_
     }
     return $targetPortal
 } # Get-TargetPortal
@@ -1205,7 +1205,7 @@ function Get-Target
     }
     catch
     {
-        Throw $_
+        throw $_
     }
     return $target
 } # Get-Target
@@ -1237,7 +1237,7 @@ function Get-Session
     }
     catch
     {
-        Throw $_
+        throw $_
     }
     return $session
 } # Get-Session
@@ -1269,7 +1269,7 @@ function Get-Connection
     }
     catch
     {
-        Throw $_
+        throw $_
     }
     return $Connection
 } # Get-Connection
