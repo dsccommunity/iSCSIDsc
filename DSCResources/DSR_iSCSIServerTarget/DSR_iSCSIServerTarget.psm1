@@ -510,9 +510,9 @@ function Get-ServerTarget
     }
     catch
     {
-        Throw $_
+        throw $_
     }
-    Return $serverTarget
+    return $serverTarget
 }
 
 Export-ModuleMember -function *-TargetResource
