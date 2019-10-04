@@ -190,7 +190,7 @@ function Get-TargetResource
         }
     }
 
-    $returnValue
+    return $returnValue
 } # Get-TargetResource
 
 <#
@@ -326,10 +326,15 @@ function Set-TargetResource
     # Remove any parameters that can't be splatted.
     $null = $PSBoundParameters.Remove('Ensure')
 
-    $targetSplat = @{ TargetPortalAddress = $TargetPortalAddress }
+    $targetSplat = @{
+        TargetPortalAddress = $TargetPortalAddress
+    }
+
     if ($PSBoundParameters.ContainsKey('InitiatorPortalAddress'))
     {
-        $targetSplat += @{ InitiatorPortalAddress = $InitiatorPortalAddress }
+        $targetSplat += @{
+            InitiatorPortalAddress = $InitiatorPortalAddress
+        }
     }
 
     # Lookup the existing iSCSI Target Portal
@@ -463,35 +468,42 @@ function Set-TargetResource
                 {
                     $connect = $true
                 } # if
+
                 if ($connection.InitiatorAddress -ne $InitiatorPortalAddress)
                 {
                     $connect = $true
                 } # if
+
                 if (($TargetPortalPortNumber) `
                         -and ($connection.TargetPortNumber -ne $TargetPortalPortNumber))
                 {
                     $connect = $true
                 } # if
+
                 if (($AuthenticationType) `
                         -and ($session.AuthenticationType -ne $AuthenticationType))
                 {
                     $connect = $true
                 } # if
+
                 if (($InitiatorInstanceName) `
                         -and ($session.InitiatorInstanceName -ne $InitiatorInstanceName))
                 {
                     $connect = $true
                 } # if
+
                 if ($PSBoundParameters.ContainsKey('InitiatorPortalAddress') `
                         -and ($session.InitiatorPortalAddress -ne $InitiatorPortalAddress))
                 {
                     $connect = $true
                 } # if
+
                 if (($null -ne $IsDataDigest) `
                         -and ($session.IsDataDigest -ne $IsDataDigest))
                 {
                     $connect = $true
                 } # if
+
                 if (($null -ne $IsHeaderDigest) `
                         -and ($session.IsHeaderDigest -ne $IsHeaderDigest))
                 {
@@ -810,7 +822,7 @@ function Test-TargetResource
     )
 
     # Flag to signal whether settings are correct
-    [Boolean] $desiredConfigurationMatch = $true
+    $desiredConfigurationMatch = $true
 
     Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
@@ -818,10 +830,15 @@ function Test-TargetResource
                 -f $NodeAddress, $TargetPortalAddress, $InitiatorPortalAddress
         ) -join '' )
 
-    $targetSplat = @{ TargetPortalAddress = $TargetPortalAddress }
+    $targetSplat = @{
+        TargetPortalAddress = $TargetPortalAddress
+    }
+
     if ($PSBoundParameters.ContainsKey('InitiatorPortalAddress'))
     {
-        $targetSplat += @{ InitiatorPortalAddress = $InitiatorPortalAddress }
+        $targetSplat += @{
+            InitiatorPortalAddress = $InitiatorPortalAddress
+        }
     }
 
     # Lookup the existing iSCSI Target Portal
@@ -1135,6 +1152,7 @@ function Test-TargetResource
             $desiredConfigurationMatch = $false
         } # if
     } # if
+
     return $desiredConfigurationMatch
 } # Test-TargetResource
 

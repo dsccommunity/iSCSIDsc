@@ -53,6 +53,7 @@ function Get-TargetResource
     $returnValue = @{
         TargetName = $TargetName
     }
+
     if ($serverTarget)
     {
         Write-Verbose -Message ( @(
@@ -84,6 +85,7 @@ function Get-TargetResource
     $iSNSServerCurrent = Get-WmiObject `
         -Class WT_iSNSServer `
         -Namespace root\wmi
+
     if ($iSNSServerCurrent)
     {
         $returnValue += @{
@@ -91,7 +93,7 @@ function Get-TargetResource
         }
     } # if
 
-    $returnValue
+    return $returnValue
 } # Get-TargetResource
 
 <#
@@ -219,6 +221,7 @@ function Set-TargetResource
                     ) -join '' )
             } # if
         } # foreach
+
         foreach ($Path in $serverTarget.LunMappings.Path)
         {
             if ($Path -notin $Paths)
@@ -370,7 +373,7 @@ function Test-TargetResource
     )
 
     # Flag to signal whether settings are correct
-    [Boolean] $desiredConfigurationMatch = $true
+    $desiredConfigurationMatch = $true
 
     Write-Verbose -Message ( @(
         "$($MyInvocation.MyCommand): "
@@ -406,6 +409,7 @@ function Test-TargetResource
             } # if
 
             [String[]] $ExistingPaths = @($serverTarget.LunMappings.Path)
+
             if (($Paths) -and (Compare-Object `
                 -ReferenceObject $Paths `
                 -DifferenceObject $ExistingPaths).Count -ne 0)
@@ -497,6 +501,7 @@ function Get-ServerTarget
         [System.String]
         $TargetName
     )
+
     try
     {
         $serverTarget = Get-iSCSIServerTarget `
@@ -512,6 +517,7 @@ function Get-ServerTarget
     {
         throw $_
     }
+
     return $serverTarget
 }
 
