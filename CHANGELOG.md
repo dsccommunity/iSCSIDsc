@@ -12,6 +12,8 @@
 - Replaced `iSCSIDsc.Common` module with the latest version from
   [DSCResource.Template](https://github.com/PowerShell/DSCResource.Template).
 - Fix minor style issues in statement case.
+- Fix minor style issues in hashtable layout.
+- Correct other minor style issues.
 
 ## 1.5.1.0
 
