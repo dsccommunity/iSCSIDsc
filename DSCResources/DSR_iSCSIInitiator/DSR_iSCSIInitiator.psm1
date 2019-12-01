@@ -611,7 +611,9 @@ function Set-TargetResource
                     Set-WmiInstance `
                         -Namespace root\wmi `
                         -Class WT_iSNSServer `
-                        -Arguments @{ServerName = $iSNSServer} `
+                        -Arguments @{
+                            ServerName = $iSNSServer
+                        } `
                         -ErrorAction Stop
 
                     Write-Verbose -Message ( @(
