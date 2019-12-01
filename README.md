@@ -20,22 +20,22 @@ Module Guidelines](https://github.com/PowerShell/DscResources/blob/master/HighQu
 ## Documentation and Examples
 
 For a full list of resources in iSCSIDsc and examples on their use, check out
-the [iSCSIDsc wiki](https://github.com/PlagueHO/iSCSIDsc/wiki).
+the [iSCSIDsc wiki](https://github.com/dsccommunity/iSCSIDsc/wiki).
 
 ## Branches
 
 ### master
 
-[![Build status](https://ci.appveyor.com/api/projects/status/xnuik3kpyag237mv/branch/master?svg=true)](https://ci.appveyor.com/project/PlagueHO/iSCSIDsc/branch/master)
-[![codecov](https://codecov.io/gh/PlagueHO/iSCSIDsc/branch/master/graph/badge.svg)](https://codecov.io/gh/PlagueHO/iSCSIDsc/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/dsccommunity/iSCSIDsc?branch=master&svg=true)](https://ci.appveyor.com/project/dsccommunity/iSCSIDsc/branch/master)
+[![codecov](https://codecov.io/gh/dsccommunity/iSCSIDsc/branch/master/graph/badge.svg)](https://codecov.io/gh/dsccommunity/iSCSIDsc/branch/master)
 
 This is the branch containing the latest release - no contributions should be made
 directly to this branch.
 
 ### dev
 
-[![Build status](https://ci.appveyor.com/api/projects/status/xnuik3kpyag237mv/branch/dev?svg=true)](https://ci.appveyor.com/project/PlagueHO/iSCSIDsc/branch/dev)
-[![codecov](https://codecov.io/gh/PlagueHO/iSCSIDsc/branch/dev/graph/badge.svg)](https://codecov.io/gh/PlagueHO/iSCSIDsc/branch/dev)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/dsccommunity/iSCSIDsc?branch=dev&svg=true)](https://ci.appveyor.com/project/dsccommunity/iSCSIDsc/branch/dev)
+[![codecov](https://codecov.io/gh/dsccommunity/iSCSIDsc/branch/dev/graph/badge.svg)](https://codecov.io/gh/dsccommunity/iSCSIDsc/branch/dev)
 
 This is the development branch to which contributions should be proposed by contributors
 as pull requests. This development branch will periodically be merged to the master
