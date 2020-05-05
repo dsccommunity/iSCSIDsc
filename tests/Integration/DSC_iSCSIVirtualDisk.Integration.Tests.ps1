@@ -57,7 +57,7 @@ try
     Describe "$($script:DSCResourceName)_Integration" {
         BeforeAll {
             $script:virtualDisk = @{
-                Path            = Join-Path -Path $ENV:Temp -ChildPath 'TestiSCSIVirtualDisk.vhdx'
+                Path            = Join-Path -Path $TempDrive -ChildPath 'TestiSCSIVirtualDisk.vhdx'
                 Ensure          = 'Present'
                 DiskType        = 'Dynamic'
                 Size            = 100MB

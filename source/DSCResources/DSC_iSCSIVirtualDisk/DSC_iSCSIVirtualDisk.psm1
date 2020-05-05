@@ -238,6 +238,7 @@ function Set-TargetResource
             {
                 $null = $PSBoundParameters.Remove('LogicalSectorSizeBytes')
             }
+
             New-iSCSIVirtualDisk `
                 @PSBoundParameters `
                 -ComputerName LOCALHOST `
@@ -475,6 +476,7 @@ function Test-TargetResource
                 ) -join '' )
         }
     } # if
+
     return $desiredConfigurationMatch
 } # Test-TargetResource
 
@@ -497,8 +499,10 @@ function Get-VirtualDisk
     )
     try
     {
-        # Specify Localhost as computer because
-        # it speeds cmdlet up significantly
+        <#
+            Specify Localhost as computer because
+            it speeds cmdlet up significantly.
+        #>
         $virtualDisk = Get-iSCSIVirtualDisk `
             -ComputerName LOCALHOST `
             -Path $Path `
