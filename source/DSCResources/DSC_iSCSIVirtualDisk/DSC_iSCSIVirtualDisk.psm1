@@ -239,6 +239,8 @@ function Set-TargetResource
                 $null = $PSBoundParameters.Remove('LogicalSectorSizeBytes')
             }
 
+            Write-Verbose -Message ('Calling New-iSCSIVirtualDisk with {0}' -f ($PSBoundParameters | Out-String)) -Verbose
+
             New-iSCSIVirtualDisk `
                 @PSBoundParameters `
                 -ComputerName LOCALHOST `
