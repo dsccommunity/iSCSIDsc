@@ -35,146 +35,148 @@ try
     . $configFile
 
     Describe "$($script:DSCResourceName)_Integration" {
-        BeforeAll {
-            $script:ipAddress = (Get-NetIPAddress -InterfaceIndex (Get-NetConnectionProfile -IPv4Connectivity Internet).InterfaceIndex -AddressFamily IPv4).IPAddress
-            $script:targetName = 'TestServerTarget'
-            $script:Initiator = @{
-                NodeAddress            = "iqn.1991-05.com.microsoft:$($ENV:ComputerName)-$script:targetName-target-target"
-                TargetPortalAddress    = $ENV:ComputerName
-                InitiatorPortalAddress = $ENV:ComputerName
-                Ensure                 = 'Present'
-                TargePortalPortNumber  = 3260
-                InitiatorInstanceName  = 'ROOT\ISCSIPRT\0000_0'
-                AuthenticationType     = 'OneWayCHAP'
-                ChapUsername           = 'MyUsername'
-                ChapSecret             = 'MySecret'
-                IsDataDigest           = $false
-                IsHeaderDigest         = $false
-                IsMultipathEnabled     = $false
-                IsPersistent           = $true
-                ReportToPnP            = $true
-                iSNSServer             = "isns.contoso.com"
-            }
-
-            # Create a Server Target on this computer to test with
-            $script:virtualDiskPath = Join-Path `
-                -Path $TestDrive `
-                -ChildPath ([System.IO.Path]::ChangeExtension([System.IO.Path]::GetRandomFileName(),'vhdx'))
-
-            New-iSCSIVirtualDisk `
-                -ComputerName LOCALHOST `
-                -Path $script:virtualDiskPath `
-                -SizeBytes 500MB
-            New-iSCSIServerTarget `
-                -TargetName $script:targetName `
-                -InitiatorIds "Iqn:iqn.1991-05.com.microsoft:$($script:Initiator.InitiatorPortalAddress)" `
-                -ComputerName LOCALHOST
-            Add-IscsiVirtualDiskTargetMapping `
-                -ComputerName LOCALHOST `
-                -TargetName $script:targetName `
-                -Path $script:virtualDiskPath
-        } # BeforeAll
-
-        It 'Should compile and apply the MOF without throwing' {
-            {
-                $configData = @{
-                    AllNodes = @(
-                        @{
-                            NodeName               = 'localhost'
-                            NodeAddress            = $script:initiator.NodeAddress
-                            TargetPortalAddress    = $script:initiator.TargetPortalAddress
-                            InitiatorPortalAddress = $script:initiator.InitiatorPortalAddress
-                            Ensure                 = $script:initiator.Ensure
-                            TargetPortalPortNumber = $script:initiator.TargetPortalPortNumber
-                            InitiatorInstanceName  = $script:initiator.InitiatorInstanceName
-                            AuthenticationType     = $script:initiator.AuthenticationType
-                            ChapUsername           = $script:initiator.ChapUsername
-                            ChapSecret             = $script:initiator.ChapSecret
-                            IsDataDigest           = $script:initiator.IsDataDigest
-                            IsHeaderDigest         = $script:initiator.IsHeaderDigest
-                            IsMultipathEnabled     = $script:initiator.IsMultipathEnabled
-                            IsPersistent           = $script:initiator.IsPersistent
-                            ReportToPnP            = $script:initiator.ReportToPnP
-                            iSNSServer             = $script:initiator.iSNSServer
-                        }
-                    )
+        Context 'When creating an iSCSI Initiator' {
+            BeforeAll {
+                $script:ipAddress = (Get-NetIPAddress -InterfaceIndex (Get-NetConnectionProfile -IPv4Connectivity Internet).InterfaceIndex -AddressFamily IPv4).IPAddress
+                $script:targetName = 'TestServerTarget'
+                $script:Initiator = @{
+                    NodeAddress            = "iqn.1991-05.com.microsoft:$($ENV:ComputerName)-$script:targetName-target-target"
+                    TargetPortalAddress    = $ENV:ComputerName
+                    InitiatorPortalAddress = $ENV:ComputerName
+                    Ensure                 = 'Present'
+                    TargePortalPortNumber  = 3260
+                    InitiatorInstanceName  = 'ROOT\ISCSIPRT\0000_0'
+                    AuthenticationType     = 'OneWayCHAP'
+                    ChapUsername           = 'MyUsername'
+                    ChapSecret             = 'MySecret'
+                    IsDataDigest           = $false
+                    IsHeaderDigest         = $false
+                    IsMultipathEnabled     = $false
+                    IsPersistent           = $true
+                    ReportToPnP            = $true
+                    iSNSServer             = "isns.contoso.com"
                 }
 
-                & "$($script:DSCResourceName)_Config" `
-                    -OutputPath $TestDrive `
-                    -ConfigurationData $configData
-
-                Start-DscConfiguration `
+                # Create a Server Target on this computer to test with
+                $script:virtualDiskPath = Join-Path `
                     -Path $TestDrive `
-                    -ComputerName localhost `
-                    -Wait `
-                    -Verbose `
-                    -Force `
-                    -ErrorAction Stop
-            } | Should -Not -Throw
-        }
+                    -ChildPath ([System.IO.Path]::ChangeExtension([System.IO.Path]::GetRandomFileName(),'vhdx'))
 
-        It 'should be able to call Get-DscConfiguration without throwing' {
-            {
-                Get-DscConfiguration -Verbose -ErrorAction Stop
-            } | Should -Not -throw
-        }
+                New-iSCSIVirtualDisk `
+                    -ComputerName LOCALHOST `
+                    -Path $script:virtualDiskPath `
+                    -SizeBytes 500MB
+                New-iSCSIServerTarget `
+                    -TargetName $script:targetName `
+                    -InitiatorIds "Iqn:iqn.1991-05.com.microsoft:$($script:Initiator.InitiatorPortalAddress)" `
+                    -ComputerName LOCALHOST
+                Add-IscsiVirtualDiskTargetMapping `
+                    -ComputerName LOCALHOST `
+                    -TargetName $script:targetName `
+                    -Path $script:virtualDiskPath
+            } # BeforeAll
 
-        It 'Should have set the resource and all the parameters should match' {
-            # Get the Target Portal details
-            $targetPortalNew = Get-iSCSITargetPortal `
-                -TargetPortalAddress $TargetPortal.TargetPortalAddress `
-                -InitiatorPortalAddress $TargetPortal.InitiatorPortalAddress
-            $script:Initiator.TargetPortalAddress    | Should -Be $targetPortalNew.TargetPortalAddress
-            $script:Initiator.TargetPortalPortNumber | Should -Be $targetPortalNew.TargetPortalPortNumber
-            $script:Initiator.InitiatorInstanceName  | Should -Be $targetPortalNew.InitiatorInstanceName
-            $script:Initiator.InitiatorPortalAddress | Should -Be $targetPortalNew.InitiatorPortalAddress
-            $script:Initiator.IsDataDigest           | Should -Be $targetPortalNew.IsDataDigest
-            $script:Initiator.IsHeaderDigest         | Should -Be $targetPortalNew.IsHeaderDigest
-            $targetNew = Get-iSCSITarget `
-                -NodeAddress $script:Initiator.NodeAddress
-            $script:Initiator.IsConnected            | Should -Be $True
-            $script:Initiator.NodeAddress            | Should -Be $targetNew.NodeAddress
-            $sessionNew = Get-iSCSISession `
-                -IscsiTarget $targetNew
-            $script:Initiator.TargetPortalAddress    | Should -Be $sessionNew.TargetAddress
-            $script:Initiator.InitiatorPortalAddress | Should -Be $sessionNew.InitiatorAddress
-            $script:Initiator.TargetPortalPortNumber | Should -Be $sessionNew.TargetPortNumber
-            $script:Initiator.ConnectionIdentifier   | Should -Be $sessionNew.ConnectionIdentifier
-            $connectionNew = Get-iSCSIConnection `
-                -NodeAddress $Target.NodeAddress
-            $script:Initiator.AuthenticationType     | Should -Be $connectionNew.AuthenticationType
-            $script:Initiator.InitiatorInstanceName  | Should -Be $connectionNew.InitiatorInstanceName
-            $script:Initiator.InitiatorPortalAddress | Should -Be $connectionNew.InitiatorPortalAddress
-            $script:Initiator.IsConnected            | Should -Be $connectionNew.IsConnected
-            $script:Initiator.IsDataDigest           | Should -Be $connectionNew.IsDataDigest
-            $script:Initiator.IsDiscovered           | Should -Be $connectionNew.IsDiscovered
-            $script:Initiator.IsHeaderDigest         | Should -Be $connectionNew.IsHeaderDigest
-            $script:Initiator.IsPersistent           | Should -Be $connectionNew.IsPersistent
-            $iSNSServerNew = Get-WmiObject -Class MSiSCSIInitiator_iSNSServerClass -Namespace root\wmi
-            # The iSNS Server is not usually accessible so won't be able to be set
-            # $script:Initiator.iSNSServer          | Should Be $iSNSServerNew.iSNSServerAddress
-        }
+            It 'Should compile and apply the MOF without throwing' {
+                {
+                    $configData = @{
+                        AllNodes = @(
+                            @{
+                                NodeName               = 'localhost'
+                                NodeAddress            = $script:initiator.NodeAddress
+                                TargetPortalAddress    = $script:initiator.TargetPortalAddress
+                                InitiatorPortalAddress = $script:initiator.InitiatorPortalAddress
+                                Ensure                 = $script:initiator.Ensure
+                                TargetPortalPortNumber = $script:initiator.TargetPortalPortNumber
+                                InitiatorInstanceName  = $script:initiator.InitiatorInstanceName
+                                AuthenticationType     = $script:initiator.AuthenticationType
+                                ChapUsername           = $script:initiator.ChapUsername
+                                ChapSecret             = $script:initiator.ChapSecret
+                                IsDataDigest           = $script:initiator.IsDataDigest
+                                IsHeaderDigest         = $script:initiator.IsHeaderDigest
+                                IsMultipathEnabled     = $script:initiator.IsMultipathEnabled
+                                IsPersistent           = $script:initiator.IsPersistent
+                                ReportToPnP            = $script:initiator.ReportToPnP
+                                iSNSServer             = $script:initiator.iSNSServer
+                            }
+                        )
+                    }
 
-        AfterAll {
-            # Clean up
-            Disconnect-IscsiTarget `
-                -NodeAddress $script:Initiator.NodeAddress `
-                -Confirm:$False
-            Remove-IscsiTargetPortal `
-                -TargetPortalAddress $script:Initiator.TargetPortalAddress `
-                -InitiatorPortalAddress $script:Initiator.InitiatorPortalAddress `
-                -Confirm:$False
-            Remove-iSCSIServerTarget `
-                -ComputerName LOCALHOST `
-                -TargetName $script:targetName
-            Remove-iSCSIVirtualDisk `
-                -ComputerName LOCALHOST `
-                -Path $script:virtualDiskPath
-            Remove-Item `
-                -Path $script:virtualDiskPath `
-                -Force
-        } # AfterAll
+                    & "$($script:DSCResourceName)_Config" `
+                        -OutputPath $TestDrive `
+                        -ConfigurationData $configData
+
+                    Start-DscConfiguration `
+                        -Path $TestDrive `
+                        -ComputerName localhost `
+                        -Wait `
+                        -Verbose `
+                        -Force `
+                        -ErrorAction Stop
+                } | Should -Not -Throw
+            }
+
+            It 'should be able to call Get-DscConfiguration without throwing' {
+                {
+                    Get-DscConfiguration -Verbose -ErrorAction Stop
+                } | Should -Not -throw
+            }
+
+            It 'Should have set the resource and all the parameters should match' {
+                # Get the Target Portal details
+                $targetPortalNew = Get-iSCSITargetPortal `
+                    -TargetPortalAddress $TargetPortal.TargetPortalAddress `
+                    -InitiatorPortalAddress $TargetPortal.InitiatorPortalAddress
+                $script:Initiator.TargetPortalAddress    | Should -Be $targetPortalNew.TargetPortalAddress
+                $script:Initiator.TargetPortalPortNumber | Should -Be $targetPortalNew.TargetPortalPortNumber
+                $script:Initiator.InitiatorInstanceName  | Should -Be $targetPortalNew.InitiatorInstanceName
+                $script:Initiator.InitiatorPortalAddress | Should -Be $targetPortalNew.InitiatorPortalAddress
+                $script:Initiator.IsDataDigest           | Should -Be $targetPortalNew.IsDataDigest
+                $script:Initiator.IsHeaderDigest         | Should -Be $targetPortalNew.IsHeaderDigest
+                $targetNew = Get-iSCSITarget `
+                    -NodeAddress $script:Initiator.NodeAddress
+                $script:Initiator.IsConnected            | Should -Be $True
+                $script:Initiator.NodeAddress            | Should -Be $targetNew.NodeAddress
+                $sessionNew = Get-iSCSISession `
+                    -IscsiTarget $targetNew
+                $script:Initiator.TargetPortalAddress    | Should -Be $sessionNew.TargetAddress
+                $script:Initiator.InitiatorPortalAddress | Should -Be $sessionNew.InitiatorAddress
+                $script:Initiator.TargetPortalPortNumber | Should -Be $sessionNew.TargetPortNumber
+                $script:Initiator.ConnectionIdentifier   | Should -Be $sessionNew.ConnectionIdentifier
+                $connectionNew = Get-iSCSIConnection `
+                    -NodeAddress $Target.NodeAddress
+                $script:Initiator.AuthenticationType     | Should -Be $connectionNew.AuthenticationType
+                $script:Initiator.InitiatorInstanceName  | Should -Be $connectionNew.InitiatorInstanceName
+                $script:Initiator.InitiatorPortalAddress | Should -Be $connectionNew.InitiatorPortalAddress
+                $script:Initiator.IsConnected            | Should -Be $connectionNew.IsConnected
+                $script:Initiator.IsDataDigest           | Should -Be $connectionNew.IsDataDigest
+                $script:Initiator.IsDiscovered           | Should -Be $connectionNew.IsDiscovered
+                $script:Initiator.IsHeaderDigest         | Should -Be $connectionNew.IsHeaderDigest
+                $script:Initiator.IsPersistent           | Should -Be $connectionNew.IsPersistent
+                $iSNSServerNew = Get-WmiObject -Class MSiSCSIInitiator_iSNSServerClass -Namespace root\wmi
+                # The iSNS Server is not usually accessible so won't be able to be set
+                # $script:Initiator.iSNSServer          | Should Be $iSNSServerNew.iSNSServerAddress
+            }
+
+            AfterAll {
+                # Clean up
+                Disconnect-IscsiTarget `
+                    -NodeAddress $script:Initiator.NodeAddress `
+                    -Confirm:$False
+                Remove-IscsiTargetPortal `
+                    -TargetPortalAddress $script:Initiator.TargetPortalAddress `
+                    -InitiatorPortalAddress $script:Initiator.InitiatorPortalAddress `
+                    -Confirm:$False
+                Remove-iSCSIServerTarget `
+                    -ComputerName LOCALHOST `
+                    -TargetName $script:targetName
+                Remove-iSCSIVirtualDisk `
+                    -ComputerName LOCALHOST `
+                    -Path $script:virtualDiskPath
+                Remove-Item `
+                    -Path $script:virtualDiskPath `
+                    -Force
+            } # AfterAll
+        }
     }
 }
 finally

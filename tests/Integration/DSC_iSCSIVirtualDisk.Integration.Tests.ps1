@@ -55,68 +55,70 @@ try
     }
 
     Describe "$($script:DSCResourceName)_Integration" {
-        BeforeAll {
-            $script:virtualDisk = @{
-                Path            = Join-Path -Path $TempDrive -ChildPath 'TestiSCSIVirtualDisk.vhdx'
-                Ensure          = 'Present'
-                DiskType        = 'Dynamic'
-                Size            = 100MB
-                Description     = 'Integration Test iSCSI Virtual Disk'
-            }
-        }
-
-        It 'Should compile and apply the MOF without throwing' {
-            {
-                $configData = @{
-                    AllNodes = @(
-                        @{
-                            NodeName    = 'localhost'
-                            Path        = $script:virtualDisk.Path
-                            Ensure      = $script:virtualDisk.Ensure
-                            DiskType    = $script:virtualDisk.DiskType
-                            SizeBytes   = $script:virtualDisk.Size
-                            Description = $script:virtualDisk.Description
-                        }
-                    )
+        Context 'When creating a iSCSI Virtual Disk' {
+            BeforeAll {
+                $script:virtualDisk = @{
+                    Path            = Join-Path -Path $TempDrive -ChildPath 'TestiSCSIVirtualDisk.vhdx'
+                    Ensure          = 'Present'
+                    DiskType        = 'Dynamic'
+                    Size            = 100MB
+                    Description     = 'Integration Test iSCSI Virtual Disk'
                 }
+            }
 
-                & "$($script:DSCResourceName)_Config" `
-                    -OutputPath $TestDrive `
-                    -ConfigurationData $configData
+            It 'Should compile and apply the MOF without throwing' {
+                {
+                    $configData = @{
+                        AllNodes = @(
+                            @{
+                                NodeName    = 'localhost'
+                                Path        = $script:virtualDisk.Path
+                                Ensure      = $script:virtualDisk.Ensure
+                                DiskType    = $script:virtualDisk.DiskType
+                                SizeBytes   = $script:virtualDisk.Size
+                                Description = $script:virtualDisk.Description
+                            }
+                        )
+                    }
 
-                Start-DscConfiguration `
-                    -Path $TestDrive `
-                    -ComputerName localhost `
-                    -Wait `
-                    -Verbose `
-                    -Force `
-                    -ErrorAction Stop
-            } | Should -Not -Throw
+                    & "$($script:DSCResourceName)_Config" `
+                        -OutputPath $TestDrive `
+                        -ConfigurationData $configData
+
+                    Start-DscConfiguration `
+                        -Path $TestDrive `
+                        -ComputerName localhost `
+                        -Wait `
+                        -Verbose `
+                        -Force `
+                        -ErrorAction Stop
+                } | Should -Not -Throw
+            }
+
+            It 'should be able to call Get-DscConfiguration without throwing' {
+                {
+                    Get-DscConfiguration -Verbose -ErrorAction Stop
+                } | Should -Not -throw
+            }
+
+            It 'Should have set the resource and all the parameters should match' {
+                # Get the Rule details
+                $virtualDiskNew = Get-iSCSIVirtualDisk -Path $script:virtualDisk.Path
+                $script:virtualDisk.Path               | Should -Be $virtualDiskNew.Path
+                $script:virtualDisk.DiskType           | Should -Be $virtualDiskNew.DiskType
+                $script:virtualDisk.Size               | Should -Be $virtualDiskNew.Size
+                $script:virtualDisk.Description        | Should -Be $virtualDiskNew.Description
+            }
+
+            AfterAll {
+                # Clean up
+                Remove-iSCSIVirtualDisk `
+                    -Path $script:virtualDisk.Path
+                Remove-Item `
+                    -Path $script:virtualDisk.Path `
+                    -Force
+            } # AfterAll
         }
-
-        It 'should be able to call Get-DscConfiguration without throwing' {
-            {
-                Get-DscConfiguration -Verbose -ErrorAction Stop
-            } | Should -Not -throw
-        }
-
-        It 'Should have set the resource and all the parameters should match' {
-            # Get the Rule details
-            $virtualDiskNew = Get-iSCSIVirtualDisk -Path $script:virtualDisk.Path
-            $script:virtualDisk.Path               | Should -Be $virtualDiskNew.Path
-            $script:virtualDisk.DiskType           | Should -Be $virtualDiskNew.DiskType
-            $script:virtualDisk.Size               | Should -Be $virtualDiskNew.Size
-            $script:virtualDisk.Description        | Should -Be $virtualDiskNew.Description
-        }
-
-        AfterAll {
-            # Clean up
-            Remove-iSCSIVirtualDisk `
-                -Path $script:virtualDisk.Path
-            Remove-Item `
-                -Path $script:virtualDisk.Path `
-                -Force
-        } # AfterAll
     }
 }
 finally
