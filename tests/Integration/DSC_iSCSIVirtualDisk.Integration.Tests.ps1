@@ -58,7 +58,7 @@ try
         Context 'When creating a iSCSI Virtual Disk' {
             BeforeAll {
                 $script:virtualDisk = @{
-                    Path            = Join-Path -Path $TempDrive -ChildPath 'TestiSCSIVirtualDisk.vhdx'
+                    Path            = Join-Path -Path $TestDrive -ChildPath 'TestiSCSIVirtualDisk.vhdx'
                     Ensure          = 'Present'
                     DiskType        = 'Dynamic'
                     Size            = 100MB
