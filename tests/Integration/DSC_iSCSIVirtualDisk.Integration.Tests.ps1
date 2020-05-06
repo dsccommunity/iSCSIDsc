@@ -61,7 +61,7 @@ try
                     Path            = Join-Path -Path $TestDrive -ChildPath 'TestiSCSIVirtualDisk.vhdx'
                     Ensure          = 'Present'
                     DiskType        = 'Dynamic'
-                    Size            = 100MB
+                    Size            = 104857600
                     Description     = 'Integration Test iSCSI Virtual Disk'
                 }
             }
