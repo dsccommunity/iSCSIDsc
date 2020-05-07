@@ -104,10 +104,10 @@ try
             It 'Should have set the resource and all the parameters should match' {
                 # Get the Rule details
                 $virtualDiskNew = Get-iSCSIVirtualDisk -Path $script:virtualDisk.Path
-                $script:virtualDisk.Path               | Should -Be $virtualDiskNew.Path
-                $script:virtualDisk.DiskType           | Should -Be $virtualDiskNew.DiskType
-                $script:virtualDisk.SizeBytes          | Should -Be $virtualDiskNew.SizeBytes
-                $script:virtualDisk.Description        | Should -Be $virtualDiskNew.Description
+                $virtualDiskNew.Path               | Should -Be $script:virtualDisk.Path
+                $virtualDiskNew.DiskType           | Should -Be $script:virtualDisk.DiskType
+                $virtualDiskNew.Size               | Should -Be $script:virtualDisk.SizeBytes
+                $virtualDiskNew.Description        | Should -Be $script:virtualDisk.Description
             }
 
             AfterAll {
