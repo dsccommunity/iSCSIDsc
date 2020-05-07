@@ -6,7 +6,7 @@ Configuration DSC_iSCSIVirtualDisk_Config {
             Path            = $Node.Path
             Ensure          = $Node.Ensure
             DiskType        = $Node.DiskType
-            SizeBytes       = $Node.Size
+            SizeBytes       = $Node.SizeBytes
             Description     = $Node.Description
         }
     }

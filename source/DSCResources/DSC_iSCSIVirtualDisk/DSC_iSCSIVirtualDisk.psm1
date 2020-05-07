@@ -175,7 +175,7 @@ function Set-TargetResource
         if ($virtualDisk)
         {
             # The iSCSI Virtual Disk exists
-            [Boolean] $recreate = $false
+            $recreate = $false
 
             if (($DiskType) `
                     -and ($virtualDisk.DiskType -ne $DiskType))
@@ -361,7 +361,7 @@ function Test-TargetResource
     )
 
     # Flag to signal whether settings are correct
-    [Boolean] $desiredConfigurationMatch = $true
+    $desiredConfigurationMatch = $true
 
     Write-Verbose -Message ( @(
             "$($MyInvocation.MyCommand): "
@@ -378,7 +378,7 @@ function Test-TargetResource
         if ($virtualDisk)
         {
             # The iSCSI Virtual Disk exists already - check the parameters
-            [Boolean] $recreate = $false
+            $recreate = $false
 
             if (($Description) `
                     -and ($virtualDisk.Description -ne $Description))

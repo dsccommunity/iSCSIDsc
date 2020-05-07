@@ -61,7 +61,7 @@ try
                     Path            = Join-Path -Path $TestDrive -ChildPath 'TestiSCSIVirtualDisk.vhdx'
                     Ensure          = 'Present'
                     DiskType        = 'Dynamic'
-                    Size            = 104857600
+                    SizeBytes       = 104857600
                     Description     = 'Integration Test iSCSI Virtual Disk'
                 }
             }
@@ -75,7 +75,7 @@ try
                                 Path        = $script:virtualDisk.Path
                                 Ensure      = $script:virtualDisk.Ensure
                                 DiskType    = $script:virtualDisk.DiskType
-                                SizeBytes   = $script:virtualDisk.Size
+                                SizeBytes   = $script:virtualDisk.SizeBytes
                                 Description = $script:virtualDisk.Description
                             }
                         )
@@ -106,7 +106,7 @@ try
                 $virtualDiskNew = Get-iSCSIVirtualDisk -Path $script:virtualDisk.Path
                 $script:virtualDisk.Path               | Should -Be $virtualDiskNew.Path
                 $script:virtualDisk.DiskType           | Should -Be $virtualDiskNew.DiskType
-                $script:virtualDisk.Size               | Should -Be $virtualDiskNew.Size
+                $script:virtualDisk.SizeBytes          | Should -Be $virtualDiskNew.SizeBytes
                 $script:virtualDisk.Description        | Should -Be $virtualDiskNew.Description
             }
 
