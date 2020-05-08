@@ -1,8 +1,8 @@
 # iSCSIDsc
 
-[![Build Status](https://dev.azure.com/dsccommunity/iSCSIDsc/_apis/build/status/dsccommunity.iSCSIDsc?branchName=master)](https://dev.azure.com/dsccommunity/iSCSIDsc/_build/latest?definitionId=18&branchName=master)
-![Code Coverage](https://img.shields.io/azure-devops/coverage/dsccommunity/iSCSIDsc/18/master)
-[![Azure DevOps tests](https://img.shields.io/azure-devops/tests/dsccommunity/iSCSIDsc/18/master)](https://dsccommunity.visualstudio.com/iSCSIDsc/_test/analytics?definitionId=18&contextType=build)
+[![Build Status](https://dev.azure.com/dsccommunity/iSCSIDsc/_apis/build/status/dsccommunity.iSCSIDsc?branchName=master)](https://dev.azure.com/dsccommunity/iSCSIDsc/_build/latest?definitionId=36&branchName=master)
+![Code Coverage](https://img.shields.io/azure-devops/coverage/dsccommunity/iSCSIDsc/36/master)
+[![Azure DevOps tests](https://img.shields.io/azure-devops/tests/dsccommunity/iSCSIDsc/36/master)](https://dsccommunity.visualstudio.com/iSCSIDsc/_test/analytics?definitionId=36&contextType=build)
 [![PowerShell Gallery (with prereleases)](https://img.shields.io/powershellgallery/vpre/iSCSIDsc?label=iSCSIDsc%20Preview)](https://www.powershellgallery.com/packages/iSCSIDsc/)
 [![PowerShell Gallery](https://img.shields.io/powershellgallery/v/iSCSIDsc?label=iSCSIDsc)](https://www.powershellgallery.com/packages/iSCSIDsc/)
 
