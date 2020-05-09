@@ -40,7 +40,7 @@ try
                 Write-Verbose -Message ("Creating Virtual Disk in {0}" -f $script:virtualDisk.Path) -Verbose
                 New-iSCSIVirtualDisk `
                     -Path $script:virtualDisk.Path `
-                    -Size 10GB
+                    -Size 104857600
                 Write-Verbose -Message ("Created Virtual Disk in {0}" -f $script:virtualDisk.Path) -Verbose
             } # BeforeAll
 
