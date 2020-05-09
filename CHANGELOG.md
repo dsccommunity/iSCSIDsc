@@ -39,6 +39,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated to use continuous delivery pattern using Azure DevOps - fixes
   [Issue #52](https://github.com/dsccommunity/iSCSIDsc/issues/52).
 - Update build badges in `README.md` with correct build IDs.
+- Removed unused test helper function `New-VDisk`.
+- Added test helper function `Assert-CanRunIntegrationTest` to validate if
+  integration tests can be successfully run on a machine.
 
 ## [1.5.0.41] - 2017-09-02
 

@@ -20,39 +20,17 @@ Import-Module -Name (Join-Path -Path $PSScriptRoot -ChildPath '..\TestHelpers\Co
 
 try
 {
+    Assert-CanRunIntegrationTest
+}
+catch
+{
+    Write-Warning -Message $_
+}
+
+try
+{
     $configFile = Join-Path -Path $PSScriptRoot -ChildPath "$($script:dscResourceName).Config.ps1"
     . $configFile
-
-    # Ensure that the tests can be performed on this computer
-    $productType = (Get-CimInstance Win32_OperatingSystem).ProductType
-
-    Describe 'Environment' {
-        Context 'Operating System' {
-            It 'Should be a Server OS' {
-                $productType | Should -Be 3
-            }
-        }
-    }
-
-    if ($productType -ne 3)
-    {
-        break
-    }
-
-    $installed = (Get-WindowsFeature -Name FS-iSCSITarget-Server).Installed
-
-    Describe 'Environment' {
-        Context 'Windows Features' {
-            It 'Should have the iSCSI Target Feature Installed' {
-                $installed | Should -Be $true
-            }
-        }
-    }
-
-    if ($installed -eq $false)
-    {
-        break
-    }
 
     Describe "$($script:DSCResourceName)_Integration" {
         Context 'When creating a iSCSI Virtual Disk' {

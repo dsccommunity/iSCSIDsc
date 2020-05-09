@@ -20,6 +20,15 @@ Import-Module -Name (Join-Path -Path $PSScriptRoot -ChildPath '..\TestHelpers\Co
 
 try
 {
+    Assert-CanRunIntegrationTest
+}
+catch
+{
+    Write-Warning -Message $_
+}
+
+try
+{
     $configFile = Join-Path -Path $PSScriptRoot -ChildPath "$($script:dscResourceName).Config.ps1"
     . $configFile
 
@@ -27,7 +36,7 @@ try
         Context 'When creating an iSCSI Server Target' {
             BeforeAll {
                 $script:virtualDisk = @{
-                    Path         = Join-Path -Path $PSScriptRoot -ChildPath 'TestiSCSIServerTarget.vhdx'
+                    Path         = Join-Path -Path $TestDrive -ChildPath 'TestiSCSIServerTarget.vhdx'
                 }
                 $script:serverTarget = @{
                     TargetName   = 'testtarget'
@@ -37,11 +46,9 @@ try
                     iSNSServer   = 'isns.contoso.com'
                 }
 
-                Write-Verbose -Message ("Creating Virtual Disk in {0}" -f $script:virtualDisk.Path) -Verbose
                 New-iSCSIVirtualDisk `
                     -Path $script:virtualDisk.Path `
                     -Size 104857600
-                Write-Verbose -Message ("Created Virtual Disk in {0}" -f $script:virtualDisk.Path) -Verbose
             } # BeforeAll
 
 
