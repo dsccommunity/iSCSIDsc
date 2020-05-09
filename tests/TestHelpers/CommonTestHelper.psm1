@@ -100,6 +100,7 @@ function Assert-CanRunIntegrationTest
     param ()
 
     # Ensure that the tests can be performed on this computer
+    Write-Verbose -Message 'Assert operating system is Windows Server'
     $productType = (Get-CimInstance Win32_OperatingSystem).ProductType
 
     if ($productType -ne 3)
@@ -107,6 +108,7 @@ function Assert-CanRunIntegrationTest
         throw 'Integration tests can only be run on Windows Server operating systems'
     }
 
+    Write-Verbose -Message 'Assert FS-iSCSITarget-Server feature is installed'
     $installed = (Get-WindowsFeature -Name FS-iSCSITarget-Server).Installed
 
     if ($installed -eq $false)
@@ -118,6 +120,7 @@ function Assert-CanRunIntegrationTest
 
     try
     {
+        Write-Verbose -Message 'Assert iSCSI Virtual Disk can be created'
         New-iSCSIVirtualDisk `
             -Path $virtualDiskPath `
             -Size 10MB

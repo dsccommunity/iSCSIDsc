@@ -20,11 +20,12 @@ Import-Module -Name (Join-Path -Path $PSScriptRoot -ChildPath '..\TestHelpers\Co
 
 try
 {
-    Assert-CanRunIntegrationTest
+    Assert-CanRunIntegrationTest -Verbose
 }
 catch
 {
     Write-Warning -Message $_
+    return
 }
 
 try
