@@ -20,6 +20,16 @@ Import-Module -Name (Join-Path -Path $PSScriptRoot -ChildPath '..\TestHelpers\Co
 
 try
 {
+    Assert-CanRunIntegrationTest -Verbose
+}
+catch
+{
+    Write-Warning -Message $_
+    return
+}
+
+try
+{
     $configFile = Join-Path -Path $PSScriptRoot -ChildPath "$($script:dscResourceName).Config.ps1"
     . $configFile
 
@@ -37,11 +47,9 @@ try
                     iSNSServer   = 'isns.contoso.com'
                 }
 
-                Write-Verbose -Message ("Creating Virtual Disk in {0}" -f $script:virtualDisk.Path) -Verbose
                 New-iSCSIVirtualDisk `
                     -Path $script:virtualDisk.Path `
-                    -Size 10GB
-                Write-Verbose -Message ("Created Virtual Disk in {0}" -f $script:virtualDisk.Path) -Verbose
+                    -Size 104857600
             } # BeforeAll
 
 

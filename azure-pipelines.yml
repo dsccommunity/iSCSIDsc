@@ -103,8 +103,8 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                Install-WindowsFeature FS-iSCSITarget-Server, ISNS
-                Start-Service msiscsi
+                Install-WindowsFeature -Name FS-iSCSITarget-Server, ISNS
+                Start-Service -Name msiscsi
               pwsh: false
 
           - task: PowerShell@2
@@ -159,8 +159,8 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                Install-WindowsFeature FS-iSCSITarget-Server, ISNS
-                Start-Service msiscsi
+                Install-WindowsFeature -Name FS-iSCSITarget-Server, ISNS
+                Start-Service -Name msiscsi
               pwsh: false
 
           - task: PowerShell@2
@@ -206,8 +206,8 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                Install-WindowsFeature FS-iSCSITarget-Server, ISNS
-                Start-Service msiscsi
+                Install-WindowsFeature -Name FS-iSCSITarget-Server, ISNS
+                Start-Service -Name msiscsi
               pwsh: false
 
           - task: PowerShell@2
@@ -262,8 +262,8 @@ stages:
             inputs:
               targetType: 'inline'
               script: |
-                Install-WindowsFeature FS-iSCSITarget-Server, ISNS
-                Start-Service msiscsi
+                Install-WindowsFeature -Name FS-iSCSITarget-Server, ISNS
+                Start-Service -Name msiscsi
               pwsh: false
 
           - task: PowerShell@2

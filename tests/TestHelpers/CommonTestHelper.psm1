@@ -83,63 +83,63 @@ function Get-InvalidOperationRecord
 
 <#
     .SYNOPSIS
-    Creates a new VHD using DISKPART.
-    DISKPART is used because New-VHD is only available if Hyper-V is installed.
+        Asserts if the system is able to run integration tests.
 
-    .PARAMETER Path
-    The path to the VHD file to create.
+    .NOTES
+        When running integrations tests in Azure DevOps agents an exception is thrown
+        when creating a virtual iSCSI disk on the system:
+        UnauthorizedAccessException: Access is denied. (Exception from HRESULT: 0x80070005 (E_ACCESSDENIED))
 
-    .PARAMETER SizeInMB
-    The size of the VHD disk to create.
-
-    .PARAMETER Initialize
-    Should the disk be initialized? This is for testing matching disks by GUID.
+        This previously did not occur and a solution to this has not been found.
+        Therefore suppress execution of these tests if the Virtual Disk can not
+        be created.
 #>
-function New-VDisk
+function Assert-CanRunIntegrationTest
 {
     [CmdletBinding()]
-    param
-    (
-        [Parameter(Mandatory = $True)]
-        [String]
-        $Path,
+    param ()
 
-        [Parameter()]
-        [Uint32]
-        $SizeInMB,
+    # Ensure that the tests can be performed on this computer
+    Write-Verbose -Message 'Assert operating system is Windows Server'
+    $productType = (Get-CimInstance Win32_OperatingSystem).ProductType
 
-        [Parameter()]
-        [Switch]
-        $Initialize
-    )
-
-    $tempScriptPath = Join-Path -Path $ENV:Temp -ChildPath 'DiskPartVdiskScript.txt'
-    Write-Verbose -Message ('Creating DISKPART script {0}' -f $tempScriptPath)
-
-    $diskPartScript = "CREATE VDISK FILE=`"$Path`" TYPE=EXPANDABLE MAXIMUM=$SizeInMB"
-
-    if ($Initialize)
+    if ($productType -ne 3)
     {
-        # The disk will be initialized with GPT (first blank line required because we're adding to existing string)
-        $diskPartScript += @"
-
-SELECT VDISK FILE=`"$Path`"
-ATTACH VDISK
-CONVERT GPT
-DETACH VDISK
-"@
+        throw 'Integration tests can only be run on Windows Server operating systems'
     }
 
-    Set-Content `
-        -Path $tempScriptPath `
-        -Value $diskPartScript `
-        -Encoding Ascii
-    $result = & DISKPART @('/s',$tempScriptPath)
-    Write-Verbose -Message ($Result | Out-String)
-    $null = Remove-Item -Path $tempScriptPath -Force
-} # end function New-VDisk
+    Write-Verbose -Message 'Assert FS-iSCSITarget-Server feature is installed'
+    $installed = (Get-WindowsFeature -Name FS-iSCSITarget-Server).Installed
+
+    if ($installed -eq $false)
+    {
+        throw 'Integration tests require FS-iSCSITarget-Server windows feature to be installed'
+    }
+
+    $virtualDiskPath = Join-Path -Path $ENV:Temp -ChildPath 'AssertCreateIscsiVirtualDisk.vhdx'
+
+    try
+    {
+        Write-Verbose -Message 'Assert iSCSI Virtual Disk can be created'
+        New-iSCSIVirtualDisk `
+            -Path $virtualDiskPath `
+            -Size 10MB
+    }
+    catch
+    {
+        Remove-iSCSIVirtualDisk `
+            -Path $virtualDiskPath `
+            -ErrorAction SilentlyContinue
+        Remove-Item `
+            -Path $virtualDiskPath `
+            -Force `
+            -ErrorAction SilentlyContinue
+
+        throw ('Integration tests can only be run if an iSCSI Virtual Disk can be created. Failed with {0}' -f $_)
+    }
+}
 
 Export-ModuleMember -Function `
-    New-VDisk, `
     Get-InvalidArgumentRecord, `
-    Get-InvalidOperationRecord
+    Get-InvalidOperationRecord, `
+    Assert-CanRunIntegrationTest

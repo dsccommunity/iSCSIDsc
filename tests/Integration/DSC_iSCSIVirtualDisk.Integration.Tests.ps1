@@ -20,44 +20,23 @@ Import-Module -Name (Join-Path -Path $PSScriptRoot -ChildPath '..\TestHelpers\Co
 
 try
 {
+    Assert-CanRunIntegrationTest -Verbose
+}
+catch
+{
+    Write-Warning -Message $_
+    return
+}
+
+try
+{
     $configFile = Join-Path -Path $PSScriptRoot -ChildPath "$($script:dscResourceName).Config.ps1"
     . $configFile
-
-    # Ensure that the tests can be performed on this computer
-    $productType = (Get-CimInstance Win32_OperatingSystem).ProductType
-
-    Describe 'Environment' {
-        Context 'Operating System' {
-            It 'Should be a Server OS' {
-                $productType | Should -Be 3
-            }
-        }
-    }
-
-    if ($productType -ne 3)
-    {
-        Break
-    }
-
-    $installed = (Get-WindowsFeature -Name FS-iSCSITarget-Server).Installed
-
-    Describe 'Environment' {
-        Context 'Windows Features' {
-            It 'Should have the iSCSI Target Feature Installed' {
-                $installed | Should -Be $true
-            }
-        }
-    }
-
-    if ($installed -eq $false)
-    {
-        Break
-    }
 
     Describe "$($script:DSCResourceName)_Integration" {
         Context 'When creating a iSCSI Virtual Disk' {
             BeforeAll {
-                $script:virtualDisk = @{
+                $script:testVirtualDisk = @{
                     Path            = Join-Path -Path $TestDrive -ChildPath 'TestiSCSIVirtualDisk.vhdx'
                     Ensure          = 'Present'
                     DiskType        = 'Dynamic'
@@ -72,11 +51,11 @@ try
                         AllNodes = @(
                             @{
                                 NodeName    = 'localhost'
-                                Path        = $script:virtualDisk.Path
-                                Ensure      = $script:virtualDisk.Ensure
-                                DiskType    = $script:virtualDisk.DiskType
-                                SizeBytes   = $script:virtualDisk.SizeBytes
-                                Description = $script:virtualDisk.Description
+                                Path        = $script:testVirtualDisk.Path
+                                Ensure      = $script:testVirtualDisk.Ensure
+                                DiskType    = $script:testVirtualDisk.DiskType
+                                SizeBytes   = $script:testVirtualDisk.SizeBytes
+                                Description = $script:testVirtualDisk.Description
                             }
                         )
                     }
@@ -103,19 +82,19 @@ try
 
             It 'Should have set the resource and all the parameters should match' {
                 # Get the Rule details
-                $virtualDiskNew = Get-iSCSIVirtualDisk -Path $script:virtualDisk.Path
-                $virtualDiskNew.Path               | Should -Be $script:virtualDisk.Path
-                $virtualDiskNew.DiskType           | Should -Be $script:virtualDisk.DiskType
-                $virtualDiskNew.Size               | Should -Be $script:virtualDisk.SizeBytes
-                $virtualDiskNew.Description        | Should -Be $script:virtualDisk.Description
+                $virtualDiskNew = Get-iSCSIVirtualDisk -Path $script:testVirtualDisk.Path
+                $virtualDiskNew.Path               | Should -Be $script:testVirtualDisk.Path
+                $virtualDiskNew.DiskType           | Should -Be $script:testVirtualDisk.DiskType
+                $virtualDiskNew.Size               | Should -Be $script:testVirtualDisk.SizeBytes
+                $virtualDiskNew.Description        | Should -Be $script:testVirtualDisk.Description
             }
 
             AfterAll {
                 # Clean up
                 Remove-iSCSIVirtualDisk `
-                    -Path $script:virtualDisk.Path
+                    -Path $script:testVirtualDisk.Path
                 Remove-Item `
-                    -Path $script:virtualDisk.Path `
+                    -Path $script:testVirtualDisk.Path `
                     -Force
             } # AfterAll
         }
