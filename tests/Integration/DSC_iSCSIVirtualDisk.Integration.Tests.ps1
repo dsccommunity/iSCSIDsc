@@ -36,7 +36,7 @@ try
 
     if ($productType -ne 3)
     {
-        Break
+        break
     }
 
     $installed = (Get-WindowsFeature -Name FS-iSCSITarget-Server).Installed
@@ -51,7 +51,7 @@ try
 
     if ($installed -eq $false)
     {
-        Break
+        break
     }
 
     Describe "$($script:DSCResourceName)_Integration" {
@@ -103,7 +103,6 @@ try
 
             It 'Should have set the resource and all the parameters should match' {
                 # Get the Rule details
-                Write-Verbose -Message ($script:testVirtualDisk.Path) -Verbose
                 $virtualDiskNew = Get-iSCSIVirtualDisk -Path $script:testVirtualDisk.Path
                 $virtualDiskNew.Path               | Should -Be $script:testVirtualDisk.Path
                 $virtualDiskNew.DiskType           | Should -Be $script:testVirtualDisk.DiskType
@@ -113,7 +112,6 @@ try
 
             AfterAll {
                 # Clean up
-                Write-Verbose -Message ($script:testVirtualDisk.Path) -Verbose
                 Remove-iSCSIVirtualDisk `
                     -Path $script:testVirtualDisk.Path
                 Remove-Item `

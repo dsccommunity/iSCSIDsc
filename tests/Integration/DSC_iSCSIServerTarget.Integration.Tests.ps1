@@ -27,7 +27,7 @@ try
         Context 'When creating an iSCSI Server Target' {
             BeforeAll {
                 $script:virtualDisk = @{
-                    Path         = Join-Path -Path $TestDrive -ChildPath 'TestiSCSIServerTarget.vhdx'
+                    Path         = Join-Path -Path $PSScriptRoot -ChildPath 'TestiSCSIServerTarget.vhdx'
                 }
                 $script:serverTarget = @{
                     TargetName   = 'testtarget'
