@@ -1,0 +1,26 @@
+TOPIC
+    about_iSCSIDsc
+
+SHORT DESCRIPTION
+    DSC resources for configuring Windows iSCSI Targets and Initiators.
+
+LONG DESCRIPTION
+    This module contains DSC resources for configuring Windows iSCSI Targets
+    and Initiators.
+
+EXAMPLES
+    PS C:\> Get-DscResource -Module iSCSIDsc
+
+NOTE:
+    Thank you to the DSC Community contributors who contributed to this module by
+    writing code, sharing opinions, and provided feedback.
+
+TROUBLESHOOTING NOTE:
+    Go to the Github repository for read about issues, submit a new issue, and read
+    about new releases. https://github.com/dsccommunity/iSCSIDsc
+
+SEE ALSO
+  - https://github.com/dsccommunity/iSCSIDsc
+
+KEYWORDS
+    DesiredStateConfiguration, DSC, DSCResource, iSCSI, Target, Initiator
