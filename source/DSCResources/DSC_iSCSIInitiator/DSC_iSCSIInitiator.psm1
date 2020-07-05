@@ -1,12 +1,9 @@
 $modulePath = Join-Path -Path (Split-Path -Path (Split-Path -Path $PSScriptRoot -Parent) -Parent) -ChildPath 'Modules'
 
-# Import the iSCSI Common Module
-Import-Module -Name (Join-Path -Path $modulePath `
-    -ChildPath (Join-Path -Path 'iSCSIDsc.Common' `
-        -ChildPath 'iSCSIDsc.Common.psm1'))
+Import-Module -Name (Join-Path -Path $modulePath -ChildPath 'DscResource.Common')
 
 # Import Localization Strings
-$script:localizedData = Get-LocalizedData -ResourceName 'DSC_iSCSIInitiator'
+$script:localizedData = Get-LocalizedData -DefaultUICulture 'en-US'
 
 <#
     .SYNOPSIS
