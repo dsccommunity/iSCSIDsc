@@ -52,7 +52,7 @@
             Tags       = @('DesiredStateConfiguration', 'DSC', 'DSCResource', 'iSCSI', 'Target', 'Initiator')
 
             # A URL to the license for this module.
-            LicenseUri = 'https://github.com/dsccommunity/iSCSIDsc/blob/dev/LICENSE'
+            LicenseUri = 'https://github.com/dsccommunity/iSCSIDsc/blob/main/LICENSE'
 
             # A URL to the main website for this project.
             ProjectUri = 'https://github.com/dsccommunity/iSCSIDsc'

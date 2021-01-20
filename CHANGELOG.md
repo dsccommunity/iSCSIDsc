@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pin `Pester` module to 4.10.1 because Pester 5.0 is missing code
   coverage - Fixes [Issue #60](https://github.com/dsccommunity/iSCSIDsc/issues/60).
 - Automatically publish documentation to GitHub Wiki - Fixes [Issue #61](https://github.com/dsccommunity/iSCSIDsc/issues/61).
+- Renamed `master` branch to `main` - Fixes [Issue #63](https://github.com/dsccommunity/iSCSIDsc/issues/63).
 
 ## [1.5.0.41] - 2017-09-02
 
