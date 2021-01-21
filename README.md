@@ -1,8 +1,8 @@
 # iSCSIDsc
 
-[![Build Status](https://dev.azure.com/dsccommunity/iSCSIDsc/_apis/build/status/dsccommunity.iSCSIDsc?branchName=master)](https://dev.azure.com/dsccommunity/iSCSIDsc/_build/latest?definitionId=36&branchName=master)
-![Code Coverage](https://img.shields.io/azure-devops/coverage/dsccommunity/iSCSIDsc/36/master)
-[![Azure DevOps tests](https://img.shields.io/azure-devops/tests/dsccommunity/iSCSIDsc/36/master)](https://dsccommunity.visualstudio.com/iSCSIDsc/_test/analytics?definitionId=36&contextType=build)
+[![Build Status](https://dev.azure.com/dsccommunity/iSCSIDsc/_apis/build/status/dsccommunity.iSCSIDsc?branchName=main)](https://dev.azure.com/dsccommunity/iSCSIDsc/_build/latest?definitionId=36&branchName=main)
+![Code Coverage](https://img.shields.io/azure-devops/coverage/dsccommunity/iSCSIDsc/36/main)
+[![Azure DevOps tests](https://img.shields.io/azure-devops/tests/dsccommunity/iSCSIDsc/36/main)](https://dsccommunity.visualstudio.com/iSCSIDsc/_test/analytics?definitionId=36&contextType=build)
 [![PowerShell Gallery (with prereleases)](https://img.shields.io/powershellgallery/vpre/iSCSIDsc?label=iSCSIDsc%20Preview)](https://www.powershellgallery.com/packages/iSCSIDsc/)
 [![PowerShell Gallery](https://img.shields.io/powershellgallery/v/iSCSIDsc?label=iSCSIDsc)](https://www.powershellgallery.com/packages/iSCSIDsc/)
 
@@ -12,7 +12,7 @@ This project has adopted [this code of conduct](CODE_OF_CONDUCT.md).
 
 ## Releases
 
-For each merge to the branch `master` a preview release will be
+For each merge to the branch `main` a preview release will be
 deployed to [PowerShell Gallery](https://www.powershellgallery.com/).
 Periodically a release version tag will be pushed which will deploy a
 full release to [PowerShell Gallery](https://www.powershellgallery.com/).

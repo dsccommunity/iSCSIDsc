@@ -32,4 +32,4 @@ Get-DscResource -Module iSCSIDsc
 
 ## Change Log
 
-A full list of changes in each version can be found in the [change log](https://github.com/dsccommunity/iSCSIDsc/blob/master/CHANGELOG.md).
+A full list of changes in each version can be found in the [change log](https://github.com/dsccommunity/iSCSIDsc/blob/main/CHANGELOG.md).
