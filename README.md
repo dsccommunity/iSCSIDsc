@@ -5,6 +5,7 @@
 [![Azure DevOps tests](https://img.shields.io/azure-devops/tests/dsccommunity/iSCSIDsc/36/main)](https://dsccommunity.visualstudio.com/iSCSIDsc/_test/analytics?definitionId=36&contextType=build)
 [![PowerShell Gallery (with prereleases)](https://img.shields.io/powershellgallery/vpre/iSCSIDsc?label=iSCSIDsc%20Preview)](https://www.powershellgallery.com/packages/iSCSIDsc/)
 [![PowerShell Gallery](https://img.shields.io/powershellgallery/v/iSCSIDsc?label=iSCSIDsc)](https://www.powershellgallery.com/packages/iSCSIDsc/)
+[![codecov](https://codecov.io/gh/dsccommunity/iSCSIDsc/branch/main/graph/badge.svg)](https://codecov.io/gh/dsccommunity/iSCSIDsc)
 
 ## Code of Conduct
 

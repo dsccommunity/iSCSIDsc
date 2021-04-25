@@ -49,6 +49,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   coverage - Fixes [Issue #60](https://github.com/dsccommunity/iSCSIDsc/issues/60).
 - Automatically publish documentation to GitHub Wiki - Fixes [Issue #61](https://github.com/dsccommunity/iSCSIDsc/issues/61).
 - Renamed `master` branch to `main` - Fixes [Issue #63](https://github.com/dsccommunity/iSCSIDsc/issues/63).
+- Updated build to use `Sampler.GitHubTasks` - Fixes [Issue #65](https://github.com/dsccommunity/iSCSIDsc/issues/65).
+- Added support for publishing code coverage to `CodeCov.io` and
+  Azure Pipelines - Fixes [Issue #66](https://github.com/dsccommunity/iSCSIDsc/issues/66).
 
 ## [1.5.0.41] - 2017-09-02
 
