@@ -47,10 +47,7 @@ the [iSCSIDsc wiki](https://github.com/dsccommunity/iSCSIDsc/wiki).
 
 ## Requirements
 
-- The iSCSI Target resources can only be used on Windows Server 2012 and above but
-  does not currently work with Windows Server 2022 due to the ISNS feature being
-  deprecated. See [this post](https://docs.microsoft.com/windows-server/get-started/removed-features-1709)
-  for more information.
+- The iSCSI Target resources can only be used on Windows Server 2012 and above.
   These resources can not be used on Windows Desktop operating systems.
 - The iSCSI Target resources can only be used on Windows Servers that have the
   iSCSI Target Server (FS-iSCSITarget-Server) feature installed.
@@ -73,8 +70,6 @@ as the **iSNS Server** becomes contactable.
 
 ## Known Issues
 
-- ISNS support is deprecated on Windows Server 2022, this resource will not currently
-  work on that OS.
 - Integration Tests on the iSCSIInitiator resource are currently disabled because
   it requires **iSCSI Initiator Loopback**, but this isn't documented anywhere so
   could not be made to work.
