@@ -57,8 +57,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added SECURITY.md.
 - Updated pipeline Deploy_Module anb Code_Coverage jobs to use ubuntu-latest
   images - Fixes [Issue #68](https://github.com/dsccommunity/iSCSIDsc/issues/68).
-- Updated pipeline unit tests and integration tests to use Windows Server 2019 and
-  Windows Server 2022 images - Fixes [Issue #68](https://github.com/dsccommunity/iSCSIDsc/issues/68).
+- Updated pipeline unit tests and integration tests to use Windows Server
+  2019 only - Fixes [Issue #68](https://github.com/dsccommunity/iSCSIDsc/issues/68).
 
 ### Fixed
 
