@@ -48,7 +48,7 @@ the [iSCSIDsc wiki](https://github.com/dsccommunity/iSCSIDsc/wiki).
 ## Requirements
 
 - The iSCSI Target resources can only be used on Windows Server 2012 and above.
-  They can not be used on Windows Desktop operating systems.
+  These resources can not be used on Windows Desktop operating systems.
 - The iSCSI Target resources can only be used on Windows Servers that have the
   iSCSI Target Server (FS-iSCSITarget-Server) feature installed.
 - Before the iSCSI Initiator resource is used in a config, the **msiscsi** service
