@@ -4,7 +4,7 @@ $modulePath = Join-Path -Path (Split-Path -Path (Split-Path -Path $PSScriptRoot 
 Import-Module -Name (Join-Path -Path $modulePath -ChildPath 'DscResource.Common')
 
 # Import Localization Strings
-$script:script:localizedData = Get-script:localizedData -DefaultUICulture 'en-US'
+$script:localizedData = Get-localizedData -DefaultUICulture 'en-US'
 
 <#
     .SYNOPSIS
