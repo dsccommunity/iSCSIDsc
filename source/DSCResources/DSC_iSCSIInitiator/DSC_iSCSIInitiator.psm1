@@ -893,7 +893,7 @@ function Test-TargetResource
                 Check the Connection parameters are correct
                 The Connection.TargetAddress will always be an IP Address
                 even if the TargetPortalAddress was specified as a Hostname
-                AIS - adaptation add multiple session
+                !! adaptation add multiple session
             #>
             try
             {
