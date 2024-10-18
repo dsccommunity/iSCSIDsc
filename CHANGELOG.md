@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Added the possibility to add multiple targets for a single iscsi session
 - Transferred ownership to DSCCommunity.org - Fixes [Issue #50](https://github.com/dsccommunity/iSCSIDsc/issues/50).
 - Fix hash table style guideline violations.
 - Added .gitattributes file to fix bug publishing examples - Fixes [Issue #40](https://github.com/PlagueHO/iSCSIDsc/issues/40).
@@ -60,6 +61,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated pipeline unit tests and integration tests to use Windows Server
   2019 only - Fixes [Issue #68](https://github.com/dsccommunity/iSCSIDsc/issues/68).
 - Removed unused ISNS feature from being installed for unit tests.
+
+## [1.5.0.42] - 2024-10-18
+
+### Changed
+
+- Changed the iSCSIinitiator resource to allow for multiple targets for a iscsi session defined.
 
 ### Fixed
 

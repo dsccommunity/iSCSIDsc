@@ -32,7 +32,7 @@ The **iSCSIDsc** module contains DSC resources for configuring Windows iSCSI
 Targets and Initiators.
 
 - **iSCSIInitiator**: This resource is used to add or remove an iSCSI Target
-  Portal and connect it to an iSCSI Target.
+  Portal and connect it to an iSCSI Target (with multiple targets defined possible).
 - **iSCSIServerTarget**: This resource is used to create or remove Virtual Disks
   for use by iSCSI Targets.
 - **iSCSIVirtualDisk**: This resource is used to create or remove Virtual Disks
