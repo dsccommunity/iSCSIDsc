@@ -18,7 +18,10 @@
     MarkdownLinkCheck           = 'latest'
     'DscResource.Test'          = 'latest'
     'DscResource.AnalyzerRules' = 'latest'
-    'DscResource.DocGenerator'  = 'latest'
     'DscResource.Common'        = 'latest'
     xDscResourceDesigner        = 'latest'
+
+    # Prerequisite modules for documentation.
+    'DscResource.DocGenerator'  = 'latest'
+    PlatyPS                     = 'latest'
 }
