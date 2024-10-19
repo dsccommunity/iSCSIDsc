@@ -72,6 +72,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed pipeline by replacing the GitVersion task in the `azure-pipelines.yml`
   with a script.
+- Updated build files to fix build and use latest patterns.
+  - azure-pipelines.yml
+  - build.ps1
+  - build.yml
+  - GitVersion.yml
+  - RequiredModules.psd1
+  - Resolve-Dependency.ps1/psd1
 
 ## [1.5.0.41] - 2017-09-02
 

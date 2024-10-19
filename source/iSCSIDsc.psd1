@@ -1,4 +1,7 @@
 @{
+    # Script module or binary module file associated with this manifest.
+    RootModule           = 'iSCSIDsc.psm1'
+
     # Version number of this module.
     ModuleVersion         = '0.0.2'
 
@@ -39,7 +42,7 @@
     AliasesToExport       = @()
 
     # DSC resources to export from this module
-    DscResourcesToExport  = @('iSCSIInitiator', 'iSCSIServerTarget', 'iSCSIVirtualDisk')
+    DscResourcesToExport  = @()
 
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
     PrivateData           = @{
