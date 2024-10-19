@@ -3,7 +3,7 @@
     RootModule           = 'iSCSIDsc.psm1'
 
     # Version number of this module.
-    ModuleVersion         = '0.0.1'
+    ModuleVersion         = '0.0.2'
 
     # ID used to uniquely identify this module
     GUID                  = 'f2793754-6dc7-439a-a779-b1529b5e704c'

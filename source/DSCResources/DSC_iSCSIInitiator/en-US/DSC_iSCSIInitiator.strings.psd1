@@ -30,6 +30,7 @@ ConvertFrom-StringData -StringData @'
     iSCSITargetExistsButShouldNotMessage = iSCSI Target '{0}' exists but should not. Change required.
     iSCSITargetPortalDoesNotExistAndShouldNotMessage = iSCSI Target Portal '{0}' from '{1}' does not exist and should not. Change not required.
     iSCSITargetDoesNotExistButShouldMessage = iSCSI Target '{0}' does not exist but should. Change required.
+    iSCSITargetSessionIsNotListedAsPersistentButShouldMessage = iSCSI Target Session on the targetportalIP ('{1}') for nodeaddress = '{0}' is not listed as peristent. Change required.
     iSCSITargetNotConnectedMessage = iSCSI Target '{0}' exists but is not connected. Change required.
     iSCSIConnectionDoesNotExistButShouldMessage = iSCSI Connection '{0}' does not exist but should. Change required.
     iSCSISessionDoesNotExistButShouldMessage = iSCSI Session '{0}' does not exist but should. Change required.
