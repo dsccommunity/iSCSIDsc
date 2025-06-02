@@ -60,6 +60,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated pipeline unit tests and integration tests to use Windows Server
   2019 only - Fixes [Issue #68](https://github.com/dsccommunity/iSCSIDsc/issues/68).
 - Removed unused ISNS feature from being installed for unit tests.
+- `azure-pipelines.yml`
+  - Remove `windows-2019` images fixes [#78](https://github.com/dsccommunity/iSCSIDsc/issues/78).
 
 ### Fixed
 
